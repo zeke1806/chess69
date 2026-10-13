@@ -23,6 +23,11 @@ chess69/
     architecture-arborescence-exemple.md
     architecture-business-examples.md
     architecture-front-examples.md
+    mode-de-travail.md
+    agents/
+      issue-tracker.md
+      triage-labels.md
+      domain.md
   src/
     services-business/
       dependency-injection.ts
