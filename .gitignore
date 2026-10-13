@@ -1,0 +1,64 @@
+# Keep .agents/skills/, project documentation, and .scratch/ tickets in Git.
+# Keep application assets (including PNGs) and bundled content databases in Git.
+
+# Impeccable: generated mockups, captures, build state, and local preferences.
+# Keep shared config.json, design.json, and written critique reports.
+/.impeccable/mocks/
+/.impeccable/build/
+/.impeccable/review/
+/.impeccable/live/
+/.impeccable/config.local.json
+/.impeccable/**/*.png
+/.impeccable/**/*.jpg
+/.impeccable/**/*.webp
+
+# Downloaded Impeccable engines; keep the launchers and supporting scripts.
+/.agents/skills/impeccable/scripts/impeccable-darwin-*
+/.agents/skills/impeccable/scripts/impeccable-linux-*
+/.agents/skills/impeccable/scripts/impeccable-windows-*
+
+# Local agent settings.
+/.claude/settings.local.json
+
+# Dependencies, Expo state, generated bundles, and test reports.
+node_modules/
+/.expo/
+/dist/
+/web-build/
+/coverage/
+/test-results/
+/playwright-report/
+/artifacts/screenshots/
+*.log
+*.tsbuildinfo
+
+# Android/iOS build outputs and machine-specific configuration.
+# Keep native source folders: Stockfish integration may require native code.
+.gradle/
+/android/**/build/
+/android/.cxx/
+/android/**/.cxx/
+/android/local.properties
+/ios/build/
+/ios/Pods/
+*.apk
+*.aab
+*.ipa
+
+# Secrets and signing keys. Keep environment templates.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.jks
+*.keystore
+*.p12
+*.p8
+
+# OS and editor temporary files.
+.DS_Store
+._*
+Thumbs.db
+*.swp
+*.swo
+*~
