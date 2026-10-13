@@ -13,28 +13,24 @@ React Native, Expo Router et TypeScript strict, selon
 
 ## Users
 
-L'utilisateur teste l'installation sur son Samsung Galaxy S22 Ultra.
-Le contexte métier cible est l'apprentissage des échecs hors ligne.
+Utilisateur débutant à intermédiaire apprenant les échecs en français sur son Samsung Galaxy S22 Ultra, avec ou sans connexion.
 
 ## Product Purpose
 
-Le premier jalon vérifie le téléchargement d'une APK signée, son installation,
-son lancement et une interaction élémentaire sans connexion. Les fonctions
-d'échecs viendront ensuite ; elles ne sont pas présentes dans cette livraison.
+Apprendre les ouvertures et les mémoriser, résoudre des puzzles et finales, jouer contre Stockfish, analyser ses parties et suivre une progression propre à cette installation.
 
 ## Operating Context
 
 La distribution passe par `https://apk.rentabe.ovh/chess69`. Une fois l'APK
-installée, cet écran doit se lancer et répondre en mode avion, y compris après
+installée, l’application doit se lancer et fonctionner en mode avion, y compris après
 fermeture puis réouverture. La validation sur téléphone attend un retour réel.
 
 ## Capabilities and Constraints
 
-L'écran affiche le nom, la version, un message et un bouton « Tester ».
-L'appui produit « Interaction confirmée ». Aucune persistance n'est requise.
+Huit ouvertures et 24 variantes, 120 puzzles et 24 finales embarqués. Parties contre trois niveaux Stockfish, reprise et analyse locale progressive annulable. Persistance SQLite, révisions espacées et activité par jour civil local.
 L'application embarque son code et ses ressources, sans connexion à Metro,
 à Expo Go ou au VPS. La spécification est la source du périmètre :
-[première APK](.scratch/premiere-apk/spec.md).
+[application locale](.scratch/application-locale/spec.md).
 
 ## Brand Commitments
 

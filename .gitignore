@@ -22,6 +22,9 @@
 
 # Dependencies, Expo state, generated bundles, and test reports.
 node_modules/
+/node_modules
+/modules/**/build/
+/modules/**/.cxx/
 /.expo/
 /dist/
 /web-build/

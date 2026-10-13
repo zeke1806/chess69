@@ -98,3 +98,10 @@ réouverture en mode avion. Aucune validation sur son appareil n'est annoncée.
 - Procédure et preuves serveur dans vps-perso : docs/chess69-apk.md et
   .scratch/chess69-apk/verification.md. Critères 1, 2, 6 et 7 vérifiés ;
   critères 3 à 5 en attente utilisateur sur Galaxy S22 Ultra.
+
+## Retour utilisateur après livraison
+
+Téléchargement, installation et interaction avec message attendu confirmés sur
+Galaxy S22 Ultra par l’utilisateur. Les critères 3 et 4 sont validés. Le critère 5
+(mode avion puis fermeture et réouverture) attend une confirmation explicite.
+Ce retour actualise les mentions « en attente » du compte rendu initial.

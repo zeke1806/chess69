@@ -1,10 +1,2 @@
-import type {
-  InstallationCheckFrontService,
-  InstallationCheckFrontSnapshot,
-} from '../../installation-check/installation-check-type';
-
-export interface ReactService {
-  useInstallationCheckState: (
-    service: InstallationCheckFrontService,
-  ) => InstallationCheckFrontSnapshot;
-}
+import type { ApplicationService, ApplicationSnapshot } from '../../application/application-type';
+export type ReactService = Readonly<{ useApplicationState: (service: ApplicationService) => ApplicationSnapshot }>;

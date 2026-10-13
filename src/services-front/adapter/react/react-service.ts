@@ -1,20 +1,7 @@
 import { useSyncExternalStore } from 'react';
-import type {
-  InstallationCheckFrontService,
-  InstallationCheckFrontSnapshot,
-} from '../../installation-check/installation-check-type';
+import type { ApplicationService, ApplicationSnapshot } from '../../application/application-type';
 import type { ReactService } from './react-type';
-
-export const createReactService = (): ReactService => ({
-  useInstallationCheckState,
-});
-
-function useInstallationCheckState(
-  service: InstallationCheckFrontService,
-): InstallationCheckFrontSnapshot {
-  return useSyncExternalStore(
-    service.subscribe,
-    service.getSnapshot,
-    service.getSnapshot,
-  );
+export const createReactService = ():ReactService => ({useApplicationState});
+function useApplicationState(service:ApplicationService):ApplicationSnapshot {
+  return useSyncExternalStore(service.subscribe,service.getSnapshot,service.getSnapshot);
 }

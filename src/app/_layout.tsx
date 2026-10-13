@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { createServicesBusiness } from '../services-business/dependency-injection';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import appConfig from '../../app.json';
@@ -8,7 +9,10 @@ import { ServicesFrontProvider } from '../ui/features/services-front-provider';
 export default function RootLayout() {
   const [servicesFront] = useState(() => createServicesFront({
     version: appConfig.expo.version,
+    business: createServicesBusiness(),
   }));
+
+  useEffect(() => () => { void servicesFront.applicationService.dispose().catch(() => {}); }, [servicesFront]);
 
   return (
     <ServicesFrontProvider servicesFront={servicesFront}>

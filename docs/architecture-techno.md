@@ -28,9 +28,10 @@ aucune bibliothèque supplémentaire de gestion d’état n’est retenue.
 | Technologie | Usage | Statut |
 | --- | --- | --- |
 | Expo Router | Routes raccordées aux features | Installé ; routes dans src/app |
-| SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Validé ; intégration à faire |
-| Stockfish embarqué | Adversaire et analyse hors ligne | Validé ; intégration native à prototyper |
-| `chess.js` | Règles et validation des coups | Validé ; intégration à faire |
+| SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Installé ; adaptateurs SQLite/mémoire et migration transactionnelle |
+| Stockfish embarqué | Adversaire et analyse hors ligne | Stockfish 17.1, module Expo local Kotlin/JNI C++ ARM64 et NNUE embarqués |
+| `chess.js` | Règles et validation des coups | Installé ; règles et validation des coups derrière adaptateur |
+| `react-native-svg` | Pièces et icônes vectorielles locales | Compatible Expo SDK 57 ; assets Chessnut Apache-2.0, icônes géométriques originales |
 | Jest + `jest-expo` | Tests unitaires et intégration en mémoire, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
 
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
@@ -55,12 +56,19 @@ requise pour jouer et apprendre.
 
 ## État actuel et maintenance
 
-Le scaffold Expo SDK 57 est installé avec React 19.2.3, React Native 0.86.3 et
-TypeScript 6 strict. Le premier écran utilise un service front et ses bindings
-React ; aucun service métier ni stockage fictif n’a été ajouté. Le projet
-Android est versionné et maintenu explicitement. SQLite, Stockfish et chess.js
-restent à intégrer ; ce jalon ne les valide pas.
+Expo SDK 57 est installé avec React 19.2.3, React Native 0.86.3 et
+TypeScript 6 strict. Le projet Android est versionné et maintenu explicitement.
+SQLite, Stockfish et chess.js sont intégrés. Le ticket de preuve native
+consigne les contrôles sur une APK signée réellement exécutée sur Android
+API 36 ARM64 ; les performances et les transferts Samsung restent à vérifier
+sur le Galaxy S22 Ultra.
 
 Les versions exactes sont celles de `package.json` et du
 lockfile. Mettre à jour ici les choix et statuts quand ils changent ; conserver
 les conventions structurelles et de codage dans `architecture.md`.
+
+Stockfish est compilé depuis les sources et les réseaux exacts conservés dans
+`android/vendor/stockfish`, avec vérification SHA-256 des NNUE au build. Le
+module Expo local de `modules/chess69-stockfish` lance ses calculs hors du fil
+JavaScript et les annule explicitement. La distribution inclut les sources
+correspondants sous GPLv3 ; voir [THIRD_PARTY.md](../THIRD_PARTY.md).

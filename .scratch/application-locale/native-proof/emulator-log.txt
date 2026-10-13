@@ -1,0 +1,18 @@
+--------- beginning of main
+10-13 17:53:00.180  3426  3473 I ReactNativeJS: Running "main"
+10-13 17:53:00.270  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_INITIAL attempts=2
+10-13 17:53:00.289  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_REOPEN attempts=3 PASS
+10-13 17:53:00.291  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_WRITE_ERROR caught
+10-13 17:53:00.292  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_RETRY_UNCHANGED PASS
+10-13 17:53:00.320  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_MIGRATION_0_TO_1_DATA_RETAINED PASS
+10-13 17:53:00.356  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_MIGRATION_ERROR Error: Cette progression nécessite une version plus récente de Chess69.
+10-13 17:53:00.363  3426  3473 I ReactNativeJS: NATIVE_PROOF SQLITE_MIGRATION_RETRY_DATA_RETAINED PASS
+10-13 17:53:00.605  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_UCI_READY PASS
+10-13 17:53:00.759  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_beginner {"bestMove":"e2e3","score":{"type":"cp","value":36},"pv":["e2e4","c7c5","g1f3","b8c6","f1c4","e7e6","b1c3","g8f6","e1g1"]} LEGAL PASS
+10-13 17:53:00.911  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_casual {"bestMove":"e2e4","score":{"type":"cp","value":29},"pv":["e2e4","c7c5","c2c3","e7e5","g1f3","b8c6","f1c4","g8f6","d2d4","c5d4","c3d4","f8b4","c1d2","b4d2","b1d2"]} LEGAL PASS
+10-13 17:53:01.067  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_club {"bestMove":"e2e4","score":{"type":"cp","value":35},"pv":["e2e4","c7c5","c2c3","e7e5","g1f3","b8c6","d2d4","c5d4","c3d4","e5d4","f3d4","g8f6","b1c3","f8b4","f1c4","e8g8"]} LEGAL PASS
+10-13 17:53:01.132  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_CANCEL PASS
+10-13 17:53:01.232  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_REUSED e2e4 PASS
+10-13 17:53:01.235  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_MATE {"bestMove":"g6g7","score":{"type":"mate","value":1},"pv":["g6g7"]} PASS
+10-13 17:53:01.393  3426  3473 I ReactNativeJS: NATIVE_PROOF STOCKFISH_DISPOSE_REINITIALIZE PASS
+10-13 17:53:01.393  3426  3473 I ReactNativeJS: NATIVE_PROOF NATIVE_PROOF_COMPLETE

@@ -102,7 +102,7 @@ signe avec `apksigner`, puis vérifie avant de promouvoir l'artefact local :
 - bundle `assets/index.android.bundle` embarqué et alignement ;
 - taille et SHA-256 du fichier final.
 
-Sorties : `artifacts/chess69-0.1.0-1-arm64.apk` et son fichier `.json` public.
+Sorties actuelles : `artifacts/chess69-0.2.0-4-arm64.apk` et son fichier `.json` public.
 Les APK sont ignorées par Git. Gradle produit volontairement une APK non signée ;
 seul `android:build` fournit la release distribuable. Les clés debug standard
 Android ne sont jamais utilisées pour cette release.
@@ -117,7 +117,7 @@ python3 scripts/verify-apk.py /chemin/vers/telechargement.apk
 ## Contrôle Android sur émulateur
 
 Le contrôle réel de cette release est consigné dans
-[les preuves émulateur](../.scratch/premiere-apk/emulator-verification.md).
+[les preuves de l’application locale](../.scratch/application-locale/verification.md).
 L'émulateur n'est pas nécessaire à la compilation. Pour préparer ses composants :
 
 ```bash
@@ -135,12 +135,13 @@ Depuis le dépôt `vps-perso` :
 
 ```bash
 ansible-playbook playbooks/publish-chess69-apk.yml \
-  -e apk_source=/Users/zeke/Documents/Projects/chess69/artifacts/chess69-0.1.0-1-arm64.apk \
-  -e apk_version=0.1.0 -e apk_version_code=1
+  -e apk_source=/Users/zeke/Documents/Projects/chess69/artifacts/chess69-0.2.0-4-arm64.apk \
+  -e apk_version=0.2.0 -e apk_version_code=4 \
+  -e apk_source_archive=/Users/zeke/Documents/Projects/chess69/artifacts/chess69-source.tar.gz
 ```
 
 La première préparation du serveur, la promotion atomique, les validations HTTP
-et le rollback sont documentés dans le README et les procédures de `vps-perso`.
+et le nettoyage après succès sont documentés dans le README et les procédures de `vps-perso`.
 Ne jamais remplacer le contenu d'une version déjà publiée. Pour corriger,
 incrémenter `versionCode`, adapter le nom de version, reconstruire avec la même
 clé, puis publier une nouvelle URL. Un retour de page à une ancienne release
@@ -157,3 +158,13 @@ Le routeur reçoit chaque intent natif comme `/`, sans décoder de paramètres.
 Aucun lien entrant n'est annoncé dans le manifest. Les alertes transitives sans
 correctif compatible restent documentées, sans prétendre à un audit nul.
 L'essai final sur le Galaxy S22 Ultra reste en attente du retour utilisateur.
+
+## Application locale 0.2.0
+
+Stockfish 17.1 est compilé en bibliothèque JNI ARM64 dans le module Expo local `modules/chess69-stockfish`. Les sources et les deux réseaux NNUE épinglés sont dans `android/vendor/stockfish`. SQLite initialise/migre transactionnellement `chess69.db` ; aucune erreur de migration n’efface les données. Les règles de sauvegarde cloud et transfert Android sont explicitement exclues.
+
+Version livrée : 0.2.0, code 4 (les codes 2 et 3 ont servi aux preuves natives et aux contrôles privés de parcours avec données). Le package, certificat, icône et splash sont ceux de la première APK. Le nouveau build embarque catalogue, moteur et données initiales.
+
+La publication reçoit aussi l’archive des sources correspondantes GPL. Après succès de la vérification HTTP complète, seules la release courante, son empreinte, sa page et ses sources restent sur le serveur ; anciennes APK et sauvegardes de releases sont supprimées. La récupération de la clé privée sur le Mac est conservée. Il n’existe plus de rollback serveur vers une ancienne version : une correction augmente le code de version.
+
+Pour mettre à jour, ouvrir la nouvelle APK et accepter **Mettre à jour**. Ne pas désinstaller : la progression appartient aux données de cette installation. Voir le guide appareil de la livraison locale.

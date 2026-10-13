@@ -1,47 +1,29 @@
 # Chess69
 
-Première application Android autonome : nom, version et bouton de contrôle.
-Le toucher affiche « Interaction confirmée ». Aucune donnée persistée, aucun
-compte, aucune API ni mise à jour distante du code ne sont nécessaires.
+Application Android française entièrement locale pour débutants et joueurs intermédiaires : huit ouvertures et 24 variantes guidées/mémorisables, 120 puzzles, 24 finales, parties contre Stockfish et analyse progressive. SQLite conserve la progression propre à cette installation, sans compte, serveur métier, télémétrie ou téléchargement initial.
 
-Téléchargement : <https://apk.rentabe.ovh/chess69>.
+Téléchargement : [APK et instructions](https://apk.rentabe.ovh/chess69). Ouvrir la nouvelle APK et accepter **Mettre à jour**, sans désinstaller. Package et certificat sont conservés. La progression disparaît après désinstallation ou effacement des données.
 
-## Développer
+## Développer et vérifier
 
-Node 24.18.0 (`.nvmrc`) et npm ; les versions exactes sont dans le lockfile.
+Node 24 (`.nvmrc`) et npm ; versions exactes dans le lockfile.
 
 ```bash
 npm ci
 npm run typecheck
 npm test
-npm run web
+npx expo install --check
+npx expo-doctor
 ```
 
-`npm run android` est réservé au développement avec un émulateur ou appareil
-connecté. Le livrable utilisateur est la release signée ci-dessous.
+Les tests rapides utilisent les contrats publics et des adaptateurs en mémoire, sans réseau, disque, SQLite natif ou moteur réel. Le fonctionnement natif exige Android ; un navigateur ou Expo Go ne remplace pas l’APK.
 
 ## Compiler et distribuer
 
-Voir [la procédure Android](docs/android-release.md) : setup macOS, identité,
-signature, récupération de la clé, compilation, validation et publication.
-La configuration serveur et la publication appartiennent à `vps-perso`.
+[Procédure Android](docs/android-release.md) : setup macOS, identité/signature, récupération de clé, build et validation. `npm run android:build` produit la release ARM64 signée. Ne pas exécuter prebuild --clean : le projet natif est maintenu explicitement.
 
-## Tester sur le Galaxy S22 Ultra
+Le module Expo local contient Stockfish 17.1 C++/JNI et ses NNUE ; le catalogue est embarqué. Les sources GPL correspondantes et les instructions de [recompilation](docs/source-release.md) accompagnent la release publique. La clé privée reste sur le Mac. La publication appartient à `vps-perso` ; elle conserve seulement la dernière APK après vérification complète du téléchargement.
 
-1. Ouvrir l'adresse de téléchargement dans Chrome ou Samsung Internet,
-   puis télécharger la version indiquée et ouvrir l'APK.
-2. Si Android le demande, autoriser **ce navigateur** à installer des
-   applications inconnues, puis revenir à l'installation. Révoquer cette
-   autorisation après installation si souhaité.
-3. Ouvrir **Chess69** depuis les applications. Vérifier **Version 0.1.0**, puis
-   toucher **Tester** : le message devient **Interaction confirmée**.
-4. Activer le mode avion et vérifier que Wi-Fi et données mobiles sont coupés.
-   Refaire le test du bouton.
-5. Fermer Chess69 depuis les applications récentes (ou utiliser **Forcer
-   l'arrêt** dans ses informations), puis la rouvrir en restant en mode avion.
-   Le message peut revenir à **Prêt à tester** ; toucher **Tester** à nouveau.
-6. Communiquer la version, l'étape et le texte exact d'une éventuelle erreur.
+## Test sur le Galaxy S22 Ultra
 
-**Validation sur le Galaxy S22 Ultra en attente du retour utilisateur.**
-Les captures web et essais sur émulateur ne la remplacent pas. Suivi et preuves :
-[première APK](.scratch/premiere-apk/spec.md) et tickets associés.
+Voir [installation/mise à jour et protocole court](.scratch/application-locale/phone-test.md). Activer le mode avion, résoudre un exercice, reprendre une partie après arrêt forcé et analyser l’historique. Les [preuves de livraison](.scratch/application-locale/verification.md) distinguent tests rapides, Android ARM64 émulé et contrôles Samsung restant à effectuer. Le premier retour téléphone validait l’ancienne APK 0.1.0 ; il ne valide pas encore cette nouvelle application.

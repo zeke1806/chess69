@@ -1,0 +1,154 @@
+[
+  {
+    "id": "italienne",
+    "title": "Partie italienne",
+    "description": "Développez rapidement le fou vers f7 et préparez le roque.",
+    "ideas": [
+      "Contrôler e4 et d4",
+      "Développer les cavaliers avant une attaque",
+      "Roquer avant d’ouvrir le centre"
+    ],
+    "mistakes": [
+      "Déplacer trop tôt la dame",
+      "Attaquer f7 sans développer les autres pièces"
+    ],
+    "variationIds": [
+      "opening-italienne-1",
+      "opening-italienne-2",
+      "opening-italienne-3"
+    ]
+  },
+  {
+    "id": "espagnole",
+    "title": "Partie espagnole",
+    "description": "Mettez une pression durable sur le cavalier qui défend e5.",
+    "ideas": [
+      "Préparer un centre fort",
+      "Conserver le fou espagnol",
+      "Roquer puis centraliser les tours"
+    ],
+    "mistakes": [
+      "Croire que e5 est gratuit dès Bb5",
+      "Oublier le développement du côté dame"
+    ],
+    "variationIds": [
+      "opening-espagnole-1",
+      "opening-espagnole-2",
+      "opening-espagnole-3"
+    ]
+  },
+  {
+    "id": "ecossaise",
+    "title": "Partie écossaise",
+    "description": "Ouvrez tôt le centre avec d4 et développez les pièces avec tempo.",
+    "ideas": [
+      "Jouer d4 pour ouvrir le centre",
+      "Installer un cavalier actif en d4",
+      "Développer avant de reprendre chaque pion"
+    ],
+    "mistakes": [
+      "Sortir la dame sans nécessité",
+      "Négliger une pièce attaquée après les échanges"
+    ],
+    "variationIds": [
+      "opening-ecossaise-1",
+      "opening-ecossaise-2",
+      "opening-ecossaise-3"
+    ]
+  },
+  {
+    "id": "gambit-dame",
+    "title": "Gambit dame",
+    "description": "Proposez le pion c4 pour contester le centre noir.",
+    "ideas": [
+      "Construire un centre avec d4 et c4",
+      "Développer les pièces vers le centre",
+      "Récupérer c4 sans affaiblir le roi"
+    ],
+    "mistakes": [
+      "Défendre un pion de gambit au prix du développement",
+      "Bloquer le fou c1 sans prévoir sa sortie"
+    ],
+    "variationIds": [
+      "opening-gambit-dame-1",
+      "opening-gambit-dame-2",
+      "opening-gambit-dame-3"
+    ]
+  },
+  {
+    "id": "londres",
+    "title": "Système de Londres",
+    "description": "Développez le fou hors de la chaîne de pions puis consolidez le centre.",
+    "ideas": [
+      "Sortir le fou c1 avant e3",
+      "Soutenir d4 avec c3",
+      "Réagir au jeu adverse plutôt que réciter le système"
+    ],
+    "mistakes": [
+      "Ignorer une pression sur b2",
+      "Jouer h3 sans besoin pendant une attaque centrale"
+    ],
+    "variationIds": [
+      "opening-londres-1",
+      "opening-londres-2",
+      "opening-londres-3"
+    ]
+  },
+  {
+    "id": "francaise",
+    "title": "Défense française",
+    "description": "Acceptez moins d’espace puis attaquez la chaîne de pions blanche.",
+    "ideas": [
+      "Frapper d4 avec c5",
+      "Développer le fou c8 avec un plan",
+      "Attaquer la base de la chaîne plutôt que sa tête"
+    ],
+    "mistakes": [
+      "Attendre passivement derrière e6",
+      "Ouvrir le côté roi avant d’avoir développé les pièces"
+    ],
+    "variationIds": [
+      "opening-francaise-1",
+      "opening-francaise-2",
+      "opening-francaise-3"
+    ]
+  },
+  {
+    "id": "caro-kann",
+    "title": "Défense Caro-Kann",
+    "description": "Préparez d5 en gardant la possibilité de sortir le fou c8.",
+    "ideas": [
+      "Contester e4 par d5",
+      "Sortir le fou avant e6",
+      "Conserver une structure de pions saine"
+    ],
+    "mistakes": [
+      "Enfermer le fou c8 sans raison",
+      "Poursuivre une pièce avec trop de coups de pions"
+    ],
+    "variationIds": [
+      "opening-caro-kann-1",
+      "opening-caro-kann-2",
+      "opening-caro-kann-3"
+    ]
+  },
+  {
+    "id": "sicilienne",
+    "title": "Défense sicilienne",
+    "description": "Créez un jeu asymétrique en échangeant le pion c contre le pion d.",
+    "ideas": [
+      "Contester d4 sans copier e4",
+      "Développer avant de lancer une attaque latérale",
+      "Choisir une structure et connaître ses cases faibles"
+    ],
+    "mistakes": [
+      "Affaiblir d5 sans compensation",
+      "Retarder le développement pour chasser une pièce"
+    ],
+    "variationIds": [
+      "opening-sicilienne-1",
+      "opening-sicilienne-2",
+      "opening-sicilienne-3"
+    ]
+  }
+]

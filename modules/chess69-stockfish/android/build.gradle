@@ -1,0 +1,27 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+group = 'ovh.rentabe'
+version = '1.0.0'
+android {
+  ndkVersion rootProject.ext.ndkVersion
+  namespace 'ovh.rentabe.stockfish'
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+    externalNativeBuild {
+      cmake {
+        abiFilters 'arm64-v8a'
+        arguments '-DANDROID_STL=c++_shared', '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+      }
+    }
+  }
+  externalNativeBuild {
+    cmake {
+      path 'CMakeLists.txt'
+      version '3.22.1'
+    }
+  }
+  packagingOptions { excludes += ['**/libc++_shared.so'] }
+}

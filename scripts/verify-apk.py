@@ -33,16 +33,24 @@ def main():
     require("native-code: 'arm64-v8a'" in badging, 'ARM64 build required')
     minimum = re.search(r"sdkVersion:'(\d+)'", badging)
     require(minimum is not None and int(minimum[1]) <= 31, 'Incompatible with Galaxy S22 Android 12 or later')
+    permissions = subprocess.check_output([str(tools / 'aapt'), 'dump', 'permissions', str(args.apk)], text=True)
+    require('android.permission.INTERNET' not in permissions, 'A local-only release must not request Internet access')
+    manifest = subprocess.check_output([str(tools / 'aapt'), 'dump', 'xmltree', str(args.apk), 'AndroidManifest.xml'], text=True)
+    require(re.search(r'android:allowBackup[^\n]*0x0\b', manifest) is not None, 'Android backup must be disabled')
+    require('android:fullBackupContent' in manifest and 'android:dataExtractionRules' in manifest, 'Explicit backup and device-transfer exclusions required')
     with zipfile.ZipFile(args.apk) as archive:
         require(archive.getinfo('assets/index.android.bundle').file_size > 1000, 'Missing embedded JS bundle')
         require('lib/arm64-v8a/libhermesvm.so' in archive.namelist(), 'Missing embedded Hermes engine')
+        require(archive.getinfo('lib/arm64-v8a/libchess69_stockfish.so').file_size > 75000000, 'Missing native Stockfish and embedded NNUE')
+        require(archive.getinfo('lib/arm64-v8a/libexpo-sqlite.so').file_size > 1000000, 'Missing native SQLite')
         require(not any(name.endswith(('.p12', '.jks', '.keystore')) for name in archive.namelist()), 'Signing key in APK')
     subprocess.run([str(tools / 'zipalign'), '-c', '-P', '16', '4', str(args.apk)], check=True, stdout=subprocess.DEVNULL)
     metadata = {
         'file': args.apk.name, 'package': package[1], 'version': package[3],
         'versionCode': int(package[2]), 'minSdk': int(minimum[1]), 'abi': 'arm64-v8a',
         'bytes': args.apk.stat().st_size, 'sha256': sha256(args.apk),
-        'certificateSha256': expected,
+        'certificateSha256': expected, 'stockfish': '17.1', 'sqlite': True,
+        'internetPermission': False, 'androidBackup': False,
     }
     if args.metadata:
         args.metadata.write_text(json.dumps(metadata, indent=2) + '\n')
