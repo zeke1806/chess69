@@ -1,8 +1,17 @@
 # Première APK : validation de l’installation
 
-Status: ready-for-agent
+Status: ready-for-human
 Date: 2026-10-13
 Périmètre: première livraison Android minimale, du dépôt au téléchargement HTTPS.
+
+## État de livraison au 13 octobre 2026
+
+Application, APK signée et distribution HTTPS implémentées. Essai de la vraie
+APK réussi sur émulateur Android ARM64, y compris après arrêt forcé hors ligne.
+Les critères 3 à 5 sur Galaxy S22 Ultra restent en attente du retour utilisateur.
+Voir [les preuves](verification.md), [la release](release.json) et
+[les essais Android](emulator-verification.md). Le cadrage ci-dessous reste
+la référence du périmètre.
 
 ## Problem Statement
 
@@ -27,8 +36,8 @@ un message. Elle démarre et répond au toucher sans connexion, y compris après
 fermeture et réouverture. L’utilisateur réalise l’essai sur son téléphone.
 
 Le cadrage est confirmé par les réponses aux deux questions du 13 octobre 2026.
-L’étape actuelle produit cette spécification ; son implémentation est une étape
-ultérieure.
+La phase de cadrage a produit cette spécification ; son implémentation est
+consignée dans l’état de livraison ci-dessus.
 
 ## User Stories
 

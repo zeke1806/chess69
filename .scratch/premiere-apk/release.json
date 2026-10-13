@@ -1,0 +1,14 @@
+{
+  "file": "chess69-0.1.0-1-arm64.apk",
+  "package": "ovh.rentabe.chess69",
+  "version": "0.1.0",
+  "versionCode": 1,
+  "minSdk": 24,
+  "abi": "arm64-v8a",
+  "bytes": 40248544,
+  "sha256": "fcdb18fd9f1aaa660627e0d7c7c95fe0f2702df1f0a9019acb41b338d1691efd",
+  "certificateSha256": "e0795076a4d2d489b5f774ff2d1ca605ee3b1117ce1717ad02e5e683fb4b5b3a",
+  "downloadUrl": "https://apk.rentabe.ovh/chess69/releases/0.1.0-1/chess69-0.1.0-1.apk",
+  "pageUrl": "https://apk.rentabe.ovh/chess69",
+  "galaxyS22UltraValidation": "pending-user-feedback"
+}

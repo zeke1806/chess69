@@ -28,7 +28,7 @@ node_modules/
 /coverage/
 /test-results/
 /playwright-report/
-/artifacts/screenshots/
+/artifacts/
 *.log
 *.tsbuildinfo
 
@@ -62,3 +62,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Local Python tooling caches.
+__pycache__/
+*.pyc

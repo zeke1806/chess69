@@ -9,12 +9,12 @@ La structure complète est dans [l’arborescence globale](architecture-arboresc
 
 | Technologie | Usage | Statut |
 | --- | --- | --- |
-| React Native | Application mobile Android et composants natifs | Validé ; application à initialiser |
-| React | Composition de l’interface et réactivité | Inclus dans la stack React Native ; à installer avec le scaffold |
-| Expo | Outillage et modules Android, compilation d’une APK autonome | Validé ; application à initialiser |
-| TypeScript en mode strict | Contrats, types et vérification statique | Validé ; configuration à créer |
-| Zod | Validation des données à l’exécution et types inférés depuis les schémas | Validé ; installation avec l’application |
-| Remeda | Transformations fonctionnelles et utilitaires purs | Demandé ; installation à faire avec l’application |
+| React Native | Application mobile Android et composants natifs | Installé ; première APK 0.1.0 |
+| React | Composition de l’interface et réactivité | Installé avec React Native |
+| Expo | Outillage et modules Android, compilation d’une APK autonome | Installé ; première APK 0.1.0 |
+| TypeScript en mode strict | Contrats, types et vérification statique | Configuré en mode strict |
+| Zod | Validation des données à l’exécution et types inférés depuis les schémas | Installé ; validation future aux entrées de données |
+| Remeda | Transformations fonctionnelles et utilitaires purs | Installé ; disponible pour les transformations utiles |
 | Git | Historique du projet | Initialisé, branche `main` |
 | GitHub | Dépôt distant | `zeke1806/chess69`, remote `origin` configuré |
 
@@ -27,11 +27,11 @@ aucune bibliothèque supplémentaire de gestion d’état n’est retenue.
 
 | Technologie | Usage | Statut |
 | --- | --- | --- |
-| Expo Router | Routes raccordées aux features | Validé ; configuration au scaffold |
+| Expo Router | Routes raccordées aux features | Installé ; routes dans src/app |
 | SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Validé ; intégration à faire |
 | Stockfish embarqué | Adversaire et analyse hors ligne | Validé ; intégration native à prototyper |
 | `chess.js` | Règles et validation des coups | Validé ; intégration à faire |
-| Jest + `jest-expo` | Tests unitaires et intégration en mémoire, rapides et déterministes | Choix pour concrétiser le runner ; configuration au scaffold |
+| Jest + `jest-expo` | Tests unitaires et intégration en mémoire, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
 
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
 [le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). Les tests
@@ -44,8 +44,9 @@ contrats. Ils ne remplacent pas la persistance de l’application finale.
 
 - Skills Matt Pocock et Impeccable : installés localement dans `.agents/skills`.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
-  avec la version Expo retenue ; environnement à vérifier lors du scaffold.
-- APK release signée : distribution prévue depuis Mustang, via Caddy et les
+  avec Expo SDK 57 ; OpenJDK 17, SDK 36, NDK 27.1.12297006, Gradle 9.3.1.
+  Setup et signature : [procédure Android](android-release.md).
+- APK release signée : distribution depuis Mustang, via Caddy et les
   procédures du projet `vps-perso`, sur `https://apk.rentabe.ovh/chess69`.
 
 Le VPS héberge les téléchargements. L’application installée conserve ses données
@@ -54,10 +55,12 @@ requise pour jouer et apprendre.
 
 ## État actuel et maintenance
 
-Le dépôt contient les skills et la documentation. Aucun scaffold mobile ni
-`package.json` applicatif n’a encore été créé : les technologies validées ne sont
-donc pas présentées comme des dépendances déjà installées.
+Le scaffold Expo SDK 57 est installé avec React 19.2.3, React Native 0.86.3 et
+TypeScript 6 strict. Le premier écran utilise un service front et ses bindings
+React ; aucun service métier ni stockage fictif n’a été ajouté. Le projet
+Android est versionné et maintenu explicitement. SQLite, Stockfish et chess.js
+restent à intégrer ; ce jalon ne les valide pas.
 
-Après l’initialisation, les versions exactes sont celles de `package.json` et du
+Les versions exactes sont celles de `package.json` et du
 lockfile. Mettre à jour ici les choix et statuts quand ils changent ; conserver
 les conventions structurelles et de codage dans `architecture.md`.

@@ -3,7 +3,8 @@
 ## Portée et décisions
 
 Ce document est la référence d’architecture pour les agents IA et les développeurs.
-Il décrit l’organisation cible ; les dossiers applicatifs ne sont pas encore créés.
+Il décrit l’organisation cible. Le premier écran implémente le bloc front et
+la présentation ; les modules métier seront créés avec leurs besoins réels.
 
 - Une seule application mobile, sans API serveur. Les choix de technologies
   et leur statut sont définis dans [architecture-techno.md](architecture-techno.md).
