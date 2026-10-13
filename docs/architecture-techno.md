@@ -46,7 +46,7 @@ contrats. Ils ne remplacent pas la persistance de l’application finale.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
   avec la version Expo retenue ; environnement à vérifier lors du scaffold.
 - APK release signée : distribution prévue depuis Mustang, via Caddy et les
-  procédures du projet `vps-perso`, sur `apk.rentabe.ovh/chess-69/`.
+  procédures du projet `vps-perso`, sur `https://apk.rentabe.ovh/chess69`.
 
 Le VPS héberge les téléchargements. L’application installée conserve ses données
 et ses calculs sur le téléphone. Il n’y a ni API métier distante ni synchronisation
