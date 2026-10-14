@@ -53,8 +53,15 @@ carte du travail avec décisions, tickets restants et points bloquants. À la
 reprise, lire cette carte, les tickets concernés et l’état Git.
 
 Consigner les contrôles réellement effectués et leurs limites dans le ticket.
-La livraison Git suit les instructions de livraison de la session. Push,
-publication et distribution APK suivent le périmètre autorisé ; un commit
+Tout travail se fait dans le dépôt principal, sur une nouvelle branche dédiée,
+sans worktree, y compris pour les sous-agents. Après l’implémentation et les
+vérifications, regrouper les éventuels commits intermédiaires en un seul commit
+avec un titre clair et un corps décrivant les modifications, les décisions et
+les contrôles. Fusionner cette branche sur `main` par avance rapide, puis la
+supprimer sans attendre les retours utilisateur. Une correction après livraison
+constitue un nouveau travail et suit le même processus.
+
+Push, publication et distribution APK suivent le périmètre autorisé ; un commit
 ne signifie pas un déploiement.
 
 ## Interface et validation Android
