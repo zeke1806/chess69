@@ -13,6 +13,11 @@ const meta = {
   title: 'Business/Pages/AnalysisScreen',
   component: AnalysisScreen,
   args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
     state: analysisState,
     actions: analysisActions,
     board: <Chessboard state={boardState} actions={boardActions} pieceSize={42} />,
@@ -47,4 +52,15 @@ export const Completed = {
     ),
   },
   parameters: { smoke: { text: 'Analyse terminée : 3 / 3', svg: true } },
+} satisfies Story;
+
+export const ExplanationExpanded = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

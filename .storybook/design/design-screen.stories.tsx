@@ -4,7 +4,7 @@ import { DesignDemo } from './demo';
 const meta = {
   title: 'Design/Proposition',
   component: DesignDemo,
-  parameters: { presentationFrame: 'design' },
+  parameters: { presentationFrame: 'design', designStatus: 'integrated' },
   args: { initialPage: 'home' },
 } satisfies Meta<typeof DesignDemo>;
 

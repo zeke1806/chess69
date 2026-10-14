@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../common/theme';
+import { colors, typography, fontFamilies } from '../common/theme';
 
 export const screenStyles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.surface },
@@ -21,7 +21,14 @@ export const screenStyles = StyleSheet.create({
   },
   smallLogo: { width: 32, height: 32 },
   logo: { width: 40, height: 40 },
-  brand: { color: colors.onSurface, fontSize: 20, fontWeight: '700', flex: 1 },
+  brand: {
+    ...typography,
+    color: colors.onSurface,
+    fontSize: 20,
+    fontFamily: fontFamilies.bold,
+    fontWeight: 'normal',
+    flex: 1,
+  },
   scroll: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 24 },
   content: { width: '100%', maxWidth: 480, alignSelf: 'center', gap: 12 },
   loading: { paddingVertical: 48, gap: 20, alignItems: 'center' },
@@ -31,6 +38,11 @@ export const screenStyles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 8,
     minHeight: 80,
+    marginHorizontal: 12,
+    marginBottom: 8,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: colors.outline,
     backgroundColor: colors.surfaceContainer,
   },
   navItem: {
@@ -40,6 +52,9 @@ export const screenStyles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     paddingVertical: 4,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: colors.surfaceContainer,
   },
   navIndicator: {
     width: 64,
@@ -50,17 +65,26 @@ export const screenStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  navSelected: { backgroundColor: '#54371F' },
+  navSelected: { backgroundColor: '#354332', borderColor: colors.primary },
   navLabel: {
+    ...typography,
     color: colors.muted,
     fontSize: 12,
     lineHeight: 16,
-    fontWeight: '600',
+    fontFamily: fontFamilies.semibold,
+    fontWeight: 'normal',
     textAlign: 'center',
   },
   navLabelSelected: { color: colors.primary },
-  focus: { backgroundColor: colors.primary, padding: 20, borderRadius: 16, gap: 12, marginTop: 8 },
-  focusTitle: { fontSize: 24, lineHeight: 32, fontWeight: '700', color: colors.onPrimary },
+  focus: { backgroundColor: colors.primary, padding: 20, borderRadius: 24, gap: 12, marginTop: 8 },
+  focusTitle: {
+    ...typography,
+    fontSize: 24,
+    lineHeight: 32,
+    fontFamily: fontFamilies.bold,
+    fontWeight: 'normal',
+    color: colors.onPrimary,
+  },
   action: {
     minHeight: 64,
     paddingVertical: 16,
@@ -68,6 +92,13 @@ export const screenStyles = StyleSheet.create({
     borderColor: colors.outline,
     gap: 4,
   },
-  actionTitle: { color: colors.onSurface, fontSize: 18, lineHeight: 26, fontWeight: '600' },
+  actionTitle: {
+    ...typography,
+    color: colors.onSurface,
+    fontSize: 18,
+    lineHeight: 26,
+    fontFamily: fontFamilies.semibold,
+    fontWeight: 'normal',
+  },
   statRow: { paddingVertical: 12, borderBottomWidth: 1, borderColor: colors.outline, gap: 4 },
 });

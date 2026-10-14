@@ -2,6 +2,7 @@ import { createServicesBusiness } from '../services-business/di';
 import { useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { colors } from '../ui/components/common/theme';
 import appConfig from '../../app.json';
 import { createServicesFront } from '../services/di';
 import { ServicesFrontProvider } from '../ui/features/services-provider';
@@ -20,7 +21,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#111318' },
+          contentStyle: { backgroundColor: colors.surface },
         }}
       />
     </ServicesFrontProvider>

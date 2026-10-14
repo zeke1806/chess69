@@ -23,7 +23,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Ready = {
-  parameters: { smoke: { text: 'Votre prochain coup', logo: true, svg: true } },
+  parameters: { smoke: { text: 'Votre prochain coup', logo: true, image: true } },
 } satisfies Story;
 
 export const Loading = {
@@ -50,5 +50,5 @@ export const Nested = {
       R.set('title', 'Giuoco Piano'),
     ),
   },
-  parameters: { smoke: { text: 'Giuoco Piano', logo: true, svg: true } },
+  parameters: { smoke: { text: 'Giuoco Piano', logo: true, image: true } },
 } satisfies Story;

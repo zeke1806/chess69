@@ -246,3 +246,23 @@ test('le choix de camp et de difficulté reprend les préférences de l’instal
     level: 'casual',
   });
 });
+
+test('l’aide est à la demande, conserve le snapshot précédent et se ferme en changeant de parcours', async () => {
+  const { connection } = gameContext();
+  await connection.actions.initialize();
+  const before = connection.state;
+  expect(before.shell.helpVisible).toBe(false);
+  connection.actions.toggleHelp();
+  expect(connection.state.shell.helpVisible).toBe(true);
+  expect(before.shell.helpVisible).toBe(false);
+  expect(connection.state.learning).toBe(before.learning);
+  connection.actions.toggleHelp();
+  expect(connection.state.shell.helpVisible).toBe(false);
+  connection.actions.toggleHelp();
+  connection.actions.navigate('learn');
+  expect(connection.state.shell.helpVisible).toBe(false);
+  expect(connection.state.shell.route.destination).toBe('learn');
+  connection.actions.toggleHelp();
+  connection.actions.back();
+  expect(connection.state.shell.helpVisible).toBe(false);
+});

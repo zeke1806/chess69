@@ -360,7 +360,7 @@ export function DesignScreen(props: Props) {
     <View style={styles.screen}>
       <View style={styles.brandRow}>
         <Text style={styles.brand}>Chess69</Text>
-        <Text style={styles.previewLabel}>Aperçu design</Text>
+        <Text style={styles.previewLabel}>Référence intégrée</Text>
       </View>
       <ScrollView
         key={props.page}

@@ -72,3 +72,5 @@ __pycache__/
 
 # Isolated React Native Web component catalogue.
 /storybook-static/
+
+/android/.kotlin/

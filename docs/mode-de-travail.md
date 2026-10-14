@@ -25,8 +25,8 @@ Consulter les exemples utiles du projet de référence, puis adapter la réalisa
 aux technologies de Chess69. Les vues common et business sont stateless : leurs
 données et callbacks arrivent par props ; les services portent les transitions
 et les features raccordent l’état, les effets et les dimensions au framework.
-Le catalogue Storybook garde deux racines, `Common` et `Business`, regroupées
-par thèmes ; chaque composant réutilisable dispose de variantes représentatives.
+Le catalogue Storybook conserve `Common` et `Business` pour les composants
+intégrés et `Design` pour les propositions et leurs références, regroupés par thèmes ; chaque composant réutilisable dispose de variantes représentatives.
 
 | Besoin | Skills à utiliser selon le travail |
 | --- | --- |
@@ -93,9 +93,8 @@ ne signifie pas un déploiement.
 ## Interface et validation Android
 
 Le rendu cible le Galaxy S22 Ultra : échiquier lisible, gestes accessibles,
-commandes tactiles confortables et hiérarchie visible. Le noir et l’orange
-constituent une direction initiale issue de la conversation ; l’apprentissage
-et la facilité d’utilisation restent la priorité.
+commandes tactiles confortables et hiérarchie visible. Le design charbon, ivoire et sauge est validé ; l’apprentissage et la facilité
+d’utilisation restent la priorité.
 
 Utiliser le workflow natif d’Impeccable et conserver les décisions produit/design
 durables dans les documents attendus par ce skill. Distinguer les preuves
@@ -115,9 +114,9 @@ les étapes de compilation. La publication depuis Mustang appartient au projet
 
 Quand l’utilisateur demande une exploration de design avant les features,
 valider d’abord la spec, puis livrer un moodboard dans Common et les maquettes
-isolées dans une racine temporaire Design. Cette troisième racine est une
-exception pour la proposition à valider ; le catalogue des composants livrés
-conserve Common et Business. Les maquettes et leurs assets restent dans
+isolées dans une racine durable Design. Les propositions portent les statuts
+proposition, approuvé et intégré ; garder la référence approuvée après intégration.
+Common et Business cataloguent les composants réellement utilisés. Les maquettes et leurs assets restent dans
 .storybook/design, avec des vues stateless et un raccordement de démonstration
 pour les seules interactions locales. Le code Android et les services métier
 ne dépendent pas de cette proposition.

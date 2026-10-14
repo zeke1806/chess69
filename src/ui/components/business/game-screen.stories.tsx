@@ -9,6 +9,11 @@ const meta = {
   title: 'Business/Pages/GameScreen',
   component: GameScreen,
   args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
     state: gameState,
     actions: gameActions,
     onHome: noop,
@@ -39,4 +44,15 @@ export const Completed = {
 export const Saved = {
   args: { state: R.set(gameState, 'session', null) },
   parameters: { smoke: { text: 'La partie est sauvegardée' } },
+} satisfies Story;
+
+export const ExplanationExpanded = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

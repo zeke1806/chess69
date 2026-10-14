@@ -34,7 +34,9 @@ L'application embarque son code et ses ressources, sans connexion à Metro,
 
 ## Brand Commitments
 
-Nom Chess69, interface en français et direction noir/orange déjà documentée.
+Nom Chess69, interface en français et palette validée charbon, ivoire et sauge.
+Cartes en relief, illustrations originales en volume et textes courts ; les
+explications ponctuelles s’ouvrent dans des aides compactes.
 
 ## Product Principles
 

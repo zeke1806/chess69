@@ -25,6 +25,7 @@ export function createOrchestrationService(
             scrollKey: 'home:list::',
             version: dependencies.version,
             error: null,
+            helpVisible: false,
           },
           learning: dependencies.learning.createInitialState(),
           game: dependencies.game.createInitialState(),
@@ -225,6 +226,10 @@ export function createOrchestrationService(
           enter({ destination, page: 'list' });
         },
 
+        toggleHelp: () => {
+          publish((state) => R.setPath(state, ['shell', 'helpVisible'], !state.shell.helpVisible));
+        },
+
         back: () => {
           const state = connector.getState();
           if (state.shell.route.page !== 'list') {
@@ -292,7 +297,13 @@ export function createOrchestrationService(
           runtime.update(R.set('retryLifecycle', null));
         }
         leave();
-        publish(R.setPath(['shell', 'route'], route));
+        publish((state) =>
+          R.pipe(
+            state,
+            R.setPath(['shell', 'route'], route),
+            R.setPath(['shell', 'helpVisible'], false),
+          ),
+        );
         stop();
         return current();
       }

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { colors, layout } from './theme';
+import { colors, layout, typography, fontFamilies } from './theme';
 
 export type ChoiceProps = Readonly<{ label: string; selected: boolean; onPress: () => void }>;
 
@@ -23,9 +23,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 1,
     borderColor: colors.outline,
-    borderRadius: 12,
+    borderRadius: 18,
     justifyContent: 'center',
   },
   selected: { backgroundColor: colors.primary, borderColor: colors.primary },
-  selectedLabel: { color: colors.onPrimary, fontWeight: '600' },
+  selectedLabel: {
+    color: colors.onPrimary,
+    fontFamily: fontFamilies.semibold,
+    fontWeight: 'normal',
+  },
 });

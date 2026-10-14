@@ -85,10 +85,10 @@ TalkBack. RNW 0.21 ne traduit pas les champs natifs
 `accessibilityState.checked/selected` ; les stories vérifient la sélection
 visuelle, tandis que son annonce accessible reste un contrôle natif.
 
-## Proposition de design à valider
+## Références de design
 
 Le moodboard est dans **Common → Design → Moodboard → Palette A**.
-La racine temporaire **Design → Proposition** présente les cinq maquettes
+La racine durable **Design → Proposition** présente les cinq maquettes
 et la navigation de démonstration. Voir [le périmètre temporaire](design/README.md).
-Cette proposition charbon, ivoire et sauge attend une validation visuelle ;
-les vues Android livrées restent dans Business.
+La proposition charbon, ivoire et sauge est approuvée et intégrée.
+Design conserve cette référence ; Business montre les vrais parcours Android.

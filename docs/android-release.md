@@ -102,7 +102,7 @@ signe avec `apksigner`, puis vérifie avant de promouvoir l'artefact local :
 - bundle `assets/index.android.bundle` embarqué et alignement ;
 - taille et SHA-256 du fichier final.
 
-Sorties actuelles : `artifacts/chess69-0.2.1-5-arm64.apk` et son fichier `.json` public.
+Sorties actuelles : `artifacts/chess69-0.3.0-6-arm64.apk` et son fichier `.json` public.
 Les APK sont ignorées par Git. Gradle produit volontairement une APK non signée ;
 seul `android:build` fournit la release distribuable. Les clés debug standard
 Android ne sont jamais utilisées pour cette release.
@@ -178,3 +178,11 @@ front séparés et orchestration. Même package et certificat. L’APK signée e
 l’archive de sources correspondantes sont préparées sous `artifacts/`.
 Cette livraison ne publie pas la nouvelle version sur le VPS. Le protocole de
 mise à jour et les preuves Android sont dans le [compte rendu CU-ARCHI](../.scratch/corrections-cu-archi/verification.md).
+
+## Intégration visuelle 0.3.0
+
+Version locale 0.3.0/code6 : palette charbon/ivoire/sauge, Manrope statique,
+illustrations et aides à la demande. Même package et certificat ; mise à jour
+avec conservation des données contrôlée sur émulateur ARM64 API36. Source et
+preuves dans .scratch/integration-design/verification.md. Installation Samsung
+à effectuer avec Mettre à jour, sans désinstaller. Aucune publication VPS ici.

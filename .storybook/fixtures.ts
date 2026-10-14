@@ -321,6 +321,7 @@ export const applicationState: OrchestrationState = {
 };
 
 export const applicationActions: OrchestrationActions = {
+  toggleHelp: noop,
   initialize: noopAsync,
   foreground: noopAsync,
   dispose: noopAsync,

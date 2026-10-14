@@ -49,16 +49,20 @@ function renderPage(
   actions: OrchestrationActions,
   board: ReactNode,
 ): ReactNode {
+  const help = { expanded: state.shell.helpVisible ?? false, onToggle: actions.toggleHelp };
   const { page, destination } = state.shell.route;
   if (page === 'opening') {
-    return <OpeningScreen state={state.learning} actions={actions.learning} />;
+    return <OpeningScreen help={help} state={state.learning} actions={actions.learning} />;
   }
   if (page === 'exercise') {
-    return <ExerciseScreen state={state.learning} actions={actions.learning} board={board} />;
+    return (
+      <ExerciseScreen help={help} state={state.learning} actions={actions.learning} board={board} />
+    );
   }
   if (page === 'game') {
     return (
       <GameScreen
+        help={help}
         state={state.game}
         actions={actions.game}
         board={board}
@@ -71,17 +75,20 @@ function renderPage(
     return <HistoryScreen state={state.game} onAnalysis={actions.analysis.open} />;
   }
   if (page === 'analysis') {
-    return <AnalysisScreen state={state.analysis} actions={actions.analysis} board={board} />;
+    return (
+      <AnalysisScreen help={help} state={state.analysis} actions={actions.analysis} board={board} />
+    );
   }
   if (destination === 'learn') {
-    return <LearnScreen state={state.learning} actions={actions.learning} />;
+    return <LearnScreen help={help} state={state.learning} actions={actions.learning} />;
   }
   if (destination === 'play') {
-    return <PlayScreen state={state.game} actions={actions.game} />;
+    return <PlayScreen help={help} state={state.game} actions={actions.game} />;
   }
   if (destination === 'progress') {
     return (
       <ProgressScreen
+        help={help}
         state={state.progression}
         onExercise={actions.learning.startExercise}
         onHistory={actions.game.showHistory}
@@ -90,6 +97,7 @@ function renderPage(
   }
   return (
     <HomeScreen
+      help={help}
       state={{ ...state.progression, activeGame: state.game.activeGame }}
       events={{
         onOnboard: actions.progression.dismissOnboarding,

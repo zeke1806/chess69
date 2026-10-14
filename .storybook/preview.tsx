@@ -1,4 +1,7 @@
-import displayFontUrl from './design/assets/manrope.ttf?url';
+import regularFontUrl from '../src/assets/manrope-400.ttf?url';
+import semiboldFontUrl from '../src/assets/manrope-600.ttf?url';
+import boldFontUrl from '../src/assets/manrope-700.ttf?url';
+import displayFontUrl from '../src/assets/manrope.ttf?url';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Preview } from '@storybook/react-native-web-vite';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -52,7 +55,10 @@ const preview: Preview = {
             insets: { top: 0, right: 0, bottom: 0, left: 0 },
           }}
         >
-          <style>{`@font-face { font-family: Chess69Display; src: url('${displayFontUrl}') format('truetype'); font-weight: 200 800; font-style: normal; font-display: swap; }`}</style>
+          <style>{`@font-face { font-family: Chess69Display; src: url('${displayFontUrl}') format('truetype'); font-weight: 200 800; font-style: normal; font-display: swap; }
+            @font-face { font-family: Chess69Regular; src: url('${regularFontUrl}') format('truetype'); font-weight: normal; font-display: swap; }
+            @font-face { font-family: Chess69Semibold; src: url('${semiboldFontUrl}') format('truetype'); font-weight: normal; font-display: swap; }
+            @font-face { font-family: Chess69Bold; src: url('${boldFontUrl}') format('truetype'); font-weight: normal; font-display: swap; }`}</style>
           <div
             style={{ minHeight: '100vh', backgroundColor: isDesign ? '#191C1A' : colors.surface }}
           >

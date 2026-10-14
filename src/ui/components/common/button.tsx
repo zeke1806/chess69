@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { colors } from './theme';
+import { colors, typography, fontFamilies } from './theme';
 
 export type ButtonProps = Readonly<{
   label: string;
@@ -36,17 +36,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 28,
+    borderRadius: 18,
     overflow: 'hidden',
   },
   secondary: { backgroundColor: colors.surfaceHigh },
   disabled: { opacity: 0.45 },
   pressed: { opacity: 0.8 },
   label: {
+    ...typography,
     color: colors.onPrimary,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '700',
+    fontFamily: fontFamilies.bold,
+    fontWeight: 'normal',
     textAlign: 'center',
   },
   secondaryLabel: { color: colors.onSurface },

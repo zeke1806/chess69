@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Destination, ShellState } from '../../../services/orchestration/orchestration-types';
 import { Button } from '../common/button';
 import { colors, layout } from '../common/theme';
+import { Illustration } from './illustration';
 import { NavigationIcon } from './navigation-icon';
 import { screenStyles as styles } from './screen-styles';
 
@@ -23,6 +24,13 @@ const destinationLabels = {
   play: 'Jouer',
   progress: 'Progrès',
 };
+
+const illustrationKinds = {
+  home: 'knight',
+  learn: 'book',
+  play: 'rook',
+  progress: 'puzzle',
+} as const;
 
 const accessibilityDestinations = { ...destinationLabels, progress: 'Progression' };
 
@@ -86,20 +94,9 @@ export function ApplicationShell({
             accessibilityState={{ selected: state.route.destination === destination }}
             onPress={() => onNavigate(destination)}
             android_ripple={{ color: '#FFFFFF20' }}
-            style={styles.navItem}
+            style={[styles.navItem, state.route.destination === destination && styles.navSelected]}
           >
-            <View
-              collapsable={false}
-              style={[
-                styles.navIndicator,
-                state.route.destination === destination && styles.navSelected,
-              ]}
-            >
-              <NavigationIcon
-                kind={destination}
-                color={state.route.destination === destination ? colors.primary : colors.muted}
-              />
-            </View>
+            <Illustration kind={illustrationKinds[destination]} size={38} />
             <Text
               numberOfLines={1}
               style={[

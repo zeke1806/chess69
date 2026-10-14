@@ -6,7 +6,15 @@ import { gameState, gameSession, gameActions } from '../../../../.storybook/fixt
 const meta = {
   title: 'Business/Pages/PlayScreen',
   component: PlayScreen,
-  args: { state: gameState, actions: gameActions },
+  args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
+    state: gameState,
+    actions: gameActions,
+  },
 } satisfies Meta<typeof PlayScreen>;
 
 export default meta;
@@ -22,4 +30,15 @@ export const Resume = {
 export const Creating = {
   args: { state: R.set(gameState, 'busy', true) },
   parameters: { smoke: { text: 'Commencer une partie' } },
+} satisfies Story;
+
+export const Help = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

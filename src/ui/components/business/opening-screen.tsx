@@ -1,4 +1,6 @@
 import { Text, View } from 'react-native';
+import { HelpDisclosure } from '../common/help-disclosure';
+import { Illustration } from './illustration';
 import { Button } from '../common/button';
 import { Choice } from '../common/choice';
 import { Panel } from '../common/panel';
@@ -6,11 +8,12 @@ import { layout } from '../common/theme';
 import type { LearningState, LearningActions } from '../../../services/learning/learning-types';
 
 type ScreenProps = Readonly<{
+  help?: Readonly<{ expanded: boolean; onToggle: () => void }>;
   state: LearningState;
   actions: Pick<LearningActions, 'changeColor' | 'startExercise'>;
 }>;
 
-export function OpeningScreen({ state, actions }: ScreenProps) {
+export function OpeningScreen({ state, actions, help }: ScreenProps) {
   const color = state.color;
   const opening = state.opening;
   if (!opening) {
@@ -18,20 +21,10 @@ export function OpeningScreen({ state, actions }: ScreenProps) {
   }
   return (
     <View style={layout.stack}>
-      <Text style={layout.title}>{opening.title}</Text>
-      <Text style={layout.body}>{opening.description}</Text>
-      <Text style={layout.section}>Les idées à retenir</Text>
-      {opening.ideas.map((idea) => (
-        <Text key={idea} style={layout.body}>
-          • {idea}
-        </Text>
-      ))}
-      <Text style={layout.section}>Les pièges à éviter</Text>
-      {opening.mistakes.map((idea) => (
-        <Text key={idea} style={layout.body}>
-          • {idea}
-        </Text>
-      ))}
+      <Illustration kind="book" size={88} />
+      <Text accessibilityRole="header" style={layout.title}>
+        {opening.title}
+      </Text>
       <View style={layout.row}>
         <Choice
           label="Travailler les blancs"
@@ -44,6 +37,7 @@ export function OpeningScreen({ state, actions }: ScreenProps) {
           onPress={() => actions.changeColor('b')}
         />
       </View>
+      <Text style={layout.section}>Les variantes</Text>
       {state.openingExercises.map((exercise) => {
         const id = exercise.id;
         return (
@@ -61,6 +55,21 @@ export function OpeningScreen({ state, actions }: ScreenProps) {
           </Panel>
         );
       })}
+      <HelpDisclosure expanded={help?.expanded ?? true} onToggle={help?.onToggle ?? (() => {})}>
+        <Text style={layout.body}>{opening.description}</Text>
+        <Text style={layout.section}>Les idées à retenir</Text>
+        {opening.ideas.map((idea) => (
+          <Text key={idea} style={layout.body}>
+            • {idea}
+          </Text>
+        ))}
+        <Text style={layout.section}>Les pièges à éviter</Text>
+        {opening.mistakes.map((idea) => (
+          <Text key={idea} style={layout.body}>
+            • {idea}
+          </Text>
+        ))}
+      </HelpDisclosure>
     </View>
   );
 }

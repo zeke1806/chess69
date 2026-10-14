@@ -46,7 +46,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Home = {
   name: 'Accueil',
-  parameters: { smoke: { text: 'Votre prochain coup', logo: true, svg: true } },
+  parameters: { smoke: { text: 'À vous de jouer.', logo: true, image: true } },
 } satisfies Story;
 
 export const FirstLaunch = {
@@ -72,7 +72,7 @@ export const Resume = {
 export const Openings = {
   name: 'Apprendre · ouvertures',
   args: { state: pageState({ page: 'list', destination: 'learn' }, 'Apprendre') },
-  parameters: { smoke: { text: 'Partie italienne', svg: true } },
+  parameters: { smoke: { text: 'Partie italienne', image: true } },
 } satisfies Story;
 
 export const Puzzles = {
@@ -108,7 +108,7 @@ export const Opening = {
 export const Exercise = {
   name: 'Exercice guidé',
   args: { state: pageState({ page: 'exercise', destination: 'learn' }, 'Giuoco Piano') },
-  parameters: { smoke: { text: 'Trait aux blancs', board: true, svg: true } },
+  parameters: { smoke: { text: 'Trait aux blancs', board: true, image: true } },
 } satisfies Story;
 
 export const Play = {
@@ -142,7 +142,7 @@ export const Game = {
 export const History = {
   name: 'Historique',
   args: { state: pageState({ page: 'history', destination: 'play' }, 'Historique') },
-  parameters: { smoke: { text: 'Analyser' } },
+  parameters: { smoke: { text: 'Revoir la partie' } },
 } satisfies Story;
 
 export const Analysis = {

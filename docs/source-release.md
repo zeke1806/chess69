@@ -1,6 +1,8 @@
 # Sources correspondant à Chess69
 
-La version publique 0.2.0/code4 conserve ses sources distribuées. La livraison
+La version publique 0.2.0/code4 conserve ses sources distribuées.
+L’intégration visuelle locale 0.3.0/code6 fournit
+`artifacts/chess69-0.3.0-6-source.tar.gz` avec sa révision finale. La livraison
 locale CU-ARCHI 0.2.1/code5 prépare `artifacts/chess69-0.2.1-5-source.tar.gz`
 avec la révision finale, sans publication distante.
 

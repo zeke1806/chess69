@@ -9,6 +9,11 @@ const meta = {
   title: 'Business/Pages/ExerciseScreen',
   component: ExerciseScreen,
   args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
     state: learningState,
     actions: learningActions,
     board: <Chessboard state={boardState} actions={boardActions} pieceSize={42} />,
@@ -54,4 +59,15 @@ export const Completed = {
 export const Saving = {
   args: { state: R.set(learningState, 'busy', true) },
   parameters: { smoke: { text: 'Un indice', svg: true } },
+} satisfies Story;
+
+export const ExplanationExpanded = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

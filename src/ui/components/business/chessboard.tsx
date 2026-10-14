@@ -69,12 +69,19 @@ export function Chessboard({ state, actions, pieceSize }: ChessboardProps) {
                   ]}
                 >
                   {column === 0 && (
-                    <Text style={[styles.coordinate, { color: dark ? '#FFF3E0' : '#4F3824' }]}>
+                    <Text
+                      style={[
+                        styles.coordinate,
+                        { color: dark ? colors.surface : colors.onPrimary },
+                      ]}
+                    >
                       {rank}
                     </Text>
                   )}
                   {row === 7 && (
-                    <Text style={[styles.file, { color: dark ? '#FFF3E0' : '#4F3824' }]}>
+                    <Text
+                      style={[styles.file, { color: dark ? colors.surface : colors.onPrimary }]}
+                    >
                       {file}
                     </Text>
                   )}
@@ -111,13 +118,19 @@ export function Chessboard({ state, actions, pieceSize }: ChessboardProps) {
 const styles = StyleSheet.create({
   wrapper: { gap: 8 },
   turn: { alignSelf: 'flex-start' },
-  board: { width: '100%', maxWidth: 480, alignSelf: 'center', borderRadius: 4, overflow: 'hidden' },
+  board: {
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
   rank: { flexDirection: 'row' },
   square: { width: '12.5%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
   coordinate: { position: 'absolute', top: 1, left: 3, fontSize: 10, fontWeight: '700' },
   file: { position: 'absolute', bottom: 1, right: 3, fontSize: 10, fontWeight: '700' },
   selected: { backgroundColor: colors.boardSelected },
-  last: { backgroundColor: '#B8A05E' },
+  last: { backgroundColor: colors.boardSelected },
   check: { backgroundColor: '#BF6057' },
   dot: {
     width: 12,
@@ -132,7 +145,7 @@ const styles = StyleSheet.create({
     height: '92%',
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: '#ED8127',
+    borderColor: colors.primary,
   },
   scrim: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#000000BB' },
   dialog: { backgroundColor: colors.surfaceContainer, padding: 24, borderRadius: 24, gap: 8 },

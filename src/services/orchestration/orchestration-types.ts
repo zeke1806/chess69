@@ -25,6 +25,7 @@ export type ShellState = Readonly<{
   scrollKey: string;
   version: string;
   error: string | null;
+  helpVisible?: boolean;
 }>;
 
 export type OrchestrationState = Readonly<{
@@ -40,6 +41,7 @@ export interface OrchestrationActions {
   readonly foreground: () => Promise<void>;
   readonly dispose: () => Promise<void>;
   readonly navigate: (destination: Destination) => void;
+  readonly toggleHelp: () => void;
   readonly back: () => boolean;
   readonly openPractice: (kind: Exercise['kind']) => void;
   readonly startRecommendedPractice: () => void;

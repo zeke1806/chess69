@@ -6,7 +6,15 @@ import { learningState, learningActions, puzzles, endgames } from '../../../../.
 const meta = {
   title: 'Business/Pages/LearnScreen',
   component: LearnScreen,
-  args: { state: learningState, actions: learningActions },
+  args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
+    state: learningState,
+    actions: learningActions,
+  },
 } satisfies Meta<typeof LearnScreen>;
 
 export default meta;
@@ -27,4 +35,15 @@ export const Endgames = {
 export const Empty = {
   args: { state: R.pipe(learningState, R.set('kind', 'puzzle'), R.set('catalogue', [])) },
   parameters: { smoke: { text: 'Filtrer par difficulté' } },
+} satisfies Story;
+
+export const Help = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

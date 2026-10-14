@@ -6,7 +6,16 @@ import { progressionState, emptySummary, noop } from '../../../../.storybook/fix
 const meta = {
   title: 'Business/Pages/ProgressScreen',
   component: ProgressScreen,
-  args: { state: progressionState, onExercise: noop, onHistory: noop },
+  args: {
+    help: {
+      expanded: false,
+
+      onToggle: () => {},
+    },
+    state: progressionState,
+    onExercise: noop,
+    onHistory: noop,
+  },
 } satisfies Meta<typeof ProgressScreen>;
 
 export default meta;
@@ -17,4 +26,15 @@ export const Activity = { parameters: { smoke: { text: 'Révisions dues' } } } s
 export const Empty = {
   args: { state: R.set(progressionState, 'summary', emptySummary) },
   parameters: { smoke: { text: 'Aucune révision due' } },
+} satisfies Story;
+
+export const Help = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

@@ -1,92 +1,78 @@
 ---
 name: Chess69
-description: Apprentissage et jeu d’échecs sur Android, noir et orange
+description: Apprentissage des échecs sur Android, charbon ivoire et sauge
 colors:
-  surface: "#111318"
-  surface-container: "#1D2027"
-  surface-high: "#292D36"
-  on-surface: "#F3F0E8"
-  muted: "#BCC1CC"
-  primary: "#FF9F43"
-  on-primary: "#241506"
-  outline: "#454A56"
+  surface: "#191C1A"
+  surface-container: "#292E2A"
+  surface-high: "#333B34"
+  on-surface: "#F0EDE5"
+  muted: "#BAC2B6"
+  primary: "#B6C7A8"
+  on-primary: "#202B1E"
+  outline: "#465044"
   error: "#FFB4AB"
   success: "#B7D9AB"
-  board-light: "#E4D9C5"
-  board-dark: "#7B6553"
-  board-last: "#B8A05E"
-  board-check: "#BF6057"
-  board-capture: "#ED8127"
-  board-target: "#29231988"
-  coordinate-on-light: "#4F3824"
-  coordinate-on-dark: "#FFF3E0"
-  navigation-selected: "#54371F"
+  board-light: "#E7E5D8"
+  board-dark: "#7F9276"
+  board-selected: "#B6C7A8"
+  navigation-selected: "#354332"
   error-container: "#442B2B"
+  board-check: "#BF6057"
+  board-target: "#29231988"
   scrim: "#000000BB"
 typography:
   title:
-    fontFamily: "Android system sans-serif"
+    fontFamily: "Chess69Bold"
     fontSize: "26sp"
-    fontWeight: 700
     lineHeight: "34sp"
-  focus-title:
-    fontFamily: "Android system sans-serif"
-    fontSize: "24sp"
-    fontWeight: 700
-    lineHeight: "32sp"
+    fontWeight: 400
   section:
-    fontFamily: "Android system sans-serif"
+    fontFamily: "Chess69Semibold"
     fontSize: "20sp"
-    fontWeight: 600
     lineHeight: "28sp"
-  action-title:
-    fontFamily: "Android system sans-serif"
-    fontSize: "18sp"
-    fontWeight: 600
-    lineHeight: "26sp"
+    fontWeight: 400
   body:
-    fontFamily: "Android system sans-serif"
+    fontFamily: "Chess69Regular"
     fontSize: "16sp"
+    lineHeight: "24sp"
     fontWeight: 400
-    lineHeight: "24sp"
-  button-label:
-    fontFamily: "Android system sans-serif"
-    fontSize: "16sp"
-    fontWeight: 700
-    lineHeight: "24sp"
-  choice-selected-label:
-    fontFamily: "Android system sans-serif"
-    fontSize: "16sp"
-    fontWeight: 600
-    lineHeight: "24sp"
   muted:
-    fontFamily: "Android system sans-serif"
+    fontFamily: "Chess69Regular"
     fontSize: "14sp"
-    fontWeight: 400
     lineHeight: "21sp"
+    fontWeight: 400
+  button-label:
+    fontFamily: "Chess69Bold"
+    fontSize: "16sp"
+    lineHeight: "24sp"
+    fontWeight: 400
+  action-title:
+    fontFamily: "Chess69Semibold"
+    fontSize: "18sp"
+    lineHeight: "26sp"
+    fontWeight: 400
   navigation-label:
-    fontFamily: "Android system sans-serif"
+    fontFamily: "Chess69Semibold"
     fontSize: "12sp"
-    fontWeight: 600
     lineHeight: "16sp"
-  app-bar-title:
-    fontFamily: "Android system sans-serif"
-    fontSize: "20sp"
-    fontWeight: 700
-  board-coordinate:
-    fontFamily: "Android system sans-serif"
-    fontSize: "10sp"
-    fontWeight: 700
+    fontWeight: 400
+  focus-title:
+    fontFamily: "Chess69Bold"
+    fontSize: "24sp"
+    lineHeight: "32sp"
+    fontWeight: 400
 rounded:
-  board: "4dp"
-  panel: "12dp"
-  focus: "16dp"
-  dialog: "24dp"
-  button: "28dp"
+  panel: "24dp"
+  button: "18dp"
+  help: "20dp"
+  navigation: "26dp"
+  navigation-item: "22dp"
+  board: "16dp"
 spacing:
   compact: "8dp"
   stack: "12dp"
   panel: "16dp"
+  focus: "20dp"
   section: "24dp"
 components:
   button-primary:
@@ -98,228 +84,111 @@ components:
   button-secondary:
     backgroundColor: "{colors.surface-high}"
     textColor: "{colors.on-surface}"
-    typography: "{typography.button-label}"
     rounded: "{rounded.button}"
-    padding: "14dp 20dp"
-  choice:
-    textColor: "{colors.on-surface}"
-    typography: "{typography.body}"
-    rounded: "{rounded.panel}"
-    padding: "12dp 16dp"
-  choice-selected:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.choice-selected-label}"
-    rounded: "{rounded.panel}"
-    padding: "12dp 16dp"
   panel:
     backgroundColor: "{colors.surface-container}"
     rounded: "{rounded.panel}"
     padding: "{spacing.panel}"
-  action-row:
-    textColor: "{colors.on-surface}"
-    typography: "{typography.action-title}"
-    padding: "16dp 0dp"
-  navigation-indicator:
-    backgroundColor: "{colors.navigation-selected}"
-    rounded: "16dp"
-    width: "64dp"
-    height: "32dp"
-  chessboard:
-    rounded: "{rounded.board}"
-    width: "100%"
-  promotion-dialog:
-    backgroundColor: "{colors.surface-container}"
-    rounded: "{rounded.dialog}"
-    padding: "{spacing.section}"
+  help:
+    backgroundColor: "{colors.surface-high}"
+    rounded: "{rounded.help}"
+    padding: "{spacing.panel}"
 ---
 
 # Design System: Chess69
 
 ## Overview
 
-**Creative North Star: "L’échiquier à portée de main"**
+**Creative North Star: "Le jeu prend du relief"**
 
-L’application étend l’identité noir/orange existante. Le logo et le splash
-Android sont conservés. Les surfaces servent la lecture d’une position et
-l’action suivante : apprendre, jouer, revoir ou consulter un résultat.
-La densité vient d’une colonne lisible, de listes séparées par un trait et de
-panneaux réservés aux groupes utiles.
+La direction validée charbon, ivoire et sauge est intégrée aux vues réelles.
+Les cartes tactiles et les illustrations originales en volume reprennent
+l’esprit des références ChessFlare. Les mots restent courts ; les détails utiles
+s’ouvrent dans des aides compactes plutôt que de remplir l’écran.
 
-Ce document décrit le code Android livré : [thème](src/ui/components/common/theme.ts),
-[commandes](src/ui/components/common/button.tsx), [écrans](src/ui/components/business/application-shell.tsx)
-et [échiquier](src/ui/components/business/chessboard.tsx). Les dimensions sont
-en dp et les textes en sp ; la famille système est laissée au moteur natif.
-Les exemples HTML/CSS du sidecar sont des traductions de présentation au facteur
-1 dp/sp vers 1 px. Leurs états de survol et de focus clavier servent uniquement
-le panneau web ; ils ne décrivent pas un comportement Android livré. Les rampes
-tonales du panneau sont synthétiques, pas de nouveaux tokens de l’application.
-
-**Key Characteristics:**
-
-- Identité noir/orange et ressources locales.
-- Échiquier carré, pièces vectorielles et repères de jeu explicites.
-- Texte système ajustable et commandes qui grandissent avec leur contenu.
-- Profondeur tonale et retour d’état utile.
+Ce document décrit le code dans `src/ui/components`, partagé avec Storybook.
+Les anciens prototypes restent des références de proposition, pas la source des
+fonctionnalités. La preuve web et la vérification Android sont distinctes ;
+la validation sur le Samsung de l’utilisateur reste à obtenir.
 
 ## Colors
 
-La surface sombre porte les textes clairs. L’orange désigne l’action principale,
-la sélection et le prochain entraînement. Le résultat est toujours nommé en
-français ; erreur, aide et réussite ne reposent pas uniquement sur une couleur.
-Les deux tons de l’échiquier sont distincts de la palette des panneaux.
-
-### Primary
-
-- **Orange d’action** (`primary`) : boutons remplis, choix sélectionnés, icône et label de destination active, case sélectionnée et panneau du prochain entraînement.
-- **Encre sur orange** (`on-primary`) : textes du bouton principal, du choix actif et du panneau orange.
-- **Fond de destination active** (`navigation-selected`) : capsule derrière l’icône orange, distincte du fond de navigation.
-
-### Neutral
-
-- **Fond sombre** (`surface`) : écran et barre supérieure.
-- **Panneau sombre** (`surface-container`) : groupes, navigation et dialogue de promotion.
-- **Commande secondaire** (`surface-high`) : fond des boutons secondaires.
-- **Texte clair** (`on-surface`) et **texte secondaire** (`muted`) : information principale puis contexte, version et métadonnées.
-- **Trait de séparation** (`outline`) : bord des choix et séparateurs de listes.
-- **Cases claires et brunes** (`board-light`, `board-dark`) : grille de travail ; les coordonnées emploient leurs deux encres dédiées.
-- **Dernier coup** (`board-last`), **roi en échec** (`board-check`), **destination vide** (`board-target`) et **prise possible** (`board-capture`) : repères fonctionnels de l’échiquier.
-- **Erreur** (`error`, `error-container`) et **journée active** (`success`) : états nommés, jamais un résultat transmis par couleur seule.
-- **Voile de promotion** (`scrim`) : atténuation de l’arrière-plan pendant le choix obligatoire d’une pièce.
-
-**The Action and Position Rule.** L’orange exprime l’action ou la sélection. Les repères de position restent accompagnés de coordonnées, d’une forme ou d’un libellé ; ils ne remplacent pas l’explication du résultat.
+La sauge porte l’action et la sélection ; le charbon chaud organise les surfaces,
+l’ivoire porte la lecture. Les fonds secondaires restent teintés dans cette famille.
+Les erreurs et résultats sont aussi nommés en français. Les cases de l’échiquier
+emploient leurs deux tons propres ; coups possibles, échec et promotion conservent
+leurs repères de forme et leur contexte accessible.
 
 ## Typography
 
-La police système Android suit la taille de texte de l’appareil. Les titres,
-sections, explications et informations secondaires utilisent les rôles du
-frontmatter. Les commandes grandissent avec leur texte. Le label visuel court
-« Progrès » conserve le nom accessible « Progression ». Aucune police distante.
+Manrope est embarquée en trois instances statiques locales :
+`src/assets/manrope-400.ttf` (Chess69Regular), `manrope-600.ttf`
+(Chess69Semibold) et `manrope-700.ttf` (Chess69Bold), avec sa licence SIL OFL 1.1.
+`ApplicationFeature` les charge via `expo-font`. Les composants choisissent
+explicitement la famille, avec `fontWeight: normal` : la graisse intrinsèque
+400/600/700 appartient au fichier de fonte. Le frontmatter décrit cette sélection,
+sans demander une synthèse de graisse. Les titres et commandes utilisent Bold,
+les sections, lignes d’action et navigation Semibold, les corps et contexte Regular.
+La fonte variable unique produisait un rendu trop fin sur Android ; les trois
+instances corrigent ce défaut. Le catalogue charge ces mêmes ressources pour
+les vues de production. Seul le prototype conserve l’alias variable Chess69Display.
+La provenance et la conversion sont dans `src/assets/fonts.md`.
+Elle sert les rôles communs du thème, y compris les corps ; certaines métadonnées
+locales et coordonnées conservent le rendu système. Pendant le chargement, un
+indicateur apparaît ; si le chargement échoue, l’application peut rendre la vue
+avec le repli du moteur natif. Aucun téléchargement de fonte n’est requis.
 
-### Hierarchy
-
-- **Titre** (`title`) : nom du parcours ou de la position travaillée.
-- **Titre du prochain entraînement** (`focus-title`) : texte dans le panneau orange de l’accueil.
-- **Section** (`section`) : groupe d’informations ; espace au-dessus supérieur à l’espace au-dessous.
-- **Titre d’action** (`action-title`) : ligne d’ouverture, d’exercice ou d’historique.
-- **Corps** (`body`) et **contexte** (`muted`) : explication puis information secondaire.
-- **Commande** (`button-label`, `choice-selected-label`) : action en gras, sélection légèrement renforcée.
-- **Navigation** (`navigation-label`, `app-bar-title`) : destinations courtes et contexte du parcours. La hauteur de ligne du titre de barre est gérée par Android, sans valeur inventée.
-- **Coordonnée** (`board-coordinate`) : repère discret dans le coin d’une case, pas un label de commande.
-
-**The System Text Rule.** Conserver l’ajustement natif du texte. Les boutons ont une hauteur minimale et des marges intérieures, sans hauteur fixe qui couperait leur libellé.
+Les tailles du frontmatter sont celles du thème actuel. Les labels peuvent
+s’ajuster au texte Android ; les commandes ont une hauteur minimale, pas fixe.
 
 ## Layout
 
-Les insets protègent les barres système. Une top app bar d’au moins 64 dp porte
-le titre du parcours et, dans les sous-écrans, une action de retour de 48 dp.
-Le contenu défile, avec 12 dp de marge horizontale et une largeur maximale de
-480 dp. La navigation à quatre destinations reste en bas, dans une zone d’au
-moins 80 dp ; ses commandes mesurent au moins 64 dp de haut. Les groupes utilisent
-les espacements du frontmatter. L’échiquier occupe la largeur disponible et
-reste carré ; ses cases sont proches de 48 dp sur le téléphone émulé de 411 dp.
-Les lignes de choix peuvent revenir à la ligne. Les sections ont 24 dp au-dessus
-et 8 dp au-dessous ; les panneaux regroupent leurs enfants avec 8 dp. Le contenu
-a 24 dp de marge en bas. Aucun breakpoint n’est défini : la largeur est fluide
-jusqu’au maximum du conteneur. Les pièces ont une taille calculée depuis la
-largeur de fenêtre, plafonnée à 54 dp dans le code actuel.
+Une colonne défilante, 12 dp de marge horizontale, largeur maximale 480 dp,
+12 dp entre les groupes, et 24 dp de marge basse. La barre supérieure mesure
+au moins 64 dp et le retour 48 dp. Les destinations restent en bas dans une
+navigation d’au moins 80 dp. L’accueil et l’apprentissage comportent des rangées
+horizontales de cartes de 198 dp, espacées de 12 dp. Les insets protègent les
+barres Android ; l’échiquier est carré, fluide et limité à 480 dp.
 
 ## Elevation & Depth
 
-Les surfaces sont planes, sans ombre. Les panneaux tonaux et
-les séparateurs organisent les groupes. Aucun mouvement décoratif ; le ripple
-natif matérialise l’appui, l’indicateur de chargement nomme une opération réelle.
-La transparence est limitée aux destinations légales, au ripple et au voile de
-promotion. La modal de promotion utilise le fondu natif ; aucune durée ou courbe
-personnalisée n’est définie.
-
-**The Tonal Depth Rule.** Utiliser les surfaces et les séparateurs pour organiser les groupes ; ne pas ajouter d’ombre décorative aux composants de ce système.
+Les panneaux et lignes d’action gagnent du relief avec un bord inférieur de
+5 dp, un contour de 1 dp et une surface tonale. Les cartes d’historique utilisent
+une ombre noire décalée de 4 dp, rayon 8 dp, opacité 0,2. Les illustrations
+apportent leur propre éclairage volumétrique. Pas de mouvement décoratif ajouté ;
+l’appui sur les boutons baisse l’opacité à 0,8 et conserve le ripple Android.
 
 ## Shapes
 
-Les panneaux sont légèrement arrondis, les boutons remplis ou secondaires sont
-arrondis à 28 dp et mesurent au moins 52 dp de haut. L’indicateur de navigation
-est une capsule. L’échiquier reste une grille nette.
-Ses coins sont arrondis selon `board`, puis clippés. Les choix gardent un trait
-de 1 dp. Le retour est un contrôle circulaire de 48 dp. Le dialogue de promotion
-utilise `dialog`, avec 24 dp de marge intérieure.
+Cartes et panneaux à rayon 24 dp, boutons et choix 18 dp, aides 20 dp avec
+une petite pointe. La navigation forme une capsule de 26 dp avec destinations
+arrondies à 22 dp ; l’échiquier est clippé à 16 dp. La modal de promotion garde
+24 dp de rayon et de marge intérieure.
 
 ## Components
 
-Les primitives sont dans `src/ui/components/common` et les vues produit dans
-`src/ui/components/business`. Chaque parcours possède une vue stateless ; les
-choix et gestes sont portés par les services de présentation et leur orchestration.
-Les stories illustrent les états avec les mêmes composants, via React Native Web ;
-la vérification du rendu Android utilise la vraie APK séparément.
+Les vues Common et Business sont stateless : données et callbacks par props.
+Les features raccordent les effets, dimensions et fonte ; les services restent
+propriétaires des transitions. Chaque composant réutilisable possède ses stories.
 
-### Buttons
-
-Les deux variantes partagent forme, dimensions et label : action orange ou
-commande secondaire sombre, au moins 52 dp de haut, avec les marges du
-frontmatter. L’appui applique une opacité de 0,8 et un ripple Android blanc
-translucide ; la désactivation applique une opacité de 0,45 et bloque l’action.
-Ces états modifient l’opacité, sans token de fond orange pressé supplémentaire.
-
-### Choices
-
-Un contrôle de sélection d’au moins 48 dp, bordé et arrondi comme un panneau.
-L’état sélectionné remplit fond et bord d’orange et renforce le label. Le rôle
-accessible est `radio` avec son état `checked`. Le composant actuel ne définit
-pas de ripple ni de changement d’opacité à l’appui : ne pas lui attribuer ceux
-du bouton.
-
-### Panels and Lists
-
-Les panneaux rassemblent aide, explication, reprise ou analyse sur une surface
-tonale. Les listes d’actions restent planes : minimum 64 dp, titre et détail
-séparés par 4 dp, trait inférieur de 1 dp et ripple Android. Les lignes de
-statistiques utilisent le même séparateur et une marge verticale de 12 dp.
-
-### Navigation
-
-La navigation inspirée de Material 3 utilise quatre icônes SVG locales cohérentes de 24 dp,
-un indicateur sélectionné et des labels. La top app bar porte le retour natif
-et le contexte. L’accueil garde le logo actuel et la version. La capsule active
-a les dimensions du frontmatter et clippe son fond dans une vue native. Les
-icônes sont des tracés géométriques d’épaisseur 1,8, avec extrémités et jointures
-arrondies. Le label visuel « Progrès » garde le nom accessible « Progression ».
-
-### Chessboard and Promotion
-
-L’échiquier utilise douze pièces Chessnut SVG locales (Apache 2.0, provenance
-dans `THIRD_PARTY.md`). Le contour sombre des blancs reste visible sur une case
-claire. Orientation, coordonnées et labels nommant case/camp/pièce sont conservés.
-Toucher l’origine puis la destination ; destinations légales, dernier coup et
-roi en échec sont marqués. La promotion affiche les quatre choix dans une modal.
-Les échiquiers d’analyse sont consultables sans déplacement. Une destination
-vide porte un point de 12 dp ; une prise possible porte un anneau couvrant 92 %
-de la case, bordé à 3 dp. Les coordonnées sont placées dans les coins des cases.
-La modal de promotion propose Dame, Tour, Fou, Cavalier et Annuler ; elle protège
-un choix nécessaire au coup, sans créer un nouveau type de panneau décoratif.
-
-### States and Evidence
-
-Boutons, choix et lignes d’activité conservent leurs labels accessibles et le
-retour Android. Chargement, moteur en réflexion, erreur avec réessai, contenu
-vide, aide, succès, reprise et analyse annulable sont des états explicites.
-Les abandons et remplacements d’une partie active demandent confirmation native.
-
-La preuve visuelle couvre une APK ARM64 sur téléphone émulé API 36, texte normal
-et à 130 %. Elle ne valide pas le Galaxy S22 Ultra, TalkBack, les gestes One UI
-ou la performance du matériel ; voir `.scratch/application-locale/phone-test.md`.
+- Boutons : minimum 52 dp, primaire sauge, secondaire tonal, désactivé à opacité
+  0,45 ; la désactivation bloque l’action et est exposée à l’accessibilité.
+- Choix : minimum 48 dp, contour au repos ; remplissage et contour sauge quand
+  sélectionné, avec état radio accessible.
+- Aide : `HelpDisclosure` reçoit `expanded` et `onToggle`. La commande
+  « Comprendre » devient « Fermer l’aide » ; le texte est encapsulé dans une bulle.
+- Navigation : quatre destinations, Accueil, Apprendre, Jouer et Progrès ;
+  illustrations de 38 dp, label 12/16, surface et bord sauge pour la sélection.
+- Illustration : atlas original local cavalier/livres/puzzle/tour, décliné depuis
+  un PNG à quatre cellules. La provenance ImageGen est conservée avec le travail
+  de proposition dans `.storybook/design/assets/illustrations.png.json`.
+- Échiquier : pièces SVG Chessnut Apache-2.0, coordonnées de 10 sp, cibles visibles,
+  sélection, dernier coup, état d’échec et choix de promotion conservés.
 
 ## Do's and Don'ts
 
-### Do
-
-- Do — Conserver le logo, le splash et l’identité noir/orange.
-- Do — Respecter le texte système, les zones sûres et le retour Android.
-- Do — Garder les pièces, icônes et contenus embarqués pour un premier lancement hors ligne.
-- Do — Nommer erreurs, résultats et opérations en français.
-- Do — Conserver les formes, coordonnées et labels qui expliquent une position sans dépendre de sa couleur seule.
-
-### Don't
-
-- Don't — Ne pas utiliser de glyphes Unicode comme système de pièces ou d’icônes.
-- Don't — Ne pas attribuer à un téléphone réel une validation obtenue sur émulateur.
-- Don't — Ne pas traiter les traductions web ni les rampes synthétiques du sidecar comme des tokens ou des preuves Android.
+- Garder une action principale immédiatement visible et des textes courts.
+- Encapsuler les détails explicatifs ; préserver les noms et retours métier utiles.
+- Utiliser les vrais composants dans Storybook et contrôler Android séparément.
+- Conserver toutes les ressources embarquées et l’autonomie hors ligne.
+- Ne pas confondre une maquette approuvée avec une nouvelle règle métier.

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { Illustration } from '../business/illustration';
 import { ActionRow } from './action-row';
 import { noop } from '../../../../.storybook/fixtures';
 
@@ -24,4 +25,9 @@ export const LongContent = {
       'Comprendre le développement, préparer le roque et occuper le centre avant de lancer une attaque',
   },
   parameters: { smoke: { text: 'Apprendre les variantes' } },
+} satisfies Story;
+
+export const Illustrated = {
+  args: { illustration: <Illustration kind="puzzle" /> },
+  parameters: { smoke: { text: 'Résoudre un puzzle' } },
 } satisfies Story;

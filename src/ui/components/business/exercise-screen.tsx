@@ -1,17 +1,19 @@
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import type { ReactNode } from 'react';
 import { Button } from '../common/button';
 import { Panel } from '../common/panel';
-import { layout } from '../common/theme';
+import { HelpDisclosure } from '../common/help-disclosure';
+import { colors, layout } from '../common/theme';
 import type { LearningState, LearningActions } from '../../../services/learning/learning-types';
 
 type ScreenProps = Readonly<{
   state: LearningState;
   actions: Pick<LearningActions, 'selectPly' | 'hint' | 'reveal' | 'startExercise'>;
   board: ReactNode;
+  help?: Readonly<{ expanded: boolean; onToggle: () => void }>;
 }>;
 
-export function ExerciseScreen({ state, actions, board }: ScreenProps) {
+export function ExerciseScreen({ state, actions, board, help }: ScreenProps) {
   const session = state.session;
   if (!session) {
     return null;
@@ -24,11 +26,13 @@ export function ExerciseScreen({ state, actions, board }: ScreenProps) {
         {session.exercise.theme} · {session.mode === 'guided' ? 'Mode guidé' : 'De mémoire'} ·{' '}
         {session.color === 'w' ? 'Blancs' : 'Noirs'}
       </Text>
-      <Text style={layout.body}>{session.exercise.objective}</Text>
       {board}
+      <View style={styles.bubble}>
+        <Text style={layout.body}>{session.exercise.objective}</Text>
+      </View>
       {session.mode === 'guided' && (
         <>
-          <View style={layout.row}>
+          <View style={styles.transport}>
             <Button
               label="Précédent"
               secondary
@@ -69,20 +73,26 @@ export function ExerciseScreen({ state, actions, board }: ScreenProps) {
         <View style={layout.stack}>
           <Button label="Un indice" secondary onPress={actions.hint} disabled={state.busy} />
           <Button
-            label="Voir la solution expliquée"
+            label="Voir la solution"
             secondary
             onPress={actions.reveal}
             disabled={state.busy}
           />
         </View>
       )}
-      {(done || session.mode === 'guided') && (
-        <Panel>
-          <Text style={layout.section}>Comprendre la position</Text>
-          <Text style={layout.body}>{session.exercise.explanation}</Text>
-          {done && <Text style={layout.body}>Suite : {session.exercise.moves.join(' · ')}</Text>}
-        </Panel>
-      )}
+      {(done || session.mode === 'guided') &&
+        (help ? (
+          <HelpDisclosure expanded={help.expanded} onToggle={help.onToggle}>
+            <Text style={layout.body}>{session.exercise.explanation}</Text>
+            {done && <Text style={layout.body}>Suite : {session.exercise.moves.join(' · ')}</Text>}
+          </HelpDisclosure>
+        ) : (
+          <Panel>
+            <Text style={layout.section}>Comprendre la position</Text>
+            <Text style={layout.body}>{session.exercise.explanation}</Text>
+            {done && <Text style={layout.body}>Suite : {session.exercise.moves.join(' · ')}</Text>}
+          </Panel>
+        ))}
       {done && (
         <Button
           label="Rejouer de mémoire"
@@ -92,3 +102,14 @@ export function ExerciseScreen({ state, actions, board }: ScreenProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  bubble: { backgroundColor: colors.surfaceHigh, padding: 16, borderRadius: 20 },
+  transport: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+});

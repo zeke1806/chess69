@@ -47,6 +47,7 @@ SQLite ni dépendance native n’est modifié par cette séparation.
 | Technologie | Usage | Statut |
 | --- | --- | --- |
 | Expo Router | Routes raccordées aux features | Installé ; routes dans src/app |
+| `expo-font` | Chargement natif de Manrope embarquée | Dépendance directe `~57.0.4` ; chargement dans ApplicationFeature, fonte et licence OFL locales, sans réseau |
 | SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Installé ; ports par parcours, adaptateurs SQLite/mémoire et migration transactionnelle |
 | Stockfish embarqué | Adversaire et analyse hors ligne | Stockfish 17.1, module Expo local Kotlin/JNI C++ ARM64 et NNUE embarqués |
 | `chess.js` | Règles et validation des coups | Installé ; règles et validation des coups derrière adaptateur |
@@ -94,6 +95,13 @@ requise pour jouer et apprendre.
 
 Expo SDK 57 est installé avec React 19.2.3, React Native 0.86.3 et
 TypeScript 6 strict. Le projet Android est versionné et maintenu explicitement.
+L’intégration visuelle 0.3.0 (Android versionCode 6) utilise la palette validée
+charbon/ivoire/sauge et les illustrations originales locales dans les composants
+réels Common/Business. `DESIGN.md` et son sidecar `.impeccable/design.json`
+décrivent cette direction durable. La fonte Manrope et l’atlas sont embarqués
+dans `src/assets` ; les services métier et la persistance restent raccordés aux
+vues stateless. Les contrôles Android de cette version sont consignés dans le
+travail d’intégration ; ce statut ne constitue pas une validation sur Samsung.
 SQLite, Stockfish et chess.js sont intégrés. Le ticket de preuve native
 consigne les contrôles sur une APK signée réellement exécutée sur Android
 API 36 ARM64 ; les performances et les transferts Samsung restent à vérifier
@@ -108,3 +116,7 @@ Stockfish est compilé depuis les sources et les réseaux exacts conservés dans
 module Expo local de `modules/chess69-stockfish` lance ses calculs hors du fil
 JavaScript et les annule explicitement. La distribution inclut les sources
 correspondants sous GPLv3 ; voir [THIRD_PARTY.md](../THIRD_PARTY.md).
+
+Manrope est chargée en trois instances statiques locales (400/600/700), identiques
+sur Android et Storybook : le chargement d’une fonte variable unique rendait les
+textes trop fins sur Android. La conversion et la licence sont dans src/assets/fonts.md.

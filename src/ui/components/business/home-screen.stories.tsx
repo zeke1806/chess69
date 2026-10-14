@@ -7,6 +7,7 @@ const meta = {
   title: 'Business/Pages/HomeScreen',
   component: HomeScreen,
   args: {
+    help: { expanded: false, onToggle: noop },
     state: { ...progressionState, activeGame: null },
     events: {
       onOnboard: noop,
@@ -39,4 +40,15 @@ export const FirstLaunch = {
 export const Resume = {
   args: { state: { ...progressionState, activeGame: gameSession } },
   parameters: { smoke: { text: 'Reprendre la partie' } },
+} satisfies Story;
+
+export const Help = {
+  args: {
+    help: {
+      expanded: true,
+
+      onToggle: () => {},
+    },
+  },
+  parameters: { smoke: { text: 'Fermer l’aide' } },
 } satisfies Story;

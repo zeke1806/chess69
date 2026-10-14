@@ -1,4 +1,6 @@
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { HelpDisclosure } from '../common/help-disclosure';
+import { Illustration } from './illustration';
 import { Button } from '../common/button';
 import { ActionRow } from '../common/action-row';
 import { colors, layout } from '../common/theme';
@@ -7,19 +9,23 @@ import type { ProgressionState } from '../../../services/progression/progression
 import { kindLabels } from './presentation-labels';
 
 type ScreenProps = Readonly<{
+  help?: Readonly<{ expanded: boolean; onToggle: () => void }>;
   state: ProgressionState;
   onExercise: (id: string, color?: 'w' | 'b') => void;
   onHistory: () => void;
 }>;
 
-export function ProgressScreen({ state, onExercise, onHistory }: ScreenProps) {
+export function ProgressScreen({ state, onExercise, onHistory, help }: ScreenProps) {
   const summary = state.summary;
   if (!summary) {
     return null;
   }
   return (
     <View style={layout.stack}>
-      <Text style={layout.title}>Votre progression</Text>
+      <Illustration kind="rook" size={80} />
+      <Text accessibilityRole="header" style={layout.title}>
+        Votre progression
+      </Text>
       <Text style={layout.body}>
         {summary.streak} jour{summary.streak === 1 ? '' : 's'} de suite ·{' '}
         {summary.activeDays.length} jour{summary.activeDays.length === 1 ? '' : 's'} actif
@@ -27,12 +33,18 @@ export function ProgressScreen({ state, onExercise, onHistory }: ScreenProps) {
       </Text>
       <Text style={layout.section}>Résultats d’apprentissage</Text>
       {(['opening', 'puzzle', 'endgame'] as const).map((kind) => (
-        <View style={styles.statRow} key={kind}>
-          <Text style={layout.body}>{kindLabels[kind]}</Text>
-          <Text style={layout.muted}>
-            {summary.byKind[kind].success} sans aide · {summary.byKind[kind].assisted} avec aide ·{' '}
-            {summary.byKind[kind].failed} à revoir
-          </Text>
+        <View style={local.stat} key={kind}>
+          <Illustration
+            kind={kind === 'opening' ? 'book' : kind === 'puzzle' ? 'puzzle' : 'rook'}
+            size={50}
+          />
+          <View style={local.statCopy}>
+            <Text style={layout.body}>{kindLabels[kind]}</Text>
+            <Text style={layout.muted}>
+              {summary.byKind[kind].success} sans aide · {summary.byKind[kind].assisted} avec aide ·{' '}
+              {summary.byKind[kind].failed} à revoir
+            </Text>
+          </View>
         </View>
       ))}
       <Text style={layout.body}>
@@ -44,10 +56,6 @@ export function ProgressScreen({ state, onExercise, onHistory }: ScreenProps) {
       <Text style={layout.body}>
         {summary.mastered} variante{summary.mastered === 1 ? '' : 's'} consolidée
         {summary.mastered === 1 ? '' : 's'} · {summary.learning} en apprentissage
-      </Text>
-      <Text style={layout.muted}>
-        Consolidée : trois révisions consécutives sans aide. Échéances après réussite : 1, 3, 7, 14
-        puis 30 jours. Une erreur remet la variante au premier palier.
       </Text>
       {summary.due.length ? (
         <>
@@ -83,10 +91,28 @@ export function ProgressScreen({ state, onExercise, onHistory }: ScreenProps) {
           ))
       )}
       <Button label="Consulter l’historique des parties" secondary onPress={onHistory} />
-      <Text style={layout.muted}>
-        Cette progression appartient à cette installation. Gardez Chess69 installé lors des mises à
-        jour.
-      </Text>
+      <HelpDisclosure expanded={help?.expanded ?? true} onToggle={help?.onToggle ?? (() => {})}>
+        <Text style={layout.muted}>
+          Consolidée : trois révisions consécutives sans aide. Échéances après réussite : 1, 3, 7,
+          14 puis 30 jours. Une erreur remet la variante au premier palier.
+        </Text>
+        <Text style={layout.muted}>
+          Cette progression appartient à cette installation. Gardez Chess69 installé lors des mises
+          à jour.
+        </Text>
+      </HelpDisclosure>
     </View>
   );
 }
+
+const local = StyleSheet.create({
+  stat: {
+    backgroundColor: colors.surfaceContainer,
+    borderRadius: 20,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  statCopy: { flex: 1, gap: 4 },
+});

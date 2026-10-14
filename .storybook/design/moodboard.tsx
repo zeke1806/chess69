@@ -81,7 +81,7 @@ export function Moodboard({ onSampleAction, onNavigate }: MoodboardProps) {
         </View>
       </View>
       <DesignNavigation active="home" onNavigate={onNavigate} />
-      <Text style={styles.note}>Proposition visuelle · à valider</Text>
+      <Text style={styles.note}>Référence approuvée · intégrée</Text>
     </ScrollView>
   );
 }

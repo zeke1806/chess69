@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 const pages = [
   {
     story: 'home',
-    text: 'Votre prochain coup',
+    text: 'À vous de jouer.',
     destination: 'Accueil',
     nested: false,
     board: false,
@@ -31,7 +31,7 @@ const pages = [
     board: false,
   },
   { story: 'game', text: 'À vous de jouer', destination: 'Jouer', nested: true, board: true },
-  { story: 'history', text: 'Analyser', destination: 'Jouer', nested: true, board: false },
+  { story: 'history', text: 'Revoir la partie', destination: 'Jouer', nested: true, board: false },
   {
     story: 'analysis',
     text: 'Continuer l’analyse',
@@ -61,11 +61,16 @@ for (const width of [360, 412, 480]) {
       const navigation = page.getByRole('tablist');
       await expect(navigation.getByRole('tab')).toHaveCount(4);
       const selected = navigation.getByRole('tab', { name: entry.destination, exact: true });
-      await expect(selected.locator('svg path')).toHaveAttribute('stroke', '#FF9F43');
+      await expect(selected).toHaveCSS('background-color', 'rgb(53, 67, 50)');
+      await expect(
+        selected.getByText(entry.destination === 'Progression' ? 'Progrès' : entry.destination, {
+          exact: true,
+        }),
+      ).toHaveCSS('color', 'rgb(182, 199, 168)');
       await expect(page.getByRole('button', { name: 'Retour', exact: true })).toHaveCount(
         entry.nested ? 1 : 0,
       );
-      expect((await navigation.boundingBox())!.y).toBeGreaterThanOrEqual(830);
+      expect((await navigation.boundingBox())!.y).toBeGreaterThanOrEqual(810);
       expect((await frame.boundingBox())!.width).toBe(width);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
         width,
@@ -91,7 +96,7 @@ test('Le contenu défile dans le shell ; la navigation reste au bas de la fenêt
   const navigation = page.getByRole('tablist');
   await expect(navigation).toBeVisible();
   const before = (await navigation.boundingBox())!;
-  const last = page.getByText('Tout fonctionne sur ce téléphone', { exact: false });
+  const last = page.getByRole('button', { name: 'Comprendre', exact: true });
   await last.scrollIntoViewIfNeeded();
   const after = (await navigation.boundingBox())!;
   expect(after.y).toBe(before.y);

@@ -1,3 +1,6 @@
+import { useFonts } from 'expo-font';
+import { ActivityIndicator, View } from 'react-native';
+import { colors } from '../components/common/theme';
 import { useEffect } from 'react';
 import { Alert, AppState, BackHandler, useWindowDimensions } from 'react-native';
 import type { OrchestrationService } from '../../services/orchestration/orchestration-types';
@@ -5,6 +8,11 @@ import { useStatefulService } from '../../services/adapters/stateful/react-state
 import { ApplicationScreen } from '../components/business/application-screen';
 
 export function ApplicationFeature({ service }: Readonly<{ service: OrchestrationService }>) {
+  const [fontsLoaded, fontError] = useFonts({
+    Chess69Regular: require('../../assets/manrope-400.ttf'),
+    Chess69Semibold: require('../../assets/manrope-600.ttf'),
+    Chess69Bold: require('../../assets/manrope-700.ttf'),
+  });
   const { state, actions } = useStatefulService(service);
   const { width } = useWindowDimensions();
 
@@ -66,6 +74,14 @@ export function ApplicationFeature({ service }: Readonly<{ service: Orchestratio
       { cancelable: true, onDismiss: actions.game.dismissResign },
     );
   }, [state.game.resignationRequired, actions.game]);
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', backgroundColor: colors.surface }}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <ApplicationScreen

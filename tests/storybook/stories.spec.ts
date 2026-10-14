@@ -6,6 +6,7 @@ type StoryEntry = Readonly<{ id: string; title: string; name: string; type: stri
 type SmokeParameters = Readonly<{
   text?: string;
   svg?: boolean;
+  image?: boolean;
   logo?: boolean;
   board?: boolean;
   disabled?: boolean;
@@ -59,6 +60,19 @@ for (const entry of stories) {
     if (smoke.text) {
       await expect(page.getByText(smoke.text, { exact: false }).first()).toBeVisible();
     }
+    if (smoke.image) {
+      await expect(page.locator('img').first()).toBeVisible();
+      await expect
+        .poll(async () =>
+          page
+            .locator('img')
+            .first()
+            .evaluate(
+              (img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0,
+            ),
+        )
+        .toBe(true);
+    }
     if (smoke.svg) {
       expect(await page.locator('svg').count()).toBeGreaterThan(0);
       await expect(page.locator('svg').first()).toBeVisible();
@@ -82,7 +96,7 @@ for (const entry of stories) {
     if (smoke.checked) {
       // RNW 0.21 does not translate React Native accessibilityState.checked.
       // Verify the selected visual state; TalkBack state is checked on the native APK.
-      await expect(page.getByRole('radio')).toHaveCSS('background-color', 'rgb(255, 159, 67)');
+      await expect(page.getByRole('radio')).toHaveCSS('background-color', 'rgb(182, 199, 168)');
     }
     if (smoke.board) {
       await expect(page.getByRole('button', { name: /^[a-h][1-8],/ })).toHaveCount(64);
@@ -90,7 +104,7 @@ for (const entry of stories) {
     if (smoke.selection) {
       await expect(page.getByRole('button', { name: /^e2,/ })).toHaveCSS(
         'background-color',
-        'rgb(255, 159, 67)',
+        'rgb(182, 199, 168)',
       );
       await expect(page.getByRole('button', { name: /^e4,/ })).toHaveAccessibleName(
         /coup possible/,
