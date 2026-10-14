@@ -4,6 +4,8 @@
 `65ad45f6979ca567b9cdbdec50761fd5c808a3af`, avec la documentation d’adoption
 réalisée dans ce travail. Les constats et propositions ci-dessous décrivent cet état initial.
 Les corrections ont ensuite été appliquées ; leur bilan figure en fin de document. Ce rapport est un constat daté, pas une nouvelle source de normes.
+Le [nouveau contrôle après recentrage du skill](#nouveau-contrôle-après-recentrage-du-skill--14-octobre-2026)
+constitue le bilan le plus récent ; les sections précédentes restent historiques.
 
 ## Références et périmètre
 
@@ -406,3 +408,139 @@ Bilan final : 108 tests/15 suites Jest et 67 tests Chromium réussis ; typage,
 formatage, contrôle des frontières/imports, compatibilité Expo et APK signée
 vérifiés. L’émulateur ARM64 couvre la mise à jour et les parcours hors ligne ;
 le Galaxy S22 Ultra reste une validation matérielle distincte.
+
+## Nouveau contrôle après recentrage du skill — 14 octobre 2026
+
+Code examiné : `65ada44a69ce1f5665f694afe7f5fb1ec82cb852`, dépôt propre
+au début de la revue. Le contrôle porte sur l'ensemble des sources actuelles,
+pas seulement sur un diff. Deux lectures indépendantes ont examiné les
+frontières/contrats et les conventions/tests ; les preuves ci-dessous ont
+été recoupées. Une revue de spécification produit n'entre pas dans cette demande.
+
+Références : version locale actuelle du [skill CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md),
+de [ses règles](/Users/zeke/.agents/skills/cu-archi/references/architecture.md)
+et du journal des corrections, avec les adaptations technologiques de Chess69.
+Empreintes SHA-256 des sources normatives consultées :
+
+- `SKILL.md` : `acd5a727e2d5b9fdb61cd7a531937503c9ab28d8d8719f1b417a8ab522249d81`.
+- `architecture.md` : `b358c044b6a5f571941cfad2ed748164584f447d3883fa6c77cf374babe8f62c`.
+
+Le skill actuel couvre l'architecture, le code et la structure/isolation des
+tests. Il ne prescrit plus de TDD systématique, de tests métier par ticket ou
+de numérotation française des scénarios. Les passages historiques ci-dessus
+qui lui attribuent ces obligations ne décrivent donc plus les normes actuelles.
+Les tests existants `tests/business/cu-archi-*` peuvent rester : leur présence
+ne crée pas une nouvelle obligation ni un écart.
+
+### Résultat architectural
+
+Aucune violation confirmée des frontières, des responsabilités, de l'injection
+ou du cycle de vie dans les sources inspectées. Business, présentation et UI
+sont séparés ; les dépendances React, Expo, SQLite et chess.js sont encapsulées
+dans l'infrastructure et les adaptateurs. Les modules de présentation exposent
+un contrat chacun ; les implémentations réparties en dossiers gardent une entrée
+publique minimale. Les helpers purs `localDay` et `mateWinner` ne sont pas des
+services autonomes supplémentaires.
+
+La DI sélectionne les ports du repository par domaine. Les services front
+consomment les opérations nécessaires : Game exclut `get`, les ports Game et
+Rules d'Analysis sont limités à `game.get` et `rules.position`, Learning utilise les trois opérations du
+catalogue et les six de son service métier. Le raccordement stateful est
+générique, avec actions stables, bindings après commit et gardes de démontage.
+SQLite conserve migrations versionnées/transactionnelles, initialisation après
+succès et sérialisation des opérations.
+
+La structure des tests est conforme : dossier racine unique, typage strict,
+Jest commun aux tests unitaires/intégration, horloges et identifiants injectés,
+promesses contrôlées et SQLite temporaire avec nettoyage. Playwright vérifie
+le rendu Storybook ; ce besoin distinct ne demande pas de fusionner les runners.
+
+### Écarts explicites de conventions
+
+**R1 — Définitions de validation communes encore répétées.**
+`src/services-business/catalogue/catalogue-types.ts:6` et
+`src/services-business/learning/learning-types.ts:11` définissent séparément
+les mêmes valeurs de `kind`, alors que la tentative reprend le type de
+l'exercice. La couleur d'échecs est aussi redéfinie dans
+`catalogue/catalogue-types.ts:15`, `game/game-types.ts:11` et
+`learning/learning-types.ts:20`. La règle « partager les validations communes »
+demande une définition unique réutilisée ou dérivée. Réutiliser le champ du
+schéma catalogue pour `kind` et un schéma couleur commun ; les préférences
+peuvent dériver leur choix incluant `random`. Conserver les formats persistés.
+
+**R2 — Forme des contrats de services.**
+La règle de validation demande explicitement de « conserver les contrats de
+services sous forme d'interfaces TypeScript ». Plusieurs contrats sont des
+aliases `type … = Readonly<{ … }>`, par exemple
+`src/services-business/game/game-types.ts:41`,
+`src/services-business/catalogue/catalogue-types.ts:44` et
+`src/services-business/adapters/engine/engine-types.ts:21`.
+Leur typage structurel et readonly fonctionne ; c'est un écart à la convention
+syntaxique actuelle, sans défaut d'injection. Des interfaces avec propriétés
+de fonctions `readonly` permettent de conserver les contrats et le comportement.
+Les types de données et les types inférés de Zod ne sont pas concernés.
+
+**R3 — Helpers placés avant leurs consommateurs.**
+La règle d'ordre de lecture demande les opérations principales avant leurs
+détails, avec déclarations de fonctions lorsque le hoisting le permet.
+`engine-service/engine-lifecycle.ts:9` définit `enqueue` avant les opérations
+publiques ; `repository-service/repository-memory-service.ts:10,15` et
+`repository-sqlite-service.ts:15,20,26` font de même pour leurs helpers.
+Ils peuvent devenir des déclarations de fonctions placées après les opérations
+publiques dans la même portée, en conservant l'état fermé par les closures.
+Il s'agit de lecture/navigation, sans panne fonctionnelle constatée.
+
+### Préférences et point de lisibilité
+
+**P1 — Remeda encore peu appliqué au métier.** Les services front utilisent
+Remeda, mais plusieurs transitions métier simples restent construites par
+spread : `learning/learning-service.ts:64,69,78,95,117,166` et
+`game/game-service.ts:64,111`, sous `src/services-business`.
+La préférence explicite pour `set`, `setPath` et les compositions courtes
+s'applique ici. Ces copies préservent actuellement les anciennes valeurs :
+ce constat ne démontre aucune mutation et ne justifie pas de remplacer
+mécaniquement tous les spreads ou toutes les opérations Array.
+
+**P2 — Ordre let/const.** Dans
+`src/services-business/progression/progression-service.ts:50–56`, `let count`
+peut être placé avant les `const` sans modifier les dépendances. C'est une
+préférence de lecture, pas une obligation de rendre les autres variables mutables.
+
+**L1 — Lisibilité du pont natif.** Les fonctions C++ `session` et `throwError`
+dans `modules/chess69-stockfish/android/src/main/cpp/stockfish-jni.cpp:32–33`
+et les `catch` à `:39,64` condensent leurs blocs. Même constat dans
+`modules/chess69-stockfish/android/src/main/java/ovh/rentabe/stockfish/Chess69StockfishModule.kt:19,22–23,58`.
+La convention générale de blocs multilignes recommande de les aérer.
+Les règles et exemples du skill étant principalement TypeScript, ce point
+natif reste distingué des écarts TypeScript. Les classes et noms imposés
+par Expo/JNI/Kotlin demeurent justifiés ; aucune migration de langage n'est proposée.
+
+### Renvoi documentaire devenu obsolète
+
+`docs/mode-de-travail.md:40–43` attribue encore à CU-ARCHI des conditions de
+tests métier par ticket absentes du skill actuel. Retirer ce renvoi ; toute
+condition de processus conservée par Chess69 doit être formulée dans son
+mode de travail, avec sa propre justification. Les archives de réalisation
+restent des traces historiques et n'ont pas à être réécrites rétroactivement.
+
+### Contrôles et limites
+
+- `npm run typecheck` : succès, sources et tests inclus.
+- `npm run format:check` : succès.
+- `npm run check:architecture` : succès, 95 sources, 17 vues stateless,
+  178 fonctions affectées avec blocs ; frontières contrôlées et imports sans cycle.
+- `npm test -- --watch=false` : 108 tests, 15 suites réussies.
+- `npm run storybook:test` : build réussi et 67 tests Chromium réussis.
+
+Le checker architectural parcourt `src` et `.storybook`, sans analyser les
+tests ni le bridge natif. Il ne couvre pas toutes les règles : duplication
+des schémas, forme interface/type, préférence Remeda et ordre de lecture ont
+nécessité la revue manuelle. Ses résultats verts ne signifient donc pas une
+conformité totale. Le warning de taille de bundle Storybook est informatif
+pour l'outillage de développement ; aucune régression APK n'en est déduite.
+
+Aucun code applicatif n'a été modifié. Aucune nouvelle compilation ou exécution
+APK/Stockfish natif ni mesure Samsung n'a été réalisée pour cet audit.
+Le bilan est : architecture conforme sur les points inspectés, trois groupes
+d'écarts explicites de conventions, deux préférences à harmoniser, un point
+de lisibilité natif et un renvoi documentaire à actualiser.
