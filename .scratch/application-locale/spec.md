@@ -167,7 +167,7 @@ Aucun délai ni performance moteur sur Galaxy n’est présumé validé par cett
 
 ### Références
 
-- [Mode de travail](../../docs/mode-de-travail.md), [architecture](../../docs/architecture.md), [technologies](../../docs/architecture-techno.md).
+- [Mode de travail](../../docs/mode-de-travail.md), [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md), [technologies](../../docs/architecture-techno.md).
 - [Procédure Android](../../docs/android-release.md), à adapter lors de l’implémentation pour la politique serveur.
 - [Vocabulaire](../../GLOSSARY.md), [suivi local](../../docs/agents/issue-tracker.md).
 - [ChessFlare](https://chessflare.com/) et [fiche Android](https://play.google.com/store/apps/details?id=com.chessflare.app), consultés pendant le cadrage. Inspection exhaustive de l’application Android non effectuée ; fidélité exacte des écrans non vérifiée.

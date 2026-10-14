@@ -1,14 +1,20 @@
 # Standards — 0da42a21…f68ad56
 
+Archive de la revue d’octobre 2026 selon les anciennes conventions locales,
+supprimées lors de l’adoption de CU-ARCHI. Les constats et leurs résolutions
+ci-dessous conservent la preuve du travail réalisé ; les normes actuelles
+viennent de [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md).
+Voir [l’audit d’adoption](../../docs/audit-cu-archi.md) pour l’état actuel.
+
 Revue en lecture du diff `git diff 0da42a21f47fc7b72563610b1643de09dfcfa19f...HEAD`. Sources Stockfish vendoriées exclues. Les imports métier restent indépendants des SDK ; les tests rapides inspectés n’effectuent aucun effet externe.
 
 ## Violations documentées
 
-- **[P2] Raccorder la libération au propriétaire de l’assemblage.** `src/ui/features/application-feature.tsx:15` retire seulement les listeners. Aucun appel à `applicationService.dispose()` n’existe dans `src`, alors que `src/app/_layout.tsx` possède l’assemblage et que le dispose ferme SQLite et Stockfish. Un démontage du propriétaire laisse les ressources et calculs ouverts jusqu’à la destruction du runtime natif. `docs/architecture.md:159` exige une initialisation **et une libération explicites** au démarrage/arrêt. Brancher le cycle de vie au propriétaire, en préservant les remounts React.
+- **[P2] Raccorder la libération au propriétaire de l’assemblage.** `src/ui/features/application-feature.tsx:15` retire seulement les listeners. Aucun appel à `applicationService.dispose()` n’existe dans `src`, alors que `src/app/_layout.tsx` possède l’assemblage et que le dispose ferme SQLite et Stockfish. Un démontage du propriétaire laisse les ressources et calculs ouverts jusqu’à la destruction du runtime natif. La convention locale de cycle de vie utilisée lors de cette revue exigeait une initialisation **et une libération explicites** au démarrage/arrêt. Brancher le cycle de vie au propriétaire, en préservant les remounts React.
 
-- **[P2] Sortir les résultats d’analyse du composant.** `src/ui/components/application/application-screen.tsx:107–108` détermine le gagnant d’un mat zéro depuis la FEN, choisit les messages d’analyse et traduit la qualité. Cette interprétation métier du mat reproduit `analysis-service.ts:107`, et les messages n’existent pas dans le snapshot front ; les tests du service ne protègent donc pas ce rendu. `docs/architecture.md:108–123` réserve les règles au business et le choix des messages de résultat/chargement au front. Exposer ces valeurs interprétées par le service front.
+- **[P2] Sortir les résultats d’analyse du composant.** `src/ui/components/application/application-screen.tsx:107–108` détermine le gagnant d’un mat zéro depuis la FEN, choisit les messages d’analyse et traduit la qualité. Cette interprétation métier du mat reproduit `analysis-service.ts:107`, et les messages n’existent pas dans le snapshot front ; les tests du service ne protègent donc pas ce rendu. La convention locale de présentation utilisée lors de cette revue réservait les règles au business et le choix des messages de résultat/chargement au front. Exposer ces valeurs interprétées par le service front.
 
-- **[P2] Fermer les mutabilités imbriquées du snapshot.** `src/services-front/application/application-service.ts:67` retourne directement son état. `ProgressionSummary.due` contient des `Review` mutables (`progression-type.ts:6`) et `AnalysisView` conserve un `score` mutable (`analysis-type.ts:8`). Un appelant peut donc changer `snapshot.summary.due[0].stage` ou un score sans action ni notification. `docs/architecture.md:126,179–181` exige des snapshots immuables. Rendre ces contrats profondément readonly et préserver cette garantie à la construction du snapshot.
+- **[P2] Fermer les mutabilités imbriquées du snapshot.** `src/services-front/application/application-service.ts:67` retourne directement son état. `ProgressionSummary.due` contient des `Review` mutables (`progression-type.ts:6`) et `AnalysisView` conserve un `score` mutable (`analysis-type.ts:8`). Un appelant peut donc changer `snapshot.summary.due[0].stage` ou un score sans action ni notification. La convention locale d’immutabilité utilisée lors de cette revue exigeait des snapshots immuables. Rendre ces contrats profondément readonly et préserver cette garantie à la construction du snapshot.
 
 ## Heuristique Fowler
 

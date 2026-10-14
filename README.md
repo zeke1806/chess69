@@ -8,6 +8,12 @@ Téléchargement : [APK et instructions](https://apk.rentabe.ovh/chess69). Ouvri
 
 Node 24 (`.nvmrc`) et npm ; versions exactes dans le lockfile.
 
+Le [mode de travail](docs/mode-de-travail.md) articule les workflows Matt Pocock,
+le skill [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) pour l’architecture
+et les normes de codage, et Impeccable pour l’interface. Les
+[choix technologiques](docs/architecture-techno.md) restent propres à Chess69.
+L’[audit CU-ARCHI](docs/audit-cu-archi.md) décrit les divergences et corrections proposées.
+
 ```bash
 npm ci
 npm run typecheck

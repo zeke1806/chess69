@@ -13,6 +13,6 @@ Le glossaire contient les termes métier et leurs définitions, sans configurati
 technique. Réutiliser ce vocabulaire dans les interfaces, tickets et tests.
 Les ADR consignent les décisions qui justifient une trace durable.
 
-L’architecture et les technologies restent définies dans leurs documents dédiés.
-Lorsqu’une proposition contredit une convention ou décision existante, signaler
-la contradiction et sa raison plutôt que la remplacer silencieusement.
+L’architecture et les normes de codage viennent du skill
+[CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) ; les technologies restent
+définies dans [les choix technologiques](../architecture-techno.md).

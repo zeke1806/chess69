@@ -124,7 +124,7 @@ téléphone, reprendre le diagnostic à l’étape concernée et fournir une APK
 
 ### Références
 
-- [Mode de travail](../../docs/mode-de-travail.md), [architecture](../../docs/architecture.md), [technologies](../../docs/architecture-techno.md) et [suivi local](../../docs/agents/issue-tracker.md).
+- [Mode de travail](../../docs/mode-de-travail.md), [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md), [technologies](../../docs/architecture-techno.md) et [suivi local](../../docs/agents/issue-tracker.md).
 - [Projet VPS : instructions](../../../vps-perso/AGENTS.md), [exploitation](../../../vps-perso/README.md) et [décision Caddy](../../../vps-perso/docs/adr/0001-docker-caddy-platform.md).
 - [Expo : compilation locale](https://docs.expo.dev/guides/local-app-development/) et [signature des applications](https://docs.expo.dev/app-signing/app-credentials/), consultés pendant le cadrage.
 

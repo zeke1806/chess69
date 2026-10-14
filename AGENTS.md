@@ -1,18 +1,17 @@
 # Chess69
 
 Pour tout besoin produit, implémentation, correction ou travail d’interface,
-appliquer [le mode de travail autonome](docs/mode-de-travail.md) : orchestration,
-skills Matt Pocock et Impeccable, progression, vérification et suivi durable.
+appliquer [le mode de travail de Chess69](docs/mode-de-travail.md) : orchestration,
+skills Matt Pocock, CU-ARCHI et Impeccable, progression, vérification et suivi durable.
 
-Avant de créer, modifier ou revoir du code, lire et appliquer
-[l’architecture du projet](docs/architecture.md) : placement des modules,
-contrats, dépendances, DI fonctionnelle, adaptateurs et tests.
+Avant de concevoir, créer, modifier ou revoir du code, appliquer le skill
+[CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) et ses références.
+Il est la source des règles d’architecture et des normes de codage du projet.
 
 Avant de choisir, installer ou configurer une dépendance, lire
 [les technologies retenues et leur statut](docs/architecture-techno.md).
 
-Pour changer ces conventions, mettre à jour ce document de référence dans la
-même modification. Les instructions explicites de l’utilisateur restent prioritaires.
+Consigner les adaptations propres à Chess69 dans les documents du projet concernés.
 
 ## Agent skills
 

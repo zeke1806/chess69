@@ -1,9 +1,10 @@
 # Technologies de Chess69
 
-Ce document est la référence des choix technologiques. L’organisation du code
-est décrite dans [architecture.md](architecture.md), avec des exemples
-[business](architecture-business-examples.md) et [front](architecture-front-examples.md).
-La structure complète est dans [l’arborescence globale](architecture-arborescence-exemple.md).
+Ce document conserve les choix technologiques et les contraintes de Chess69.
+Les règles d’architecture et les normes de codage sont maintenues dans le skill
+[CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md).
+Son projet de référence illustre les règles ; ses choix de stack ne remplacent
+pas les technologies retenues ici.
 
 ## Technologies retenues
 
@@ -13,15 +14,14 @@ La structure complète est dans [l’arborescence globale](architecture-arboresc
 | React | Composition de l’interface et réactivité | Installé avec React Native |
 | Expo | Outillage et modules Android, compilation d’une APK autonome | Installé ; première APK 0.1.0 |
 | TypeScript en mode strict | Contrats, types et vérification statique | Configuré en mode strict |
-| Zod | Validation des données à l’exécution et types inférés depuis les schémas | Installé ; validation future aux entrées de données |
+| Zod | Validation des données à l’exécution et types inférés depuis les schémas | Installé ; catalogue, état persisté et évaluations moteur validés |
 | Remeda | Transformations fonctionnelles et utilitaires purs | Installé ; disponible pour les transformations utiles |
 | Git | Historique du projet | Initialisé, branche `main` |
 | GitHub | Dépôt distant | `zeke1806/chess69`, remote `origin` configuré |
 
-La DI est écrite manuellement avec des fonctions ; aucune bibliothèque de
-conteneur n’est retenue. Les services front encapsulent leur état et sont
-raccordés à React par un adaptateur. L’exemple utilise `useSyncExternalStore` ;
-aucune bibliothèque supplémentaire de gestion d’état n’est retenue.
+Aucune bibliothèque de conteneur DI ou de gestion d’état supplémentaire n’est
+installée. Le raccordement React actuel utilise `useSyncExternalStore` ; son
+évaluation selon CU-ARCHI figure dans [l’audit d’adoption](audit-cu-archi.md).
 
 ## Briques confirmées
 
@@ -35,15 +35,15 @@ aucune bibliothèque supplémentaire de gestion d’état n’est retenue.
 | Jest + `jest-expo` | Tests unitaires et intégration en mémoire, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
 
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
-[le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). Les tests
-business et front restent sans effets externes ; les tests UI sont séparés.
+[le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). La suite
+actuelle teste les services business et front avec des dépendances en mémoire.
 
-Les repositories en mémoire des exemples servent à démontrer et tester les
-contrats. Ils ne remplacent pas la persistance de l’application finale.
+Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
 
 ## Outils de développement et de distribution
 
 - Skills Matt Pocock et Impeccable : installés localement dans `.agents/skills`.
+- Skill CU-ARCHI : installé dans `/Users/zeke/.agents/skills/cu-archi`.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
   avec Expo SDK 57 ; OpenJDK 17, SDK 36, NDK 27.1.12297006, Gradle 9.3.1.
   Setup et signature : [procédure Android](android-release.md).
@@ -64,8 +64,8 @@ API 36 ARM64 ; les performances et les transferts Samsung restent à vérifier
 sur le Galaxy S22 Ultra.
 
 Les versions exactes sont celles de `package.json` et du
-lockfile. Mettre à jour ici les choix et statuts quand ils changent ; conserver
-les conventions structurelles et de codage dans `architecture.md`.
+lockfile. Mettre à jour ici les choix et statuts quand ils changent ; consulter
+CU-ARCHI pour les conventions structurelles et de codage.
 
 Stockfish est compilé depuis les sources et les réseaux exacts conservés dans
 `android/vendor/stockfish`, avec vérification SHA-256 des NNUE au build. Le
