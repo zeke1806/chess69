@@ -1,3 +1,5 @@
+import { createMemoryDataService } from '../../src/services-business/adapters/data/memory-data-service';
+import type { AnalysisExecutionData } from '../../src/services-business/analysis/analysis-types';
 import { expect, test } from '@jest/globals';
 import { createChessJsRulesService } from '../../src/services-business/adapters/rules/chess-js-rules-service';
 import { createEmptyState } from '../../src/services-business/adapters/repository/repository-types';
@@ -52,6 +54,10 @@ const setup = (
     },
   };
   const dependencies = {
+    data: createMemoryDataService().createData<AnalysisExecutionData>({
+      generation: 0,
+      controller: null,
+    }),
     repository: analysisRepository,
     engine,
     rules: createChessJsRulesService(),
@@ -60,7 +66,13 @@ const setup = (
     analysis: createAnalysisService(dependencies),
 
     restart: () => {
-      return createAnalysisService(dependencies);
+      return createAnalysisService({
+        ...dependencies,
+        data: createMemoryDataService().createData<AnalysisExecutionData>({
+          generation: 0,
+          controller: null,
+        }),
+      });
     },
 
     fail: (value: boolean) => {

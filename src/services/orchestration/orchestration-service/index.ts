@@ -37,14 +37,25 @@ export function createOrchestrationService(
     },
 
     connect: (connector) => {
-      let lifecycle = 0;
-      let context = 0;
-      let disposed = false;
-      let stopFailed = false;
-      let pendingStop: Promise<void> = Promise.resolve();
-      let retryLifecycle: (() => Promise<void>) | null = null;
-      let actions: OrchestrationActions;
-      const frozen = new WeakSet<object>();
+      const runtime = connector.data.createData<
+        Readonly<{
+          lifecycle: number;
+          context: number;
+          disposed: boolean;
+          stopFailed: boolean;
+          pendingStop: Promise<void>;
+          retryLifecycle: (() => Promise<void>) | null;
+          frozen: WeakSet<object>;
+        }>
+      >({
+        lifecycle: 0,
+        context: 0,
+        disposed: false,
+        stopFailed: false,
+        pendingStop: Promise.resolve(),
+        retryLifecycle: null,
+        frozen: new WeakSet<object>(),
+      });
       const learning = dependencies.learning.connect(
         createSliceConnector(
           connector,
@@ -113,12 +124,12 @@ export function createOrchestrationService(
           publishBoard,
         ),
       );
-      actions = {
+      const actions: OrchestrationActions = {
         initialize: async () => {
-          disposed = false;
-          lifecycle += 1;
-          context += 1;
-          const token = lifecycle;
+          runtime.update(R.set('disposed', false));
+          runtime.update(R.set('lifecycle', runtime.read().lifecycle + 1));
+          runtime.update(R.set('context', runtime.read().context + 1));
+          const token = runtime.read().lifecycle;
           leave();
           publish((state) => {
             return R.pipe(
@@ -127,20 +138,20 @@ export function createOrchestrationService(
               R.setPath(['shell', 'error'], null),
             );
           });
-          retryLifecycle = actions.initialize;
+          runtime.update(R.set('retryLifecycle', actions.initialize));
           try {
             await dependencies.lifecycle.initialize();
-            if (!isActive() || token !== lifecycle) {
+            if (!isActive() || token !== runtime.read().lifecycle) {
               return;
             }
             await refreshGlobal();
-            if (!isActive() || token !== lifecycle) {
+            if (!isActive() || token !== runtime.read().lifecycle) {
               return;
             }
-            retryLifecycle = null;
+            runtime.update(R.set('retryLifecycle', null));
             publish(R.setPath(['shell', 'status'], 'ready'));
           } catch {
-            if (isActive() && token === lifecycle) {
+            if (isActive() && token === runtime.read().lifecycle) {
               publish((state) => {
                 return R.pipe(
                   state,
@@ -158,18 +169,19 @@ export function createOrchestrationService(
         foreground: async () => {
           if (
             !isActive() ||
-            (connector.getState().shell.status !== 'ready' && retryLifecycle !== actions.foreground)
+            (connector.getState().shell.status !== 'ready' &&
+              runtime.read().retryLifecycle !== actions.foreground)
           ) {
             return;
           }
           const lease = current();
-          retryLifecycle = actions.foreground;
+          runtime.update(R.set('retryLifecycle', actions.foreground));
           try {
             await refreshGlobal();
             if (!lease.isCurrent()) {
               return;
             }
-            retryLifecycle = null;
+            runtime.update(R.set('retryLifecycle', null));
             publish((state) => {
               return R.pipe(
                 state,
@@ -198,10 +210,10 @@ export function createOrchestrationService(
         },
 
         dispose: async () => {
-          disposed = true;
-          lifecycle += 1;
-          context += 1;
-          retryLifecycle = null;
+          runtime.update(R.set('disposed', true));
+          runtime.update(R.set('lifecycle', runtime.read().lifecycle + 1));
+          runtime.update(R.set('context', runtime.read().context + 1));
+          runtime.update(R.set('retryLifecycle', null));
           leave();
           // Invoke disposal immediately so the infrastructure queues it before a StrictMode restart.
           const stopping = stop();
@@ -246,8 +258,8 @@ export function createOrchestrationService(
         },
 
         retry: async () => {
-          if (retryLifecycle) {
-            await retryLifecycle();
+          if (runtime.read().retryLifecycle) {
+            await runtime.read().retryLifecycle?.();
             return;
           }
           const route = connector.getState().shell.route;
@@ -274,10 +286,10 @@ export function createOrchestrationService(
         if (!isActive()) {
           return current();
         }
-        context += 1;
+        runtime.update(R.set('context', runtime.read().context + 1));
         // Changing journeys must not discard recovery for a failed installation lifecycle.
         if (connector.getState().shell.status !== 'error') {
-          retryLifecycle = null;
+          runtime.update(R.set('retryLifecycle', null));
         }
         leave();
         publish(R.setPath(['shell', 'route'], route));
@@ -292,24 +304,29 @@ export function createOrchestrationService(
       }
 
       function current(): ContextLease {
-        const contextToken = context;
-        const lifecycleToken = lifecycle;
-        if (stopFailed) {
+        const contextToken = runtime.read().context;
+        const lifecycleToken = runtime.read().lifecycle;
+        if (runtime.read().stopFailed) {
           stop();
         }
         return {
           isCurrent: () => {
-            return isActive() && contextToken === context && lifecycleToken === lifecycle;
+            return (
+              isActive() &&
+              contextToken === runtime.read().context &&
+              lifecycleToken === runtime.read().lifecycle
+            );
           },
 
-          ready: pendingStop,
+          ready: runtime.read().pendingStop,
         };
       }
 
       function stop(): Promise<void> {
-        stopFailed = false;
-        const next = pendingStop
-          .catch(() => undefined)
+        runtime.update(R.set('stopFailed', false));
+        const next = runtime
+          .read()
+          .pendingStop.catch(() => undefined)
           .then(async () => {
             const results = await Promise.allSettled([
               dependencies.cancelAnalysis(),
@@ -321,16 +338,16 @@ export function createOrchestrationService(
               }
             }
           });
-        pendingStop = next;
+        runtime.update(R.set('pendingStop', next));
         void next.then(
           () => {
-            if (pendingStop === next) {
-              stopFailed = false;
+            if (runtime.read().pendingStop === next) {
+              runtime.update(R.set('stopFailed', false));
             }
           },
           () => {
-            if (pendingStop === next) {
-              stopFailed = true;
+            if (runtime.read().pendingStop === next) {
+              runtime.update(R.set('stopFailed', true));
             }
           },
         );
@@ -349,7 +366,7 @@ export function createOrchestrationService(
           return;
         }
         connector.setState((state) => {
-          return freezeState(presentShell(update(state)), frozen);
+          return freezeState(presentShell(update(state)), runtime.read().frozen);
         });
         actions?.board.synchronize(presentBoard(connector.getState()));
       }
@@ -359,12 +376,12 @@ export function createOrchestrationService(
           return;
         }
         connector.setState((state) => {
-          return freezeState(update(state), frozen);
+          return freezeState(update(state), runtime.read().frozen);
         });
       }
 
       function isActive(): boolean {
-        return connector.isActive() && !disposed;
+        return connector.isActive() && !runtime.read().disposed;
       }
     },
   };

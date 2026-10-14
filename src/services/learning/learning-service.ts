@@ -7,16 +7,15 @@ import type {
 import type { RulesService } from '../../services-business/adapters/rules/rules-types';
 import type { ContextLease } from '../adapters/stateful/stateful-types';
 import type { LearningActions, LearningUiService } from './learning-types';
-
 type Dependencies = Readonly<{
   catalogue: CatalogueService;
-  createLearning: () => LearningService;
+  learning: LearningService;
   rules: Pick<RulesService, 'position'>;
 }>;
 
 export function createLearningService({
   catalogue,
-  createLearning,
+  learning,
   rules,
 }: Dependencies): LearningUiService {
   return {
@@ -41,13 +40,17 @@ export function createLearningService({
     },
 
     connect: (connector) => {
-      let generation = 0;
-      let lease: ContextLease | null = null;
-      let retry: (() => Promise<void>) | null = null;
-      const learning = createLearning();
+      const runtime = connector.data.createData<
+        Readonly<{
+          generation: number;
+          lease: ContextLease | null;
+          retry: (() => Promise<void>) | null;
+        }>
+      >({ generation: 0, lease: null, retry: null });
+      const sessionData = connector.data.createData(learning.createInitialSession());
       const actions: LearningActions = {
         filter: (kind, theme = null, difficulty = null) => {
-          lease = connector.bindings.enter('list');
+          runtime.update(R.set('lease', connector.bindings.enter('list')));
           connector.setState((state) => {
             return R.pipe(
               state,
@@ -74,7 +77,7 @@ export function createLearningService({
           if (!opening) {
             return;
           }
-          lease = connector.bindings.enter('opening');
+          runtime.update(R.set('lease', connector.bindings.enter('opening')));
           connector.setState((state) => {
             return R.pipe(
               state,
@@ -99,31 +102,31 @@ export function createLearningService({
           const trainedColor =
             color ??
             (catalogue.get(id)?.kind === 'opening' ? connector.getState().color : undefined);
-          lease = connector.bindings.enter('exercise');
-          synchronize(learning.start(id, trainedColor, mode));
+          runtime.update(R.set('lease', connector.bindings.enter('exercise')));
+          synchronize(learning.start(sessionData, id, trainedColor, mode));
         },
 
         move: async (move) => {
           await run(async (isCurrent) => {
-            if (learning.snapshot()?.status === 'playing') {
-              synchronize(learning.play(move));
+            if (learning.snapshot(sessionData)?.status === 'playing') {
+              synchronize(learning.play(sessionData, move));
             }
-            if (learning.snapshot()?.status === 'completed') {
+            if (learning.snapshot(sessionData)?.status === 'completed') {
               await save(isCurrent);
             }
           }, 'Le résultat n’a pas pu être sauvegardé. Touchez Réessayer ; ne quittez pas cet exercice.');
         },
 
         hint: () => {
-          if (lease?.isCurrent() && !connector.getState().busy) {
-            synchronize(learning.hint());
+          if (runtime.read().lease?.isCurrent() && !connector.getState().busy) {
+            synchronize(learning.hint(sessionData));
           }
         },
 
         reveal: async () => {
           await run(async (isCurrent) => {
-            if (learning.snapshot()?.status === 'playing') {
-              synchronize(learning.reveal());
+            if (learning.snapshot(sessionData)?.status === 'playing') {
+              synchronize(learning.reveal(sessionData));
             }
             await save(isCurrent);
           }, 'La solution est visible, mais le résultat n’a pas été sauvegardé. Réessayez.');
@@ -148,15 +151,15 @@ export function createLearningService({
         },
 
         retry: async () => {
-          if (retry) {
-            await retry();
+          if (runtime.read().retry) {
+            await runtime.read().retry?.();
           }
         },
 
         leave: () => {
-          generation += 1;
-          lease = null;
-          retry = null;
+          runtime.update(R.set('generation', runtime.read().generation + 1));
+          runtime.update(R.set('lease', null));
+          runtime.update(R.set('retry', null));
           connector.setState((state) => {
             return R.pipe(
               state,
@@ -176,26 +179,32 @@ export function createLearningService({
         operation: (isCurrent: () => boolean) => Promise<void>,
         error: string,
       ): Promise<void> {
-        if (!connector.isActive() || !lease?.isCurrent() || connector.getState().busy) {
+        if (
+          !connector.isActive() ||
+          !runtime.read().lease?.isCurrent() ||
+          connector.getState().busy
+        ) {
           return;
         }
-        const context = lease;
-        const token = ++generation;
+        const context = runtime.read().lease!;
+        const token = runtime.update(R.set('generation', runtime.read().generation + 1)).generation;
 
         const isCurrent = (): boolean => {
-          return connector.isActive() && context.isCurrent() && token === generation;
+          return connector.isActive() && context.isCurrent() && token === runtime.read().generation;
         };
 
         connector.setState((state) => {
           return R.pipe(state, R.set('busy', true), R.set('error', null));
         });
-        retry = async () => {
-          await run(operation, error);
-        };
+        runtime.update(
+          R.set('retry', async () => {
+            await run(operation, error);
+          }),
+        );
         try {
           await operation(isCurrent);
           if (isCurrent()) {
-            retry = null;
+            runtime.update(R.set('retry', null));
           }
         } catch {
           if (isCurrent()) {
@@ -237,7 +246,7 @@ export function createLearningService({
       }
 
       async function save(isCurrent: () => boolean): Promise<void> {
-        const result = await learning.finish();
+        const result = await learning.finish(sessionData);
         if (!result.ok) {
           throw new Error(result.reason);
         }
@@ -245,7 +254,7 @@ export function createLearningService({
           connector.setState((state) => {
             return R.pipe(
               state,
-              R.set('session', learning.snapshot()),
+              R.set('session', learning.snapshot(sessionData)),
               R.set(
                 'message',
                 result.attempt.outcome === 'success'

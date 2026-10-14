@@ -1,21 +1,22 @@
-import type { LifecycleService } from './lifecycle-types';
+import * as R from 'remeda';
+import type { LifecycleService, LifecycleData } from './lifecycle-types';
 
-export function createLifecycleService(resources: readonly LifecycleService[]): LifecycleService {
-  let initialized = false;
-  let pending: Promise<unknown> = Promise.resolve();
+export function createLifecycleService(
+  resources: readonly LifecycleService[],
+  data: LifecycleData,
+): LifecycleService {
   const managedResources = [...resources];
-
   return {
     initialize: () => {
       return enqueue(async () => {
-        if (initialized) {
+        if (data.read().initialized) {
           return;
         }
         try {
           for (const resource of managedResources) {
             await resource.initialize();
           }
-          initialized = true;
+          data.update(R.set('initialized', true));
         } catch (error) {
           // Preserve the initialization error while releasing partial resources.
           await closeResources().catch(() => undefined);
@@ -30,13 +31,18 @@ export function createLifecycleService(resources: readonly LifecycleService[]): 
   };
 
   function enqueue(operation: () => Promise<void>): Promise<void> {
-    const result = pending.then(operation);
-    pending = result.catch(() => undefined);
+    const result = data.read().pending.then(operation);
+    data.update(
+      R.set(
+        'pending',
+        result.catch(() => undefined),
+      ),
+    );
     return result;
   }
 
   async function closeResources(): Promise<void> {
-    initialized = false;
+    data.update(R.set('initialized', false));
     const results = await Promise.allSettled(
       managedResources.toReversed().map(async (resource) => resource.dispose()),
     );

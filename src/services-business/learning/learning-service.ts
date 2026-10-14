@@ -7,6 +7,7 @@ import type {
   LearningResult,
   LearningService,
   LearningSnapshot,
+  LearningSessionData,
 } from './learning-types';
 
 export function createLearningService({
@@ -16,17 +17,17 @@ export function createLearningService({
   clock,
   ids,
 }: LearningDependencies): LearningService {
-  let current: LearningSnapshot | null = null;
-  let paths: ReadonlyArray<ReadonlyArray<string>> = [];
-  let saving = false;
-  let saved: LearningResult | null = null;
   return {
-    snapshot: () => {
-      return current;
+    createInitialSession: () => {
+      return { current: null, paths: [], saving: false, saved: null };
     },
 
-    start(contentId, color, mode = 'memory') {
-      if (saving) {
+    snapshot: (data) => {
+      return data.read().current;
+    },
+
+    start(data, contentId, color, mode = 'memory') {
+      if (data.read().saving) {
         return { ok: false, reason: 'saving' };
       }
       const exercise = catalogue.get(contentId);
@@ -37,161 +38,188 @@ export function createLearningService({
       if (exercise.kind !== 'opening' && trainedColor !== exercise.side) {
         return { ok: false, reason: 'wrong-color' };
       }
-      paths = [exercise.moves, ...exercise.alternatives];
-      saved = null;
-      current = advance({
-        exercise,
-        color: trainedColor,
-        mode,
-        fen: exercise.fen,
-        ply: 0,
-        status: 'playing',
-        legalMoves: [],
-        expectedMove: null,
-        lastMove: null,
-        errorCount: 0,
-        assisted: mode === 'guided',
-        hint: null,
-        feedback: null,
-      });
-      return { ok: true, snapshot: current };
-    },
-
-    play(move) {
-      const guard = canPlay();
-      if (guard) {
-        return guard;
-      }
-      const session = current!;
-      const nextFen = rules.play(session.fen, [], move)?.fen;
-      if (!nextFen) {
-        current = Object.freeze(R.set(session, 'feedback', 'illegal'));
-        return { ok: true, snapshot: current };
-      }
-      const matching = R.filter(paths, (path) => path[session.ply] === move);
-      if (matching.length === 0) {
-        current = Object.freeze(
-          R.pipe(
-            session,
-            R.set('errorCount', session.errorCount + 1),
-            R.set('feedback', 'incorrect'),
-            R.set('expectedMove', paths[0]?.[session.ply] ?? null),
-          ),
-        );
-        return { ok: true, snapshot: current };
-      }
-      paths = matching;
-      current = advance(
-        R.merge(session, {
-          fen: nextFen,
-          ply: session.ply + 1,
-          lastMove: move,
-          feedback: 'correct',
-          hint: null,
-        } satisfies Partial<LearningSnapshot>),
-      );
-      return { ok: true, snapshot: current };
-    },
-
-    hint() {
-      const guard = canPlay();
-      if (guard) {
-        return guard;
-      }
-      const session = current!;
-      const hintIndex = Math.min(Math.floor(session.ply / 2), session.exercise.hints.length - 1);
-      current = Object.freeze(
-        R.pipe(
-          session,
-          R.set('assisted', true),
-          R.set('hint', session.exercise.hints[hintIndex] ?? session.exercise.explanation),
-          R.set('expectedMove', paths[0]?.[session.ply] ?? null),
+      data.update(R.set('paths', [exercise.moves, ...exercise.alternatives]));
+      data.update(R.set('saved', null));
+      data.update(
+        R.set(
+          'current',
+          advance(data, {
+            exercise,
+            color: trainedColor,
+            mode,
+            fen: exercise.fen,
+            ply: 0,
+            status: 'playing',
+            legalMoves: [],
+            expectedMove: null,
+            lastMove: null,
+            errorCount: 0,
+            assisted: mode === 'guided',
+            hint: null,
+            feedback: null,
+          }),
         ),
       );
-      return { ok: true, snapshot: current };
+      return { ok: true, snapshot: data.read().current! };
     },
 
-    reveal() {
-      const guard = canPlay();
+    play(data, move) {
+      const guard = canPlay(data);
       if (guard) {
         return guard;
       }
-      const session = current!;
-      let fen = session.fen;
-      const path = paths[0]!;
-      for (const move of path.slice(session.ply)) {
+      const snapshot = data.read().current!;
+      const nextFen = rules.play(snapshot.fen, [], move)?.fen;
+      if (!nextFen) {
+        data.update(R.set('current', Object.freeze(R.set(snapshot, 'feedback', 'illegal'))));
+        return { ok: true, snapshot: data.read().current! };
+      }
+      const matching = R.filter(data.read().paths, (path) => path[snapshot.ply] === move);
+      if (matching.length === 0) {
+        data.update(
+          R.set(
+            'current',
+            Object.freeze(
+              R.pipe(
+                snapshot,
+                R.set('errorCount', snapshot.errorCount + 1),
+                R.set('feedback', 'incorrect'),
+                R.set('expectedMove', data.read().paths[0]?.[snapshot.ply] ?? null),
+              ),
+            ),
+          ),
+        );
+        return { ok: true, snapshot: data.read().current! };
+      }
+      data.update(R.set('paths', matching));
+      data.update(
+        R.set(
+          'current',
+          advance(
+            data,
+            R.merge(snapshot, {
+              fen: nextFen,
+              ply: snapshot.ply + 1,
+              lastMove: move,
+              feedback: 'correct',
+              hint: null,
+            } satisfies Partial<LearningSnapshot>),
+          ),
+        ),
+      );
+      return { ok: true, snapshot: data.read().current! };
+    },
+
+    hint(data) {
+      const guard = canPlay(data);
+      if (guard) {
+        return guard;
+      }
+      const snapshot = data.read().current!;
+      const hintIndex = Math.min(Math.floor(snapshot.ply / 2), snapshot.exercise.hints.length - 1);
+      data.update(
+        R.set(
+          'current',
+          Object.freeze(
+            R.pipe(
+              snapshot,
+              R.set('assisted', true),
+              R.set('hint', snapshot.exercise.hints[hintIndex] ?? snapshot.exercise.explanation),
+              R.set('expectedMove', data.read().paths[0]?.[snapshot.ply] ?? null),
+            ),
+          ),
+        ),
+      );
+      return { ok: true, snapshot: data.read().current! };
+    },
+
+    reveal(data) {
+      const guard = canPlay(data);
+      if (guard) {
+        return guard;
+      }
+      const snapshot = data.read().current!;
+      let fen = snapshot.fen;
+      const path = data.read().paths[0]!;
+      for (const move of path.slice(snapshot.ply)) {
         const nextFen = rules.play(fen, [], move)?.fen;
         if (nextFen) {
           fen = nextFen;
         }
       }
-      current = Object.freeze(
-        R.merge(session, {
-          fen,
-          ply: path.length,
-          lastMove: path.at(-1) ?? null,
-          assisted: true,
-          status: 'revealed',
-          legalMoves: [],
-          expectedMove: null,
-          hint: session.exercise.explanation,
-        } satisfies Partial<LearningSnapshot>),
+      data.update(
+        R.set(
+          'current',
+          Object.freeze(
+            R.merge(snapshot, {
+              fen,
+              ply: path.length,
+              lastMove: path.at(-1) ?? null,
+              assisted: true,
+              status: 'revealed',
+              legalMoves: [],
+              expectedMove: null,
+              hint: snapshot.exercise.explanation,
+            } satisfies Partial<LearningSnapshot>),
+          ),
+        ),
       );
-      return { ok: true, snapshot: current };
+      return { ok: true, snapshot: data.read().current! };
     },
 
-    async finish() {
+    async finish(data) {
+      const { saving, saved, current: snapshot } = data.read();
       if (saving) {
         return { ok: false, reason: 'saving' };
       }
       if (saved) {
         return saved;
       }
-      if (!current) {
+      if (!snapshot) {
         return { ok: false, reason: 'not-started' };
       }
-      if (current.status === 'playing') {
+      if (snapshot.status === 'playing') {
         return { ok: false, reason: 'unfinished' };
       }
-      const session = current;
       const now = clock.now();
       const attempt: Attempt = {
         id: ids.id(),
-        contentId: session.exercise.id,
-        kind: session.exercise.kind,
-        outcome: session.errorCount > 0 ? 'failed' : session.assisted ? 'assisted' : 'success',
+        contentId: snapshot.exercise.id,
+        kind: snapshot.exercise.kind,
+        outcome: snapshot.errorCount > 0 ? 'failed' : snapshot.assisted ? 'assisted' : 'success',
         at: now.toISOString(),
         day: localDay(now),
       };
-      saving = true;
-      const reviewKey = `${attempt.contentId}:${session.color}`;
+      data.update(R.set('saving', true));
+      const reviewKey = `${attempt.contentId}:${snapshot.color}`;
       try {
         const review = await repository.saveAttempt(
           attempt,
-          session.exercise.kind === 'opening' ? reviewKey : undefined,
-          session.exercise.kind === 'opening'
+          snapshot.exercise.kind === 'opening' ? reviewKey : undefined,
+          snapshot.exercise.kind === 'opening'
             ? (previous) => {
-                return scheduleReview(previous, attempt, now, session.color);
+                return scheduleReview(previous, attempt, now, snapshot.color);
               }
             : undefined,
         );
-        saved = { ok: true, attempt, review };
-        current = Object.freeze(R.set(session, 'status', 'saved'));
-        return saved;
+        data.update(R.set('saved', { ok: true, attempt, review }));
+        data.update(R.set('current', Object.freeze(R.set(snapshot, 'status', 'saved'))));
+        return data.read().saved!;
       } catch {
         return { ok: false, reason: 'save-failed' };
       } finally {
-        saving = false;
+        data.update(R.set('saving', false));
       }
     },
   };
 
-  function canPlay(): Extract<
+  function canPlay(data: LearningSessionData): Extract<
     LearningAction,
     {
       ok: false;
     }
   > | null {
+    const { saving, current } = data.read();
     if (saving) {
       return { ok: false, reason: 'saving' };
     }
@@ -204,31 +232,37 @@ export function createLearningService({
     return null;
   }
 
-  function advance(session: LearningSnapshot): LearningSnapshot {
-    let fen = session.fen;
-    let ply = session.ply;
-    let lastMove = session.lastMove;
-    const path = paths[0]!;
-    while (ply < path.length && rules.position(fen).turn !== session.color) {
+  function advance(data: LearningSessionData, snapshot: LearningSnapshot): LearningSnapshot {
+    let fen = snapshot.fen;
+    let ply = snapshot.ply;
+    let lastMove = snapshot.lastMove;
+    const path = data.read().paths[0]!;
+    while (ply < path.length && rules.position(fen).turn !== snapshot.color) {
       const move = path[ply]!;
       const nextFen = rules.play(fen, [], move)?.fen;
       if (!nextFen) {
-        throw new Error(`Invalid catalogue move ${session.exercise.id}:${ply}`);
+        throw new Error(`Invalid catalogue move ${snapshot.exercise.id}:${ply}`);
       }
       fen = nextFen;
       lastMove = move;
-      paths = R.filter(paths, (candidate) => candidate[ply] === move);
+      data.update(
+        R.set(
+          'paths',
+          R.filter(data.read().paths, (candidate) => candidate[ply] === move),
+        ),
+      );
       ply += 1;
     }
-    const complete = paths.some((candidate) => ply >= candidate.length);
+    const complete = data.read().paths.some((candidate) => ply >= candidate.length);
     return Object.freeze(
-      R.merge(session, {
+      R.merge(snapshot, {
         fen,
         ply,
         lastMove,
         status: complete ? 'completed' : 'playing',
         legalMoves: complete ? [] : Object.freeze([...rules.position(fen).legalMoves]),
-        expectedMove: !complete && session.mode === 'guided' ? (paths[0]?.[ply] ?? null) : null,
+        expectedMove:
+          !complete && snapshot.mode === 'guided' ? (data.read().paths[0]?.[ply] ?? null) : null,
       } satisfies Partial<LearningSnapshot>),
     );
   }

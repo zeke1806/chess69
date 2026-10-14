@@ -9,6 +9,7 @@ export function createSliceConnector<Key extends keyof OrchestrationState, Bindi
   publish: (update: (state: OrchestrationState) => OrchestrationState) => void,
 ): StateConnector<OrchestrationState[Key], Bindings> {
   return {
+    data: connector.data,
     isActive,
 
     getState: () => {

@@ -1,3 +1,4 @@
+import { createMemoryDataService } from '../../src/services-business/adapters/data/memory-data-service';
 import * as R from 'remeda';
 import { createServicesFront } from '../../src/services/di';
 import { createLearningService } from '../../src/services-business/learning/learning-service';
@@ -19,6 +20,8 @@ export function connect(service: OrchestrationService) {
   let state = service.createInitialState();
   let active = true;
   const actions = service.connect({
+    data: createMemoryDataService(),
+
     isActive: () => {
       return active;
     },
@@ -119,29 +122,27 @@ export function gameContext(
       },
     },
   });
-  // A custom catalogue needs its own Learning factory; standard scenarios use the composed business module.
+  // Custom catalogue logic shares the same explicit per-connection session storage.
   const business: ServicesBusiness = catalogue
     ? {
         ...base,
         catalogue,
 
-        createLearning: () => {
-          return createLearningService({
-            catalogue,
-            repository: repository.learning,
-            rules: base.rules,
-            clock: {
-              now: () => {
-                return new Date('2026-10-13T12:00:00Z');
-              },
+        learning: createLearningService({
+          catalogue,
+          repository: repository.learning,
+          rules: base.rules,
+          clock: {
+            now: () => {
+              return new Date('2026-10-13T12:00:00Z');
             },
-            ids: {
-              id: () => {
-                return `attempt-${++sequence}`;
-              },
+          },
+          ids: {
+            id: () => {
+              return `attempt-${++sequence}`;
             },
-          });
-        },
+          },
+        }),
       }
     : base;
   const definition = createServicesFront({

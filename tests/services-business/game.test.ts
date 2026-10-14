@@ -1,3 +1,5 @@
+import { createMemoryDataService } from '../../src/services-business/adapters/data/memory-data-service';
+import type { GameExecutionData } from '../../src/services-business/game/game-types';
 import { expect, test } from '@jest/globals';
 import { createChessJsRulesService } from '../../src/services-business/adapters/rules/chess-js-rules-service';
 import { createMemoryRepositoryService } from '../../src/services-business/adapters/repository/repository-service';
@@ -28,6 +30,11 @@ const setup = (engine?: EngineService) => {
     },
   };
   const dependencies = {
+    data: createMemoryDataService().createData<GameExecutionData>({
+      busy: false,
+      generation: 0,
+      thinking: null,
+    }),
     repository: gameRepository,
     rules: createChessJsRulesService(),
     engine: engine ?? {
@@ -60,7 +67,14 @@ const setup = (engine?: EngineService) => {
     game: createGameService(dependencies),
 
     restart: () => {
-      return createGameService(dependencies);
+      return createGameService({
+        ...dependencies,
+        data: createMemoryDataService().createData<GameExecutionData>({
+          busy: false,
+          generation: 0,
+          thinking: null,
+        }),
+      });
     },
 
     fail: (value: boolean) => {

@@ -1,21 +1,13 @@
 import * as R from 'remeda';
-import { exerciseSchema, openingSchema, type CatalogueService } from '../catalogue-types';
-import exercisesData from './exercises.json';
-import openingsData from './openings.json';
+import type { CatalogueService } from '../catalogue-types';
+import type { CatalogueDataService } from '../../adapters/catalogue-data/catalogue-data-types';
 
-export function createCatalogueService(): CatalogueService {
-  const exercises = Object.freeze(
-    R.map(exercisesData, (value) => freezeContent(exerciseSchema.parse(value))),
-  );
-  const openings = Object.freeze(
-    R.map(openingsData, (value) => freezeContent(openingSchema.parse(value))),
-  );
-  const byId = new Map(R.map(exercises, (exercise) => [exercise.id, exercise]));
+export function createCatalogueService(data: CatalogueDataService): CatalogueService {
   return {
     list: (filter = {}) => {
       return Object.freeze(
         R.filter(
-          exercises,
+          data.read().exercises,
           (exercise) =>
             (!filter.kind || exercise.kind === filter.kind) &&
             (!filter.theme || exercise.theme === filter.theme) &&
@@ -25,20 +17,11 @@ export function createCatalogueService(): CatalogueService {
     },
 
     get: (id) => {
-      return byId.get(id);
+      return data.find(id);
     },
 
     openings: () => {
-      return openings;
+      return data.read().openings;
     },
   };
-}
-
-function freezeContent<T extends object>(value: T): T {
-  for (const child of Object.values(value)) {
-    if (child && typeof child === 'object') {
-      freezeContent(child);
-    }
-  }
-  return Object.freeze(value);
 }

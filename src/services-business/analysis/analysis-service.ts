@@ -18,20 +18,19 @@ export class AnalysisError extends Error {
 }
 
 export const createAnalysisService = ({
+  data,
   repository,
   rules,
   engine,
 }: AnalysisDependencies): AnalysisService => {
-  let generation = 0;
-  let controller: AbortController | null = null;
   return {
     analyze: async (gameId, options = {}) => {
-      if (controller) {
+      if (data.read().controller) {
         throw new AnalysisError('busy');
       }
-      const token = ++generation;
+      const token = data.update(R.set('generation', data.read().generation + 1)).generation;
       const current = new AbortController();
-      controller = current;
+      data.update(R.set('controller', current));
 
       const onAbort = () => {
         return current.abort();
@@ -43,7 +42,7 @@ export const createAnalysisService = ({
       options.signal?.addEventListener('abort', onAbort, { once: true });
 
       const isCurrent = () => {
-        return token === generation && !current.signal.aborted;
+        return token === data.read().generation && !current.signal.aborted;
       };
 
       try {
@@ -115,8 +114,8 @@ export const createAnalysisService = ({
         return view(record, game);
       } finally {
         options.signal?.removeEventListener('abort', onAbort);
-        if (token === generation) {
-          controller = null;
+        if (token === data.read().generation) {
+          data.update(R.set('controller', null));
         }
       }
     },
@@ -127,16 +126,16 @@ export const createAnalysisService = ({
     },
 
     cancel: async () => {
-      if (!controller) {
+      if (!data.read().controller) {
         return;
       }
-      ++generation;
-      const cancelled = controller;
+      data.update(R.set('generation', data.read().generation + 1));
+      const cancelled = data.read().controller!;
       cancelled.abort();
       // A failed physical stop retains the guard so Retry must contact the engine again.
       await engine.cancel();
-      if (controller === cancelled) {
-        controller = null;
+      if (data.read().controller === cancelled) {
+        data.update(R.set('controller', null));
       }
     },
   };

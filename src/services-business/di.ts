@@ -1,3 +1,10 @@
+import { createBundledCatalogueDataService } from './adapters/catalogue-data/bundled-catalogue-data-service';
+import type { CatalogueDataService } from './adapters/catalogue-data/catalogue-data-types';
+import { createMemoryDataService } from './adapters/data/memory-data-service';
+import type { DataService } from './adapters/data/data-types';
+import type { GameExecutionData } from './game/game-types';
+import type { AnalysisExecutionData } from './analysis/analysis-types';
+import { createInitialLifecycleData } from './lifecycle/lifecycle-types';
 import { createLifecycleService } from './lifecycle/lifecycle-service';
 import type { LifecycleService } from './lifecycle/lifecycle-types';
 import { createNativeClockService } from './adapters/clock/native-clock-service';
@@ -22,7 +29,7 @@ import type { ClockService } from './adapters/clock/clock-types';
 import type { IdentityService } from './adapters/identity/identity-types';
 export interface ServicesBusiness {
   readonly catalogue: CatalogueService;
-  readonly createLearning: () => LearningService;
+  readonly learning: LearningService;
   readonly game: GameService;
   readonly analysis: AnalysisService;
   readonly progression: ProgressionService;
@@ -30,6 +37,8 @@ export interface ServicesBusiness {
   readonly lifecycle: LifecycleService;
 }
 export type ServicesBusinessDependencies = Readonly<{
+  data?: DataService;
+  catalogueData?: CatalogueDataService;
   repository?: RepositoryService;
   engine?: EngineService;
   clock?: ClockService;
@@ -39,27 +48,45 @@ export type ServicesBusinessDependencies = Readonly<{
 export const createServicesBusiness = (
   dependencies: ServicesBusinessDependencies = {},
 ): ServicesBusiness => {
+  const data = dependencies.data ?? createMemoryDataService();
+  const gameData = data.createData<GameExecutionData>({
+    busy: false,
+    generation: 0,
+    thinking: null,
+  });
+  const analysisData = data.createData<AnalysisExecutionData>({ generation: 0, controller: null });
+  const lifecycleData = data.createData(createInitialLifecycleData());
   const repository = dependencies.repository ?? createSQLiteRepositoryService();
   const engine = dependencies.engine ?? createStockfishEngineService();
   const rules = createChessJsRulesService();
   const clock = dependencies.clock ?? createNativeClockService();
   const ids = dependencies.ids ?? createNativeIdentityService();
-  const catalogue = createCatalogueService();
-
-  const createLearning = () => {
-    return createLearningService({
-      repository: repository.learning,
-      rules,
-      clock,
-      ids,
-      catalogue,
-    });
-  };
-
-  const game = createGameService({ repository: repository.game, rules, clock, ids, engine });
-  const analysis = createAnalysisService({ repository: repository.analysis, rules, engine });
+  const catalogueData = dependencies.catalogueData ?? createBundledCatalogueDataService();
+  const catalogue = createCatalogueService(catalogueData);
+  const game = createGameService({
+    data: gameData,
+    repository: repository.game,
+    rules,
+    clock,
+    ids,
+    engine,
+  });
+  const analysis = createAnalysisService({
+    data: analysisData,
+    repository: repository.analysis,
+    rules,
+    engine,
+  });
   const progression = createProgressionService({ repository: repository.progression, clock });
-  const lifecycle = createLifecycleService([repository, engine]);
+  const lifecycle = createLifecycleService([repository, engine], lifecycleData);
 
-  return { catalogue, rules, createLearning, game, analysis, progression, lifecycle };
+  const learning = createLearningService({
+    repository: repository.learning,
+    rules,
+    clock,
+    ids,
+    catalogue,
+  });
+
+  return { catalogue, rules, learning, game, analysis, progression, lifecycle };
 };

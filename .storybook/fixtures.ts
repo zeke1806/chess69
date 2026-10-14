@@ -1,3 +1,4 @@
+import { createBundledCatalogueDataService } from '../src/services-business/adapters/catalogue-data/bundled-catalogue-data-service';
 import * as R from 'remeda';
 import packageInfo from '../package.json';
 import { createCatalogueService } from '../src/services-business/catalogue/catalogue-service';
@@ -19,7 +20,7 @@ export const noopAsync = async () => {
   return;
 };
 
-const catalogue = createCatalogueService();
+const catalogue = createCatalogueService(createBundledCatalogueDataService());
 const rules = createChessJsRulesService();
 const exercise = catalogue.get('opening-italienne-1')!;
 const opening = catalogue.openings()[0]!;

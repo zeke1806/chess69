@@ -1,3 +1,4 @@
+import { createMemoryDataService } from '../../../src/services-business/adapters/data/memory-data-service';
 import { createServicesBusiness } from '../../../src/services-business/di';
 import { createMemoryRepositoryService } from '../../../src/services-business/adapters/repository/repository-service';
 import { createEmptyState } from '../../../src/services-business/adapters/repository/repository-types';
@@ -31,6 +32,8 @@ function connect<State, Actions, Bindings>(
   let state = service.createInitialState();
   let active = true;
   const actions = service.connect({
+    data: createMemoryDataService(),
+
     getState: () => {
       return state;
     },
@@ -307,21 +310,17 @@ test('11 — une sauvegarde d’apprentissage terminée après démontage ne pub
   const base = gameContext();
   const entered = deferred();
   const released = deferred();
-  const original = base.business.createLearning;
+  const original = base.business.learning;
   const connection = front({
     ...base.business,
+    learning: {
+      ...original,
 
-    createLearning: () => {
-      const learning = original();
-      return {
-        ...learning,
-
-        finish: async () => {
-          entered.resolve();
-          await released.promise;
-          return learning.finish();
-        },
-      };
+      finish: async (data) => {
+        entered.resolve();
+        await released.promise;
+        return original.finish(data);
+      },
     },
   });
   await connection.actions.initialize();

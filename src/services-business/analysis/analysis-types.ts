@@ -1,3 +1,4 @@
+import type { StateData } from '../adapters/data/data-types';
 import type { GameRecord } from '../game/game-types';
 import { z } from 'zod';
 import { evaluationSchema } from '../adapters/engine/engine-types';
@@ -58,6 +59,7 @@ export interface AnalysisService {
   readonly cancel: () => Promise<void>;
 }
 export type AnalysisDependencies = Readonly<{
+  data: StateData<AnalysisExecutionData>;
   repository: AnalysisRepository;
   rules: Pick<RulesService, 'position'>;
   engine: Pick<EngineService, 'evaluate' | 'cancel'>;
@@ -74,3 +76,8 @@ export interface AnalysisRepository {
     isCurrent: () => boolean,
   ) => Promise<AnalysisRecord | null>;
 }
+
+export type AnalysisExecutionData = Readonly<{
+  generation: number;
+  controller: AbortController | null;
+}>;

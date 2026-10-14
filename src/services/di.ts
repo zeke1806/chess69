@@ -15,7 +15,7 @@ type Dependencies = Readonly<{ version: string; business: ServicesBusiness }>;
 export function createServicesFront({ version, business }: Dependencies): ServicesFront {
   const learning = createLearningService({
     catalogue: business.catalogue,
-    createLearning: business.createLearning,
+    learning: business.learning,
     rules: business.rules,
   });
   const game = createGameService({

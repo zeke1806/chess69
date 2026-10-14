@@ -1,4 +1,6 @@
+import type { DataService } from '../../../services-business/adapters/data/data-types';
 export interface StateConnector<State, Bindings = undefined> {
+  readonly data: DataService;
   readonly isActive: () => boolean;
   readonly getState: () => State;
   readonly setState: (update: (state: State) => State) => void;

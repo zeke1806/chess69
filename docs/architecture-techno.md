@@ -27,7 +27,20 @@ Le module `services-business/lifecycle` coordonne le cycle de vie commun de SQLi
 et du moteur : ouverture séquentielle, fermeture de toutes les ressources et
 reprise après échec. La DI expose `business.lifecycle` ; l’orchestration de
 présentation consomme ce contrat. Les adaptateurs conservent leurs cycles de vie
-propres. Le contrôle architectural vérifie aussi le rôle strict des deux DI.
+propres. Le contrôle architectural vérifie aussi le rôle strict des deux DI
+et les états conservés dans la construction/connexion des services.
+
+Le module business `learning` est partagé : ses opérations reçoivent un port
+`LearningSessionData`. La connexion de présentation alloue ce port avec le
+fournisseur `data` de son connecteur. Recréer la logique conserve une session
+si son stockage est réutilisé ; deux ports distincts isolent les exercices.
+`services-business/adapters/data` conserve en mémoire les sessions et données
+de coordination des opérations. Game, Analysis et Lifecycle reçoivent leurs
+ports à la composition ; les parcours front reçoivent des ports par connexion.
+SQLite conserve les tentatives, parties, analyses et révisions durables.
+`adapters/catalogue-data` charge, valide et indexe les JSON embarqués ; le module
+Catalogue filtre cette source injectée sans posséder les données. Aucun format
+SQLite ni dépendance native n’est modifié par cette séparation.
 
 ## Briques confirmées
 

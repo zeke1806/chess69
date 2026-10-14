@@ -1,3 +1,4 @@
+import { createMemoryDataService } from '../../../services-business/adapters/data/memory-data-service';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { StatefulConnection, StatefulService } from './stateful-types';
 
@@ -14,11 +15,14 @@ export function useStatefulService<State, Actions, Bindings>(
   bindings?: Bindings,
 ): StatefulConnection<State, Actions> {
   const [state, setState] = useState(service.createInitialState);
+  const [data] = useState(createMemoryDataService);
   const stateRef = useRef(state);
   const bindingsRef = useRef(bindings);
   const mounted = useRef(false);
   const [actions] = useState(() =>
     service.connect({
+      data,
+
       isActive: () => {
         return mounted.current;
       },

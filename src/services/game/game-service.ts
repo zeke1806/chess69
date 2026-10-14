@@ -7,7 +7,6 @@ import type {
 import type { ProgressionService } from '../../services-business/progression/progression-types';
 import type { ContextLease } from '../adapters/stateful/stateful-types';
 import type { GameActions, GameUiService } from './game-types';
-
 type Dependencies = Readonly<{
   game: Omit<GameService, 'get'>;
   preferences: ProgressionService['preferences'];
@@ -31,20 +30,31 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
     },
 
     connect: (connector) => {
-      let generation = 0;
-      let thinkingGeneration = 0;
-      let refreshGeneration = 0;
-      let optionsDirty = false;
-      let pendingOptions: GameOptions | null = null;
-      let retry: (() => Promise<void>) | null = null;
+      const runtime = connector.data.createData<
+        Readonly<{
+          generation: number;
+          thinkingGeneration: number;
+          refreshGeneration: number;
+          optionsDirty: boolean;
+          pendingOptions: GameOptions | null;
+          retry: (() => Promise<void>) | null;
+        }>
+      >({
+        generation: 0,
+        thinkingGeneration: 0,
+        refreshGeneration: 0,
+        optionsDirty: false,
+        pendingOptions: null,
+        retry: null,
+      });
       const actions: GameActions = {
         changeColor: (color) => {
-          optionsDirty = true;
+          runtime.update(R.set('optionsDirty', true));
           connector.setState(R.setPath(['options', 'color'], color));
         },
 
         changeLevel: (level) => {
-          optionsDirty = true;
+          runtime.update(R.set('optionsDirty', true));
           connector.setState(R.setPath(['options', 'level'], level));
         },
 
@@ -53,12 +63,12 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
           if (!connector.isActive() || connector.getState().busy) {
             return;
           }
-          const options = confirmed ? pendingOptions : connector.getState().options;
+          const options = confirmed ? runtime.read().pendingOptions : connector.getState().options;
           if (!options) {
             return;
           }
           const lease = connector.bindings.enter('game');
-          pendingOptions = options;
+          runtime.update(R.set('pendingOptions', options));
           await run(
             async (isCurrent) => {
               await lease.ready;
@@ -69,8 +79,8 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
                 const session = await game.start(options, confirmed);
                 committed = true;
                 if (isCurrent()) {
-                  optionsDirty = false;
-                  pendingOptions = null;
+                  runtime.update(R.set('optionsDirty', false));
+                  runtime.update(R.set('pendingOptions', null));
                   connector.setState((state) => {
                     return R.pipe(
                       state,
@@ -113,7 +123,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
         },
 
         dismissReplacement: () => {
-          pendingOptions = null;
+          runtime.update(R.set('pendingOptions', null));
           connector.setState(R.set('replacementRequired', false));
         },
 
@@ -271,13 +281,15 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             return;
           }
           const lease = connector.bindings.current();
-          const token = ++thinkingGeneration;
+          const token = runtime.update(
+            R.set('thinkingGeneration', runtime.read().thinkingGeneration + 1),
+          ).thinkingGeneration;
 
           const isCurrent = (): boolean => {
             return (
               connector.isActive() &&
               lease.isCurrent() &&
-              token === thinkingGeneration &&
+              token === runtime.read().thinkingGeneration &&
               connector.getState().session?.record.id === session.record.id
             );
           };
@@ -305,11 +317,16 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             await connector.bindings.refreshGlobal();
           } catch {
             if (isCurrent()) {
-              retry = committed
-                ? async () => {
-                    await recoverGlobal('Impossible de relire les données locales. Réessayez.');
-                  }
-                : actions.think;
+              runtime.update(
+                R.set(
+                  'retry',
+                  committed
+                    ? async () => {
+                        await recoverGlobal('Impossible de relire les données locales. Réessayez.');
+                      }
+                    : actions.think,
+                ),
+              );
               connector.setState((state) => {
                 return R.pipe(
                   state,
@@ -329,13 +346,15 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
         },
 
         refresh: async () => {
-          const token = ++refreshGeneration;
+          const token = runtime.update(
+            R.set('refreshGeneration', runtime.read().refreshGeneration + 1),
+          ).refreshGeneration;
           const [activeGame, history, saved] = await Promise.all([
             game.resume(),
             game.history(),
             preferences(),
           ]);
-          if (!connector.isActive() || token !== refreshGeneration) {
+          if (!connector.isActive() || token !== runtime.read().refreshGeneration) {
             return;
           }
           connector.setState((state) => {
@@ -345,23 +364,25 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
               R.set('history', history),
               R.set(
                 'options',
-                optionsDirty ? state.options : { color: saved.color, level: saved.level },
+                runtime.read().optionsDirty
+                  ? state.options
+                  : { color: saved.color, level: saved.level },
               ),
             );
           });
         },
 
         retry: async () => {
-          if (retry) {
-            await retry();
+          if (runtime.read().retry) {
+            await runtime.read().retry?.();
           }
         },
 
         leave: () => {
-          generation += 1;
-          thinkingGeneration += 1;
-          retry = null;
-          pendingOptions = null;
+          runtime.update(R.set('generation', runtime.read().generation + 1));
+          runtime.update(R.set('thinkingGeneration', runtime.read().thinkingGeneration + 1));
+          runtime.update(R.set('retry', null));
+          runtime.update(R.set('pendingOptions', null));
           connector.setState((state) => {
             return R.pipe(
               state,
@@ -404,24 +425,28 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
         if (!connector.isActive() || !lease.isCurrent() || connector.getState().busy) {
           return;
         }
-        const token = ++generation;
+        const token = runtime.update(R.set('generation', runtime.read().generation + 1)).generation;
 
         const isCurrent = (): boolean => {
-          return connector.isActive() && lease.isCurrent() && token === generation;
+          return connector.isActive() && lease.isCurrent() && token === runtime.read().generation;
         };
 
         connector.setState((state) => {
           return R.pipe(state, R.set('busy', true), R.set('error', null));
         });
-        retry =
-          restart ??
-          (async () => {
-            await run(operation, error, connector.bindings.current());
-          });
+        runtime.update(
+          R.set(
+            'retry',
+            restart ??
+              (async () => {
+                await run(operation, error, connector.bindings.current());
+              }),
+          ),
+        );
         try {
           await operation(isCurrent);
           if (isCurrent()) {
-            retry = null;
+            runtime.update(R.set('retry', null));
           }
         } catch {
           if (isCurrent()) {

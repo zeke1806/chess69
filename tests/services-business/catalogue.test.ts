@@ -1,9 +1,10 @@
+import { createBundledCatalogueDataService } from '../../src/services-business/adapters/catalogue-data/bundled-catalogue-data-service';
 import { expect, test } from '@jest/globals';
 import { Chess } from 'chess.js';
 import { createCatalogueService } from '../../src/services-business/catalogue/catalogue-service';
 
 test('le catalogue embarque huit répertoires, 24 variantes, 120 tactiques et 24 finales sans doublon', () => {
-  const catalogue = createCatalogueService();
+  const catalogue = createCatalogueService(createBundledCatalogueDataService());
   expect(catalogue.openings()).toHaveLength(8);
   expect(catalogue.list({ kind: 'opening' })).toHaveLength(24);
   expect(catalogue.list({ kind: 'puzzle' })).toHaveLength(120);
@@ -20,7 +21,7 @@ test('le catalogue embarque huit répertoires, 24 variantes, 120 tactiques et 24
 });
 
 test('chaque position et chaque réponse prévue sont légales et atteignent le véritable objectif annoncé', () => {
-  const catalogue = createCatalogueService();
+  const catalogue = createCatalogueService(createBundledCatalogueDataService());
   const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
   const material = (chess: Chess, side: 'w' | 'b') => {
@@ -69,7 +70,7 @@ test('chaque position et chaque réponse prévue sont légales et atteignent le 
 });
 
 test('les six thèmes tactiques proposent chacun vingt positions et des filtres combinables', () => {
-  const catalogue = createCatalogueService();
+  const catalogue = createCatalogueService(createBundledCatalogueDataService());
   for (const theme of [
     'Mat',
     'Fourchette',

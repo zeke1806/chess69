@@ -9,7 +9,6 @@ import type {
   AnalysisState,
   AnalysisUiService,
 } from './analysis-types';
-
 type Dependencies = Readonly<{
   analysis: AnalysisService;
   game: Pick<GameService, 'get'>;
@@ -33,25 +32,33 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
     },
 
     connect: (connector) => {
-      let generation = 0;
-      let calculationGeneration = 0;
-      let retry: (() => Promise<void>) | null = null;
+      const runtime = connector.data.createData<
+        Readonly<{
+          generation: number;
+          calculationGeneration: number;
+          retry: (() => Promise<void>) | null;
+        }>
+      >({ generation: 0, calculationGeneration: 0, retry: null });
       const actions: AnalysisActions = {
         open: async (id) => {
           if (!connector.isActive() || connector.getState().busy) {
             return;
           }
           const lease = connector.bindings.enter();
-          const token = ++generation;
+          const token = runtime.update(
+            R.set('generation', runtime.read().generation + 1),
+          ).generation;
 
           const isCurrent = (): boolean => {
-            return connector.isActive() && lease.isCurrent() && token === generation;
+            return connector.isActive() && lease.isCurrent() && token === runtime.read().generation;
           };
 
           update(R.pipe(connector.getState(), R.set('busy', true), R.set('error', null)));
-          retry = async () => {
-            await actions.open(id);
-          };
+          runtime.update(
+            R.set('retry', async () => {
+              await actions.open(id);
+            }),
+          );
           try {
             await lease.ready;
             if (!isCurrent()) {
@@ -68,7 +75,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             if (!isCurrent()) {
               return;
             }
-            retry = null;
+            runtime.update(R.set('retry', null));
             update(
               R.pipe(
                 connector.getState(),
@@ -107,14 +114,20 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             return;
           }
           const lease = connector.bindings.current();
-          const token = ++calculationGeneration;
+          const token = runtime.update(
+            R.set('calculationGeneration', runtime.read().calculationGeneration + 1),
+          ).calculationGeneration;
 
           const isCurrent = (): boolean => {
-            return connector.isActive() && lease.isCurrent() && token === calculationGeneration;
+            return (
+              connector.isActive() &&
+              lease.isCurrent() &&
+              token === runtime.read().calculationGeneration
+            );
           };
 
           update(R.pipe(connector.getState(), R.set('analyzing', true), R.set('error', null)));
-          retry = actions.analyze;
+          runtime.update(R.set('retry', actions.analyze));
           try {
             await lease.ready;
             if (!isCurrent()) {
@@ -128,7 +141,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
               },
             });
             if (isCurrent()) {
-              retry = null;
+              runtime.update(R.set('retry', null));
               update(
                 R.pipe(
                   connector.getState(),
@@ -165,10 +178,16 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             return;
           }
           const lease = connector.bindings.current();
-          const token = ++calculationGeneration;
+          const token = runtime.update(
+            R.set('calculationGeneration', runtime.read().calculationGeneration + 1),
+          ).calculationGeneration;
 
           const isCurrent = (): boolean => {
-            return connector.isActive() && lease.isCurrent() && token === calculationGeneration;
+            return (
+              connector.isActive() &&
+              lease.isCurrent() &&
+              token === runtime.read().calculationGeneration
+            );
           };
 
           update(R.set(connector.getState(), 'analyzing', false));
@@ -189,7 +208,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             }
           } catch {
             if (isCurrent()) {
-              retry = actions.cancel;
+              runtime.update(R.set('retry', actions.cancel));
               update(
                 R.set(
                   connector.getState(),
@@ -220,15 +239,15 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
         },
 
         retry: async () => {
-          if (retry) {
-            await retry();
+          if (runtime.read().retry) {
+            await runtime.read().retry?.();
           }
         },
 
         leave: () => {
-          generation += 1;
-          calculationGeneration += 1;
-          retry = null;
+          runtime.update(R.set('generation', runtime.read().generation + 1));
+          runtime.update(R.set('calculationGeneration', runtime.read().calculationGeneration + 1));
+          runtime.update(R.set('retry', null));
           update(
             R.pipe(
               connector.getState(),

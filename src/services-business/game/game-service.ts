@@ -10,15 +10,13 @@ export class GameError extends Error {
 }
 
 export const createGameService = ({
+  data,
   repository,
   rules,
   clock,
   ids,
   engine,
 }: GameDependencies): GameService => {
-  let busy = false;
-  let generation = 0;
-  let thinking: AbortController | null = null;
   return {
     start: (options, replaceConfirmed = false) => {
       return mutate(async () => {
@@ -73,17 +71,17 @@ export const createGameService = ({
     },
 
     think: async () => {
-      if (busy || thinking) {
+      if (data.read().busy || data.read().thinking) {
         throw new GameError('busy');
       }
-      const token = ++generation;
+      const token = data.update(R.set('generation', data.read().generation + 1)).generation;
       const controller = new AbortController();
 
       const isCurrent = () => {
-        return token === generation && !controller.signal.aborted;
+        return token === data.read().generation && !controller.signal.aborted;
       };
 
-      thinking = controller;
+      data.update(R.set('thinking', controller));
       try {
         let bestMove: string | null;
         const record = await active();
@@ -120,23 +118,23 @@ export const createGameService = ({
         await save(record, updated, isCurrent);
         return isCurrent() ? session(updated) : null;
       } finally {
-        if (token === generation) {
-          thinking = null;
+        if (token === data.read().generation) {
+          data.update(R.set('thinking', null));
         }
       }
     },
 
     cancelThinking: async () => {
-      if (!thinking) {
+      if (!data.read().thinking) {
         return;
       }
-      ++generation;
-      const cancelled = thinking;
+      data.update(R.set('generation', data.read().generation + 1));
+      const cancelled = data.read().thinking!;
       cancelled.abort();
       // A failed physical stop retains the guard so Retry must contact the engine again.
       await engine.cancel();
-      if (thinking === cancelled) {
-        thinking = null;
+      if (data.read().thinking === cancelled) {
+        data.update(R.set('thinking', null));
       }
     },
 
@@ -160,14 +158,14 @@ export const createGameService = ({
   };
 
   async function mutate<T>(action: () => Promise<T>): Promise<T> {
-    if (busy || thinking) {
+    if (data.read().busy || data.read().thinking) {
       throw new GameError('busy');
     }
-    busy = true;
+    data.update(R.set('busy', true));
     try {
       return await action();
     } finally {
-      busy = false;
+      data.update(R.set('busy', false));
     }
   }
 

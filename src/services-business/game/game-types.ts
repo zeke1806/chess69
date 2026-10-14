@@ -1,3 +1,4 @@
+import type { StateData } from '../adapters/data/data-types';
 import { z } from 'zod';
 import { engineLevelSchema } from '../adapters/engine/engine-types';
 import { chessColorSchema } from '../adapters/rules/rules-types';
@@ -50,6 +51,7 @@ export interface GameService {
   readonly get: (id: string) => Promise<GameSession | null>;
 }
 export type GameDependencies = Readonly<{
+  data: StateData<GameExecutionData>;
   repository: GameRepository;
   rules: RulesService;
   engine: Pick<EngineService, 'evaluate' | 'cancel'>;
@@ -74,3 +76,9 @@ export interface GameRepository {
     isCurrent?: () => boolean,
   ) => Promise<boolean>;
 }
+
+export type GameExecutionData = Readonly<{
+  busy: boolean;
+  generation: number;
+  thinking: AbortController | null;
+}>;

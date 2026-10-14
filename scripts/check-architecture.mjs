@@ -40,6 +40,9 @@ for (const file of files) {
     if (isComposition) {
       checkComposition(source, file, node);
     }
+    if ((isBusiness || isPresentation) && !isAdapter && !isComposition) {
+      checkServiceData(source, file, node);
+    }
     if (
       ts.isArrowFunction(node) &&
       (ts.isVariableDeclaration(node.parent) ||
@@ -254,6 +257,54 @@ function checkComposition(source, file, node) {
         : '';
     if (!/^create[A-Z]/.test(factory) && node.expression.getText(source) !== 'Object.freeze') {
       report(source, file, node, 'DI : appel autre qu’une fabrique de composition.');
+    }
+  }
+}
+
+function checkServiceData(source, file, node) {
+  if (!ts.isVariableStatement(node)) {
+    return;
+  }
+  if (ts.isSourceFile(node.parent) && !(node.declarationList.flags & ts.NodeFlags.Const)) {
+    report(
+      source,
+      file,
+      node,
+      'Service : état global mutable à conserver dans un adaptateur injecté.',
+    );
+    return;
+  }
+  if (!ts.isBlock(node.parent)) {
+    return;
+  }
+  const owner = node.parent.parent;
+  if (!ts.isFunctionLike(owner)) {
+    return;
+  }
+  const name = owner.name?.getText(source) ?? owner.parent?.name?.getText(source) ?? '';
+  if (!/^create[A-Z]/.test(name) && name !== 'connect') {
+    return;
+  }
+  if (!(node.declarationList.flags & ts.NodeFlags.Const)) {
+    report(
+      source,
+      file,
+      node,
+      'Service : données entre appels à conserver dans un adaptateur injecté.',
+    );
+  }
+  for (const declaration of node.declarationList.declarations) {
+    if (
+      declaration.initializer &&
+      ts.isNewExpression(declaration.initializer) &&
+      /^(Map|Set|WeakMap|WeakSet)$/.test(declaration.initializer.expression.getText(source))
+    ) {
+      report(
+        source,
+        file,
+        declaration,
+        'Service : collection conservée à déplacer vers un adaptateur de données.',
+      );
     }
   }
 }

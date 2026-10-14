@@ -23,16 +23,19 @@ export function createProgressionService(
     },
 
     connect: (connector) => {
-      let generation = 0;
-      let retry: (() => Promise<void>) | null = null;
+      const runtime = connector.data.createData<
+        Readonly<{ generation: number; retry: (() => Promise<void>) | null }>
+      >({ generation: 0, retry: null });
       const actions = {
         refresh: async (): Promise<void> => {
-          const token = ++generation;
+          const token = runtime.update(
+            R.set('generation', runtime.read().generation + 1),
+          ).generation;
           const [summary, preferences] = await Promise.all([
             dependencies.progression.summary(),
             dependencies.progression.preferences(),
           ]);
-          if (!connector.isActive() || token !== generation) {
+          if (!connector.isActive() || token !== runtime.read().generation) {
             return;
           }
           connector.setState((state) => {
@@ -51,13 +54,13 @@ export function createProgressionService(
           connector.setState((state) => {
             return R.pipe(state, R.set('busy', true), R.set('error', null));
           });
-          retry = actions.dismissOnboarding;
+          runtime.update(R.set('retry', actions.dismissOnboarding));
           try {
             await dependencies.progression.markOnboarded();
             if (!connector.isActive()) {
               return;
             }
-            retry = null;
+            runtime.update(R.set('retry', null));
             connector.setState(R.set('onboarding', false));
           } catch {
             if (connector.isActive()) {
@@ -71,8 +74,8 @@ export function createProgressionService(
         },
 
         retry: async (): Promise<void> => {
-          if (retry) {
-            await retry();
+          if (runtime.read().retry) {
+            await runtime.read().retry?.();
           }
         },
       };

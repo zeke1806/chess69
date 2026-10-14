@@ -1,3 +1,4 @@
+import type { StateData } from '../adapters/data/data-types';
 import { z } from 'zod';
 import { exerciseKindSchema } from '../catalogue/catalogue-types';
 import type { CatalogueService, Exercise } from '../catalogue/catalogue-types';
@@ -70,13 +71,27 @@ export type LearningDependencies = Readonly<{
   clock: ClockService;
   ids: Pick<IdentityService, 'id'>;
 }>;
+export type LearningSessionState = Readonly<{
+  current: LearningSnapshot | null;
+  paths: ReadonlyArray<ReadonlyArray<string>>;
+  saving: boolean;
+  saved: LearningResult | null;
+}>;
+export interface LearningSessionData extends StateData<LearningSessionState> {}
+
 export interface LearningService {
-  readonly start: (contentId: string, color?: ChessColor, mode?: LearningMode) => LearningAction;
-  readonly snapshot: () => LearningSnapshot | null;
-  readonly play: (move: string) => LearningAction;
-  readonly hint: () => LearningAction;
-  readonly reveal: () => LearningAction;
-  readonly finish: () => Promise<LearningResult>;
+  readonly createInitialSession: () => LearningSessionState;
+  readonly start: (
+    data: LearningSessionData,
+    contentId: string,
+    color?: ChessColor,
+    mode?: LearningMode,
+  ) => LearningAction;
+  readonly snapshot: (data: LearningSessionData) => LearningSnapshot | null;
+  readonly play: (data: LearningSessionData, move: string) => LearningAction;
+  readonly hint: (data: LearningSessionData) => LearningAction;
+  readonly reveal: (data: LearningSessionData) => LearningAction;
+  readonly finish: (data: LearningSessionData) => Promise<LearningResult>;
 }
 export interface LearningRepository {
   readonly saveAttempt: (
