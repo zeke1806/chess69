@@ -7,7 +7,7 @@ import { shellState, noop } from '../../../../.storybook/fixtures';
 import { layout } from '../common/theme';
 
 const meta = {
-  title: 'Business/ApplicationShell',
+  title: 'Business/Layout/ApplicationShell',
   component: ApplicationShell,
   args: {
     state: shellState,

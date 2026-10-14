@@ -3,7 +3,7 @@ import { Button } from './button';
 import { noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Common/Button',
+  title: 'Common/Buttons/Button',
   component: Button,
   args: { label: 'Commencer une partie', onPress: noop },
 } satisfies Meta<typeof Button>;

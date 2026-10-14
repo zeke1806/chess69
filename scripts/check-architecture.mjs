@@ -28,6 +28,10 @@ for (const file of files) {
   const isAdapter = file.includes('/adapters/');
   if (isComponent && file.endsWith('.tsx')) {
     components += 1;
+    const story = file.replace(/\.tsx$/, '.stories.tsx');
+    if (!files.includes(story)) {
+      report(source, file, source, `Vue sans stories correspondantes : ${story}.`);
+    }
   }
   if (/-type\.ts$/.test(file) || file.includes('/adapter/') || file.includes('/services-front/')) {
     report(source, file, source, 'Ancien chemin de module.');
@@ -35,8 +39,12 @@ for (const file of files) {
   if (isComponent && !/^src\/ui\/components\/(common|business)\//.test(file)) {
     report(source, file, source, 'Composant hors common/business.');
   }
+  const namespaces = isComponent ? findPresentationNamespaces(source) : new Set();
 
   function visit(node) {
+    if (isComponent) {
+      checkStateless(source, file, node, namespaces);
+    }
     if (isComposition) {
       checkComposition(source, file, node);
     }
@@ -87,30 +95,6 @@ for (const file of files) {
     }
     if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
       const imported = node.moduleSpecifier.text;
-      if (isComponent && imported === 'react') {
-        const bindings = node.importClause?.namedBindings;
-        if (
-          bindings &&
-          ts.isNamedImports(bindings) &&
-          bindings.elements.some((element) =>
-            /^use[A-Z]/.test((element.propertyName ?? element.name).text),
-          )
-        ) {
-          report(source, file, node, 'Hook React dans une vue stateless.');
-        }
-      }
-      if (isComponent && imported === 'react-native') {
-        const bindings = node.importClause?.namedBindings;
-        if (
-          bindings &&
-          ts.isNamedImports(bindings) &&
-          bindings.elements.some((element) =>
-            /^use[A-Z]/.test((element.propertyName ?? element.name).text),
-          )
-        ) {
-          report(source, file, node, 'Hook natif dans une vue stateless.');
-        }
-      }
       if (
         (isBusiness || isPresentation) &&
         !isAdapter &&
@@ -161,7 +145,7 @@ if (problems.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Architecture : ${files.length} sources, ${components} vues stateless, ${assignedFunctions} fonctions affectées avec blocs ; frontières et imports sans cycle.`,
+    `Architecture : ${files.length} sources, ${components} vues stateless avec stories, ${assignedFunctions} fonctions affectées avec blocs ; frontières et imports sans cycle.`,
   );
 }
 
@@ -202,6 +186,189 @@ function resolveLocal(file, imported) {
 function report(source, file, node, message) {
   const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
   problems.push(`${file}:${line} ${message}`);
+}
+
+function hasRuntimeImport(clause) {
+  if (!clause) {
+    return true;
+  }
+  if (clause.isTypeOnly) {
+    return false;
+  }
+  if (clause.name || !clause.namedBindings || ts.isNamespaceImport(clause.namedBindings)) {
+    return true;
+  }
+  return (
+    clause.namedBindings.elements.length === 0 ||
+    clause.namedBindings.elements.some((element) => !element.isTypeOnly)
+  );
+}
+
+function findPresentationNamespaces(source) {
+  const namespaces = new Set();
+  const aliases = [];
+
+  function visit(node) {
+    if (
+      ts.isImportDeclaration(node) &&
+      ts.isStringLiteral(node.moduleSpecifier) &&
+      /^(react(?:-native(?:-web)?)?|react-native-safe-area-context)$/.test(
+        node.moduleSpecifier.text,
+      ) &&
+      hasRuntimeImport(node.importClause)
+    ) {
+      const clause = node.importClause;
+      if (clause?.name) {
+        namespaces.add(clause.name.text);
+      }
+      if (clause?.namedBindings && ts.isNamespaceImport(clause.namedBindings)) {
+        namespaces.add(clause.namedBindings.name.text);
+      }
+    }
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.initializer &&
+      ts.isIdentifier(node.initializer)
+    ) {
+      aliases.push([node.name.text, node.initializer.text]);
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(source);
+  let size;
+  do {
+    size = namespaces.size;
+    for (const [alias, original] of aliases) {
+      if (namespaces.has(original)) {
+        namespaces.add(alias);
+      }
+    }
+  } while (size !== namespaces.size);
+  return namespaces;
+}
+
+function checkStateless(source, file, node, namespaces) {
+  if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+    if (!hasRuntimeImport(node.importClause)) {
+      return;
+    }
+    checkStatelessDependency(source, file, node, node.moduleSpecifier.text);
+    const bindings = node.importClause?.namedBindings;
+    if (bindings && ts.isNamedImports(bindings)) {
+      for (const element of bindings.elements) {
+        if (!element.isTypeOnly) {
+          checkStatelessMember(source, file, element, (element.propertyName ?? element.name).text);
+        }
+      }
+    }
+  }
+  if (
+    ts.isExportDeclaration(node) &&
+    !node.isTypeOnly &&
+    node.moduleSpecifier &&
+    ts.isStringLiteral(node.moduleSpecifier) &&
+    (!node.exportClause ||
+      !ts.isNamedExports(node.exportClause) ||
+      node.exportClause.elements.some((element) => !element.isTypeOnly))
+  ) {
+    checkStatelessDependency(source, file, node, node.moduleSpecifier.text);
+  }
+  if (
+    ts.isImportEqualsDeclaration(node) &&
+    !node.isTypeOnly &&
+    ts.isExternalModuleReference(node.moduleReference) &&
+    node.moduleReference.expression &&
+    ts.isStringLiteral(node.moduleReference.expression)
+  ) {
+    checkStatelessDependency(source, file, node, node.moduleReference.expression.text);
+  }
+  if (
+    ts.isCallExpression(node) &&
+    (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+      (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
+  ) {
+    const imported = node.arguments[0];
+    if (imported && ts.isStringLiteral(imported)) {
+      checkStatelessDependency(source, file, node, imported.text);
+    } else {
+      report(source, file, node, 'Import dynamique non vérifiable dans une vue stateless.');
+    }
+  }
+  if (
+    (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) &&
+    ts.isIdentifier(node.expression) &&
+    namespaces.has(node.expression.text)
+  ) {
+    const member = ts.isPropertyAccessExpression(node) ? node.name : node.argumentExpression;
+    if (member && (ts.isIdentifier(member) || ts.isStringLiteral(member))) {
+      checkStatelessMember(source, file, node, member.text);
+    }
+  }
+  if (
+    ts.isVariableDeclaration(node) &&
+    ts.isObjectBindingPattern(node.name) &&
+    node.initializer &&
+    ts.isIdentifier(node.initializer) &&
+    namespaces.has(node.initializer.text)
+  ) {
+    for (const element of node.name.elements) {
+      const member = element.propertyName ?? element.name;
+      if (ts.isIdentifier(member) || ts.isStringLiteral(member)) {
+        checkStatelessMember(source, file, element, member.text);
+      }
+    }
+  }
+  if (
+    ts.isCallExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    /^(fetch|XMLHttpRequest|WebSocket)$/.test(node.expression.text)
+  ) {
+    report(source, file, node, 'I/O réseau dans une vue stateless.');
+  }
+  if (
+    ts.isNewExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    /^(XMLHttpRequest|WebSocket)$/.test(node.expression.text)
+  ) {
+    report(source, file, node, 'I/O réseau dans une vue stateless.');
+  }
+}
+
+function checkStatelessMember(source, file, node, member) {
+  if (/^use[A-Z]/.test(member) || member === 'use') {
+    report(source, file, node, 'Hook dans une vue stateless.');
+  }
+  if (
+    /^(Alert|Linking|AppState|BackHandler|NativeModules|NativeEventEmitter|TurboModuleRegistry|Vibration|PermissionsAndroid|DevSettings)$/.test(
+      member,
+    )
+  ) {
+    report(source, file, node, `I/O natif dans une vue stateless : ${member}.`);
+  }
+}
+
+function checkStatelessDependency(source, file, node, imported) {
+  const target = imported.startsWith('.')
+    ? path.normalize(path.join(path.dirname(file), imported))
+    : imported;
+  if (
+    /^(src\/services(?:-business)?\/|src\/ui\/features\/|src\/app\/)/.test(target) ||
+    /\/(?:adapters|features)\//.test(target) ||
+    /^(expo(?:-|\/|$)|node:|@react-native(?:-community|-async-storage)?\/|chess\.js$)/.test(
+      imported,
+    ) ||
+    /^react-native\//.test(imported) ||
+    /^react-native-(?!web(?:\/|$)|svg(?:\/|$)|safe-area-context(?:\/|$))/.test(imported)
+  ) {
+    report(
+      source,
+      file,
+      node,
+      `Dépendance exécutable interdite dans une vue stateless : ${imported}.`,
+    );
+  }
 }
 
 function checkComposition(source, file, node) {

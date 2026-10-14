@@ -25,7 +25,18 @@ npx expo install --check
 npx expo-doctor
 ```
 
-Les tests rapides utilisent les contrats publics et des dépendances injectées, sans réseau ni moteur natif. Les tests de persistance SQLite traversent aussi un adaptateur Expo substitué par le vrai SQLite Node dans des bases temporaires. Les 17 composants common/business disposent de 66 stories React Native Web : `npm run storybook:dev` ouvre le catalogue, `npm run storybook:test` vérifie son build et ses interactions. Voir [.storybook/README.md](.storybook/README.md). Le fonctionnement natif exige Android ; le catalogue web et Expo Go ne remplacent pas l’APK.
+Les tests rapides utilisent les contrats publics et des dépendances injectées, sans réseau ni moteur natif. Les tests de persistance SQLite traversent aussi un adaptateur Expo substitué par le vrai SQLite Node dans des bases temporaires.
+
+Pour inspecter l’interface dans un navigateur, lancer `npm run storybook:dev`
+depuis la racine du dépôt, puis ouvrir [http://localhost:6006](http://localhost:6006).
+Le catalogue `Common` / `Business` présente les composants et les écrans complets
+sous `Business/Pages/Application`. La commande **Largeur** permet de comparer
+360, 412 et 480 px. Les stories utilisent les mêmes vues stateless que
+l’application Android. `npm run storybook:build` produit `storybook-static/` ;
+`npm run storybook:test` contrôle son build et ses interactions après installation
+de Chromium via `npx playwright install chromium`.
+Voir [.storybook/README.md](.storybook/README.md) pour le catalogue et ses contrôles.
+Le rendu web s’inspecte sans appareil Android ; les preuves natives exigent l’APK.
 
 Les [preuves CU-ARCHI 0.2.1](.scratch/corrections-cu-archi/verification.md) couvrent cette livraison locale et sa mise à jour sans effacement. Elles complètent les preuves de la version publique 0.2.0.
 

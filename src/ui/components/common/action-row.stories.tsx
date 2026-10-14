@@ -3,7 +3,7 @@ import { ActionRow } from './action-row';
 import { noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Common/ActionRow',
+  title: 'Common/Buttons/ActionRow',
   component: ActionRow,
   args: {
     title: 'Résoudre un puzzle',

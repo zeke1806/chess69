@@ -18,6 +18,16 @@ d’ingénierie, CU-ARCHI pour les normes, et
 Lire le skill applicable ; les documents du projet conservent seulement les
 adaptations et décisions propres à Chess69.
 
+Avant de concevoir, créer, modifier ou revoir du code, lire et appliquer
+[CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) et les sections applicables
+de ses [règles](/Users/zeke/.agents/skills/cu-archi/references/architecture.md).
+Consulter les exemples utiles du projet de référence, puis adapter la réalisation
+aux technologies de Chess69. Les vues common et business sont stateless : leurs
+données et callbacks arrivent par props ; les services portent les transitions
+et les features raccordent l’état, les effets et les dimensions au framework.
+Le catalogue Storybook garde deux racines, `Common` et `Business`, regroupées
+par thèmes ; chaque composant réutilisable dispose de variantes représentatives.
+
 | Besoin | Skills à utiliser selon le travail |
 | --- | --- |
 | Cadrage et critères de fin | `to-spec` |
@@ -66,8 +76,12 @@ reprise, lire cette carte, les tickets concernés et l’état Git.
 
 Consigner les contrôles réellement effectués et leurs limites dans le ticket.
 Tout travail se fait dans le dépôt principal, sur une nouvelle branche dédiée,
-sans worktree, y compris pour les sous-agents. Après l’implémentation et les
-vérifications, regrouper les éventuels commits intermédiaires en un seul commit
+sans worktree, y compris pour les sous-agents. Créer cette branche dès le cadrage
+et la spec, puis y garder l’implémentation, les corrections de vérification ou de
+revue et les éventuelles specs complémentaires jusqu’à la livraison complète.
+La création d’une nouvelle spec avant livraison poursuit le même travail sur
+la même branche. Après l’implémentation et les vérifications, regrouper les
+éventuels commits intermédiaires en un seul commit
 avec un titre clair et un corps décrivant les modifications, les décisions et
 les contrôles. Fusionner cette branche sur `main` par avance rapide, puis la
 supprimer sans attendre les retours utilisateur. Une correction après livraison

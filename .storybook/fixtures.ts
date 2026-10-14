@@ -8,7 +8,11 @@ import type { GameState, GameActions } from '../src/services/game/game-types';
 import type { AnalysisState, AnalysisActions } from '../src/services/analysis/analysis-types';
 import type { ProgressionState } from '../src/services/progression/progression-types';
 import type { BoardState, BoardActions } from '../src/services/board/board-types';
-import type { ShellState } from '../src/services/orchestration/orchestration-types';
+import type {
+  OrchestrationState,
+  OrchestrationActions,
+  ShellState,
+} from '../src/services/orchestration/orchestration-types';
 import type { ProgressionSummary } from '../src/services-business/progression/progression-types';
 import type { GameSession } from '../src/services-business/game/game-types';
 
@@ -305,4 +309,33 @@ export const checkBoard: BoardState = {
   targets: [],
   promotion: [],
   turnMessage: 'Trait aux blancs · Roi en échec',
+};
+
+export const applicationState: OrchestrationState = {
+  shell: shellState,
+  learning: learningState,
+  game: gameState,
+  analysis: analysisState,
+  progression: progressionState,
+  board: boardState,
+};
+
+export const applicationActions: OrchestrationActions = {
+  initialize: noopAsync,
+  foreground: noopAsync,
+  dispose: noopAsync,
+  navigate: noop,
+
+  back: () => {
+    return false;
+  },
+
+  openPractice: noop,
+  startRecommendedPractice: noop,
+  retry: noopAsync,
+  learning: learningActions,
+  game: gameActions,
+  analysis: analysisActions,
+  progression: { refresh: noopAsync, dismissOnboarding: noopAsync, retry: noopAsync },
+  board: { ...boardActions, synchronize: noop, reset: noop },
 };

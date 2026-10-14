@@ -3,7 +3,7 @@ import { Choice } from './choice';
 import { noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Common/Choice',
+  title: 'Common/Inputs/Choice',
   component: Choice,
   args: { label: 'Travailler les blancs', selected: false, onPress: noop },
 } satisfies Meta<typeof Choice>;

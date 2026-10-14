@@ -3,7 +3,7 @@ import { HistoryScreen } from './history-screen';
 import { gameState, noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/HistoryScreen',
+  title: 'Business/Pages/HistoryScreen',
   component: HistoryScreen,
   args: { state: gameState, onAnalysis: noop },
 } satisfies Meta<typeof HistoryScreen>;

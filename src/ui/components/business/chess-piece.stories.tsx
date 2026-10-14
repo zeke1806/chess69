@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ChessPiece } from './chess-piece';
 
 const meta = {
-  title: 'Business/ChessPiece',
+  title: 'Business/Chess/ChessPiece',
   component: ChessPiece,
   args: { piece: 'K', size: 54 },
 } satisfies Meta<typeof ChessPiece>;

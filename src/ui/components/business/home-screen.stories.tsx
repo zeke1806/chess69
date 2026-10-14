@@ -4,7 +4,7 @@ import { HomeScreen } from './home-screen';
 import { progressionState, gameSession, emptySummary, noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/HomeScreen',
+  title: 'Business/Pages/HomeScreen',
   component: HomeScreen,
   args: {
     state: { ...progressionState, activeGame: null },

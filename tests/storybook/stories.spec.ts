@@ -125,10 +125,10 @@ test('2. Les écrans et la promotion restent lisibles aux largeurs 412 et 480 px
   page,
 }) => {
   const captures = [
-    { id: 'business-homescreen--first-launch', text: 'Bienvenue à l’échiquier' },
-    { id: 'business-applicationshell--error', text: 'Le moteur ne répond pas' },
-    { id: 'business-chessboard--promotion', text: 'Promouvoir le pion' },
-    { id: 'business-analysisscreen--partial', text: 'Continuer l’analyse' },
+    { id: 'business-pages-homescreen--first-launch', text: 'Bienvenue à l’échiquier' },
+    { id: 'business-layout-applicationshell--error', text: 'Le moteur ne répond pas' },
+    { id: 'business-chess-chessboard--promotion', text: 'Promouvoir le pion' },
+    { id: 'business-pages-analysisscreen--partial', text: 'Continuer l’analyse' },
   ];
   for (const width of [412, 480]) {
     await page.setViewportSize({ width, height: 915 });

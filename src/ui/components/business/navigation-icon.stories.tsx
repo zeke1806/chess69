@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { NavigationIcon } from './navigation-icon';
 
 const meta = {
-  title: 'Business/NavigationIcon',
+  title: 'Business/Chess/NavigationIcon',
   component: NavigationIcon,
   args: { kind: 'home', color: '#FF9F43' },
 } satisfies Meta<typeof NavigationIcon>;

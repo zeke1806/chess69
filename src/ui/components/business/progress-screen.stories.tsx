@@ -4,7 +4,7 @@ import { ProgressScreen } from './progress-screen';
 import { progressionState, emptySummary, noop } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/ProgressScreen',
+  title: 'Business/Pages/ProgressScreen',
   component: ProgressScreen,
   args: { state: progressionState, onExercise: noop, onHistory: noop },
 } satisfies Meta<typeof ProgressScreen>;

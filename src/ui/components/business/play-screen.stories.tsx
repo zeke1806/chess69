@@ -4,7 +4,7 @@ import { PlayScreen } from './play-screen';
 import { gameState, gameSession, gameActions } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/PlayScreen',
+  title: 'Business/Pages/PlayScreen',
   component: PlayScreen,
   args: { state: gameState, actions: gameActions },
 } satisfies Meta<typeof PlayScreen>;

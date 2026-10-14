@@ -6,7 +6,7 @@ import { Chessboard } from './chessboard';
 import { boardState, boardActions } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/ExerciseScreen',
+  title: 'Business/Pages/ExerciseScreen',
   component: ExerciseScreen,
   args: {
     state: learningState,

@@ -10,7 +10,7 @@ import {
 } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/Chessboard',
+  title: 'Business/Chess/Chessboard',
   component: Chessboard,
   args: { state: boardState, actions: boardActions, pieceSize: 42 },
 } satisfies Meta<typeof Chessboard>;

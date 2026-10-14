@@ -19,7 +19,7 @@
     "storybook:build": "storybook build --output-dir storybook-static",
     "storybook:test": "npm run storybook:build && playwright test --config .storybook/playwright.config.ts",
     "check:architecture": "node scripts/check-architecture.mjs",
-    "storybook:dev": "storybook dev --port 6006 --no-open"
+    "storybook:dev": "storybook dev --host 127.0.0.1 --port 6006 --exact-port --no-open"
   },
   "dependencies": {
     "chess.js": "^1.4.0",

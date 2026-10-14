@@ -4,7 +4,7 @@ import { LearnScreen } from './learn-screen';
 import { learningState, learningActions, puzzles, endgames } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/LearnScreen',
+  title: 'Business/Pages/LearnScreen',
   component: LearnScreen,
   args: { state: learningState, actions: learningActions },
 } satisfies Meta<typeof LearnScreen>;

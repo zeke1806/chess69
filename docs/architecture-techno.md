@@ -72,8 +72,14 @@ Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
   pour conserver l'espacement des fonctions d'objet demandé pour Chess69.
 - Storybook avec le framework officiel React Native Web/Vite : catalogue de
   composants isolé dans `.storybook`, sans changement de l’entrée Expo ni
-  ajout de dépendance native. Les preuves de stories web et d’APK Android
-  sont distinctes. Playwright contrôle le rendu des stories statiques.
+  ajout de dépendance native. Les racines `Common` et `Business` regroupent
+  les composants par thèmes. `Business/Pages/Application` assemble les écrans
+  actuels avec le shell réel via `ApplicationScreen`, vue stateless partagée
+  avec l’application. Le raccordement aux services et aux APIs Android reste
+  dans la feature. `npm run storybook:dev` sert le catalogue web sur
+  `http://localhost:6006` ; voir [son guide](../.storybook/README.md) pour les
+  largeurs mobiles et le build statique. Les preuves de stories web et d’APK
+  Android sont distinctes. Playwright contrôle le rendu des stories statiques.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
   avec Expo SDK 57 ; OpenJDK 17, SDK 36, NDK 27.1.12297006, Gradle 9.3.1.
   Setup et signature : [procédure Android](android-release.md).

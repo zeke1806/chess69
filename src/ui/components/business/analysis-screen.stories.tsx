@@ -10,7 +10,7 @@ import { Chessboard } from './chessboard';
 import { boardState, boardActions } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/AnalysisScreen',
+  title: 'Business/Pages/AnalysisScreen',
   component: AnalysisScreen,
   args: {
     state: analysisState,

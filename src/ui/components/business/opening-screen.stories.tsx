@@ -4,7 +4,7 @@ import { OpeningScreen } from './opening-screen';
 import { learningState, learningActions } from '../../../../.storybook/fixtures';
 
 const meta = {
-  title: 'Business/OpeningScreen',
+  title: 'Business/Pages/OpeningScreen',
   component: OpeningScreen,
   args: { state: learningState, actions: learningActions },
 } satisfies Meta<typeof OpeningScreen>;
