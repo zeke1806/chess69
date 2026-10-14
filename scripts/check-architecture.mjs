@@ -117,7 +117,7 @@ for (const file of files) {
               report(source, file, node, 'Import externe traversant une implémentation privée.');
             }
           }
-        } else if (!/\.(json|png|svg)(?:\?|$)/.test(imported)) {
+        } else if (!/\.(json|png|svg|ttf|woff2?)(?:\?|$)/.test(imported)) {
           report(source, file, node, `Import local introuvable : ${imported}.`);
         }
       }

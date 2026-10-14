@@ -110,3 +110,19 @@ restant à faire jusqu’à son retour ou une observation directe.
 La [procédure Android](android-release.md) conserve l’identité de signature et
 les étapes de compilation. La publication depuis Mustang appartient au projet
 `vps-perso` ; Chess69 conserve ses données et calculs sur le téléphone.
+
+## Validation visuelle dans Storybook
+
+Quand l’utilisateur demande une exploration de design avant les features,
+valider d’abord la spec, puis livrer un moodboard dans Common et les maquettes
+isolées dans une racine temporaire Design. Cette troisième racine est une
+exception pour la proposition à valider ; le catalogue des composants livrés
+conserve Common et Business. Les maquettes et leurs assets restent dans
+.storybook/design, avec des vues stateless et un raccordement de démonstration
+pour les seules interactions locales. Le code Android et les services métier
+ne dépendent pas de cette proposition.
+
+La validation de la spec autorise la réalisation des maquettes. La validation
+visuelle du moodboard et des écrans est un second jalon avant toute intégration
+aux features. Les tokens proposés restent locaux au prototype jusqu’à cette
+validation ; DESIGN.md continue de décrire l’application réellement livrée.

@@ -1,0 +1,12 @@
+{
+  "origin": "ImageGen original generated for Chess69 design proposal",
+  "prompt": "Create a premium mobile chess learning application's illustration asset sheet, not a UI screenshot. Four separate original small 3D clay-and-resin objects in a strict 2 by 2 square grid, all centered in equal square cells and fully within their cell with generous clear margins: top left a beautifully sculpted ivory chess knight with a sage green plinth; top right a small stack of two ivory closed study books with sage covers and a single bookmark; bottom left two interlocking chunky puzzle pieces, one sage one ivory; bottom right an ivory rook with a sage chessboard corner plinth. The palette is warm ivory #F0EDE5, soft sage green #B6C7A8 and dark charcoal #191C1A, no orange or gold. Isometric three quarter view, rounded sculptural forms, restrained satin highlights, visible dimensional bevels, exquisite professional app icon craft, all objects consistent lighting from top left. Transparent background everywhere outside the objects, no text, letters, watermark, cell borders, backdrop or UI. Each object's silhouette occupies only the central 70 percent of its quadrant; isolated silhouettes cannot touch or cross quadrant boundaries. Square canvas, high resolution.",
+  "approved": false,
+  "palette": "A",
+  "layout": {
+    "knight": "top-left",
+    "book": "top-right",
+    "puzzle": "bottom-left",
+    "rook": "bottom-right"
+  }
+}

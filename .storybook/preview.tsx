@@ -1,3 +1,4 @@
+import displayFontUrl from './design/assets/manrope.ttf?url';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Preview } from '@storybook/react-native-web-vite';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -29,8 +30,9 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
+          'Design',
           'Common',
-          ['Buttons', 'Inputs', 'Containers'],
+          ['Design', 'Buttons', 'Inputs', 'Containers'],
           'Business',
           ['Pages', ['Application'], 'Layout', 'Chess'],
         ],
@@ -40,7 +42,9 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const width = Number(context.globals.catalogueWidth ?? 412);
-      const isApplication = context.parameters.presentationFrame === 'application';
+      const frame = context.parameters.presentationFrame;
+      const isDesign = frame === 'design' || frame === 'design-moodboard';
+      const isApplication = frame === 'application' || frame === 'design';
       return (
         <SafeAreaProvider
           initialMetrics={{
@@ -48,7 +52,10 @@ const preview: Preview = {
             insets: { top: 0, right: 0, bottom: 0, left: 0 },
           }}
         >
-          <div style={{ minHeight: '100vh', backgroundColor: colors.surface }}>
+          <style>{`@font-face { font-family: Chess69Display; src: url('${displayFontUrl}') format('truetype'); font-weight: 200 800; font-style: normal; font-display: swap; }`}</style>
+          <div
+            style={{ minHeight: '100vh', backgroundColor: isDesign ? '#191C1A' : colors.surface }}
+          >
             <div
               data-testid={
                 isApplication ? 'storybook-application-frame' : 'storybook-component-frame'
@@ -60,7 +67,9 @@ const preview: Preview = {
                 margin: '0 auto',
                 display: 'flex',
                 flexDirection: 'column',
-                ...(isApplication ? { height: '100vh' } : { padding: 12, minHeight: 915 }),
+                ...(isApplication
+                  ? { height: '100vh' }
+                  : { padding: isDesign ? 0 : 12, minHeight: 915 }),
               }}
             >
               <Story />
