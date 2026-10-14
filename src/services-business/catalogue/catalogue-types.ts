@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { uciMoveSchema } from '../adapters/rules/rules-types';
+import { chessColorSchema, uciMoveSchema } from '../adapters/rules/rules-types';
+export const exerciseKindSchema = z.enum(['opening', 'puzzle', 'endgame']);
 export const exerciseSchema = z
   .object({
     id: z.string().min(1),
-    kind: z.enum(['opening', 'puzzle', 'endgame']),
+    kind: exerciseKindSchema,
     title: z.string().min(1),
     theme: z.string().min(1),
     difficulty: z.enum(['beginner', 'intermediate']),
@@ -12,7 +13,7 @@ export const exerciseSchema = z
     alternatives: z.array(z.array(uciMoveSchema).min(1).readonly()).default([]).readonly(),
     explanation: z.string().min(1),
     hints: z.array(z.string().min(1)).min(1).readonly(),
-    side: z.enum(['w', 'b']),
+    side: chessColorSchema,
     goal: z.enum(['checkmate', 'win-material', 'promote', 'hold-draw', 'opening-plan']),
     openingId: z.string().optional(),
     objective: z.string().min(1),
@@ -41,8 +42,8 @@ export type CatalogueFilter = Readonly<{
   theme?: string;
   difficulty?: Exercise['difficulty'];
 }>;
-export type CatalogueService = Readonly<{
-  list: (filter?: CatalogueFilter) => ReadonlyArray<Exercise>;
-  get: (id: string) => Exercise | undefined;
-  openings: () => ReadonlyArray<Opening>;
-}>;
+export interface CatalogueService {
+  readonly list: (filter?: CatalogueFilter) => ReadonlyArray<Exercise>;
+  readonly get: (id: string) => Exercise | undefined;
+  readonly openings: () => ReadonlyArray<Opening>;
+}

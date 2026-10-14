@@ -31,6 +31,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
         error: null,
       };
     },
+
     connect: (connector) => {
       let generation = 0;
       let calculationGeneration = 0;
@@ -42,9 +43,11 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
           }
           const lease = connector.bindings.enter();
           const token = ++generation;
+
           const isCurrent = (): boolean => {
             return connector.isActive() && lease.isCurrent() && token === generation;
           };
+
           update(R.pipe(connector.getState(), R.set('busy', true), R.set('error', null)));
           retry = async () => {
             await actions.open(id);
@@ -92,6 +95,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             }
           }
         },
+
         analyze: async () => {
           const session = connector.getState().session;
           if (
@@ -104,9 +108,11 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
           }
           const lease = connector.bindings.current();
           const token = ++calculationGeneration;
+
           const isCurrent = (): boolean => {
             return connector.isActive() && lease.isCurrent() && token === calculationGeneration;
           };
+
           update(R.pipe(connector.getState(), R.set('analyzing', true), R.set('error', null)));
           retry = actions.analyze;
           try {
@@ -152,6 +158,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             }
           }
         },
+
         cancel: async () => {
           const id = connector.getState().session?.record.id;
           if (!id) {
@@ -159,9 +166,11 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
           }
           const lease = connector.bindings.current();
           const token = ++calculationGeneration;
+
           const isCurrent = (): boolean => {
             return connector.isActive() && lease.isCurrent() && token === calculationGeneration;
           };
+
           update(R.set(connector.getState(), 'analyzing', false));
           try {
             await analysis.cancel();
@@ -191,6 +200,7 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             }
           }
         },
+
         selectPly: (ply) => {
           const session = connector.getState().session;
           if (!session) {
@@ -208,11 +218,13 @@ export function createAnalysisService({ analysis, game, rules }: Dependencies): 
             ),
           );
         },
+
         retry: async () => {
           if (retry) {
             await retry();
           }
         },
+
         leave: () => {
           generation += 1;
           calculationGeneration += 1;
@@ -247,6 +259,7 @@ function projectDetails(state: AnalysisState): AnalysisDetails | null {
   if (!state.session) {
     return null;
   }
+  let evaluationMessage = 'Cette position n’a pas encore été analysée.';
   const position = R.find(
     state.view?.record.positions ?? [],
     (item) => item.ply === state.selectedPly,
@@ -255,7 +268,6 @@ function projectDetails(state: AnalysisState): AnalysisDetails | null {
     state.view?.assessments ?? [],
     (item) => item.ply === state.selectedPly,
   );
-  let evaluationMessage = 'Cette position n’a pas encore été analysée.';
   if (position?.score.type === 'mate') {
     const color = mateWinner(position) > 0 ? 'blancs' : 'noirs';
     evaluationMessage =

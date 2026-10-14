@@ -1,11 +1,13 @@
 import { Chess } from 'chess.js';
 import { uciMoveSchema } from './rules-types';
 import type { ChessEndReason, ChessPiece, RulesPosition, RulesService } from './rules-types';
+
 export const createChessJsRulesService = (): RulesService => {
   return {
     position: (fen, moves = []) => {
       return snapshot(replay(fen, moves));
     },
+
     play: (fen, moves, uci) => {
       const chess = replay(fen, moves);
       if (chess.isGameOver() || !isUci(uci)) {
@@ -20,6 +22,7 @@ export const createChessJsRulesService = (): RulesService => {
     },
   };
 };
+
 const replay = (fen: string | undefined, moves: readonly string[]): Chess => {
   const chess = fen ? new Chess(fen) : new Chess();
   for (const uci of moves) {
@@ -30,6 +33,7 @@ const replay = (fen: string | undefined, moves: readonly string[]): Chess => {
   }
   return chess;
 };
+
 const snapshot = (chess: Chess): RulesPosition => {
   const board: ChessPiece[] = chess
     .board()
@@ -73,6 +77,7 @@ const snapshot = (chess: Chess): RulesPosition => {
     history: chess.history(),
   };
 };
+
 const isUci = (move: string): boolean => {
   return uciMoveSchema.safeParse(move).success;
 };

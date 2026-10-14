@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { engineLevelSchema } from '../adapters/engine/engine-types';
+import { chessColorSchema } from '../adapters/rules/rules-types';
 import type { ClockService } from '../adapters/clock/clock-types';
 import type { IdentityService } from '../adapters/identity/identity-types';
 import type { EngineLevel, EngineService } from '../adapters/engine/engine-types';
@@ -8,7 +9,7 @@ import type { ChessColor, RulesPosition, RulesService } from '../adapters/rules/
 export const gameRecordSchema = z
   .object({
     id: z.string(),
-    color: z.enum(['w', 'b']),
+    color: chessColorSchema,
     level: engineLevelSchema,
     moves: z.array(z.string()).readonly(),
     startedAt: z.string(),
@@ -38,16 +39,16 @@ export type GameErrorCode =
   | 'illegal-move'
   | 'engine-error'
   | 'conflict';
-export type GameService = Readonly<{
-  start: (options: GameOptions, replaceConfirmed?: boolean) => Promise<GameSession>;
-  resume: () => Promise<GameSession | null>;
-  play: (uci: string) => Promise<GameSession>;
-  think: () => Promise<GameSession | null>;
-  cancelThinking: () => Promise<void>;
-  resign: () => Promise<GameSession>;
-  history: () => Promise<readonly GameSession[]>;
-  get: (id: string) => Promise<GameSession | null>;
-}>;
+export interface GameService {
+  readonly start: (options: GameOptions, replaceConfirmed?: boolean) => Promise<GameSession>;
+  readonly resume: () => Promise<GameSession | null>;
+  readonly play: (uci: string) => Promise<GameSession>;
+  readonly think: () => Promise<GameSession | null>;
+  readonly cancelThinking: () => Promise<void>;
+  readonly resign: () => Promise<GameSession>;
+  readonly history: () => Promise<readonly GameSession[]>;
+  readonly get: (id: string) => Promise<GameSession | null>;
+}
 export type GameDependencies = Readonly<{
   repository: GameRepository;
   rules: RulesService;
@@ -55,11 +56,11 @@ export type GameDependencies = Readonly<{
   clock: ClockService;
   ids: IdentityService;
 }>;
-export type GameRepository = Readonly<{
-  active: () => Promise<GameRecord | null>;
-  get: (id: string) => Promise<GameRecord | null>;
-  history: () => Promise<readonly GameRecord[]>;
-  start: (
+export interface GameRepository {
+  readonly active: () => Promise<GameRecord | null>;
+  readonly get: (id: string) => Promise<GameRecord | null>;
+  readonly history: () => Promise<readonly GameRecord[]>;
+  readonly start: (
     input: Readonly<{
       record: GameRecord;
       options: GameOptions;
@@ -67,5 +68,9 @@ export type GameRepository = Readonly<{
       replaced: GameRecord | null;
     }>,
   ) => Promise<boolean>;
-  save: (expected: GameRecord, updated: GameRecord, isCurrent?: () => boolean) => Promise<boolean>;
-}>;
+  readonly save: (
+    expected: GameRecord,
+    updated: GameRecord,
+    isCurrent?: () => boolean,
+  ) => Promise<boolean>;
+}

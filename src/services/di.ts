@@ -7,9 +7,9 @@ import { createBoardService } from './board/board-service';
 import { createOrchestrationService } from './orchestration/orchestration-service';
 import type { OrchestrationService } from './orchestration/orchestration-types';
 
-export type ServicesFront = Readonly<{
-  orchestration: Readonly<{ createOrchestrationService: () => OrchestrationService }>;
-}>;
+export interface ServicesFront {
+  readonly orchestration: Readonly<{ createOrchestrationService: () => OrchestrationService }>;
+}
 type Dependencies = Readonly<{ version: string; business: ServicesBusiness }>;
 
 export function createServicesFront({ version, business }: Dependencies): ServicesFront {

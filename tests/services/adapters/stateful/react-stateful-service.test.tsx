@@ -21,6 +21,7 @@ const service: StatefulService<State, Actions, Bindings> = {
   createInitialState: () => {
     return { count: 0, values: [] };
   },
+
   connect: (connector) => {
     return {
       increment: () => {
@@ -29,12 +30,15 @@ const service: StatefulService<State, Actions, Bindings> = {
           values: [...state.values, state.count + 1],
         }));
       },
+
       active: connector.isActive,
+
       visit: () => {
         if (connector.isActive()) {
           connector.bindings.visit();
         }
       },
+
       finishLater: async (waiting) => {
         await waiting;
         // setState must itself refuse updates, even when a caller forgets to guard it.
@@ -76,9 +80,11 @@ test('le raccordement conserve les actions et lit l’état ainsi que les bindin
   let current!: StatefulConnection<State, Actions>;
   let firstVisits = 0;
   let secondVisits = 0;
+
   const observe = (connection: StatefulConnection<State, Actions>): void => {
     current = connection;
   };
+
   const renderer = await mount(observe, {
     visit: () => {
       firstVisits += 1;
@@ -137,7 +143,9 @@ test('deux raccordements isolent leur état et le démontage bloque les résulta
     first.actions.increment();
   });
   expect(second.state.count).toBe(0);
+
   let release = (): void => {};
+
   const waiting = new Promise<void>((resolve) => {
     release = resolve;
   });

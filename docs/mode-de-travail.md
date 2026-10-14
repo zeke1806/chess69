@@ -39,8 +39,20 @@ nécessaire reste une raison de question ciblée.
 
 Les interfaces de test autorisées par défaut sont les contrats publics des
 modules et leurs assemblages en mémoire. Noter le comportement et l’interface
-testés dans le ticket. Appliquer les conditions de CU-ARCHI pour les tests
-métier par ticket pendant les workflows Matt Pocock.
+testés dans le ticket. Le skill `tdd` guide les nouveaux comportements et les
+corrections quand une reproduction rouge est utile ; une correction mécanique
+de conventions s'appuie sur les tests de comportement existants. L'organisation
+et l'isolation des tests viennent de CU-ARCHI ; le processus de réalisation et
+le suivi par ticket restent définis ici et dans les skills Matt Pocock.
+
+Précision d'espacement demandée pour Chess69 : dans un objet, considérer chaque
+membre qui définit une fonction avec corps comme un bloc de lecture. Séparer
+ce bloc du membre voisin par une seule ligne vide, notamment entre
+`createInitialState` et `connect`, entre actions et dans les connecteurs.
+La séparation des fonctions hors objets suit la même règle de blocs de
+CU-ARCHI. Conserver ensemble les propriétés de données et les déclarations d'une
+même étape. Le formatage du projet conserve cet espacement et le contrôle
+architectural le vérifie aussi dans les tests et les stories.
 
 Le périmètre d’une réalisation vient du besoin exprimé par l’utilisateur ; ce
 mode de travail n’est pas une demande de construire toute l’application.

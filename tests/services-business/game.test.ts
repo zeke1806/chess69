@@ -12,12 +12,14 @@ const setup = (engine?: EngineService) => {
   let id = 0;
   const gameRepository: GameRepository = {
     ...repository.game,
+
     start: async (input) => {
       if (failure) {
         throw new Error('storage unavailable');
       }
       return repository.game.start(input);
     },
+
     save: async (...args) => {
       if (failure) {
         throw new Error('storage unavailable');
@@ -30,10 +32,13 @@ const setup = (engine?: EngineService) => {
     rules: createChessJsRulesService(),
     engine: engine ?? {
       initialize: async () => {},
+
       evaluate: async () => {
         return { bestMove: 'e7e5', score: { type: 'cp' as const, value: 0 }, pv: ['e7e5'] };
       },
+
       cancel: async () => {},
+
       dispose: async () => {},
     },
     clock: {
@@ -45,6 +50,7 @@ const setup = (engine?: EngineService) => {
       id: () => {
         return `game-${++id}`;
       },
+
       random: () => {
         return 0.8;
       },
@@ -52,12 +58,15 @@ const setup = (engine?: EngineService) => {
   };
   return {
     game: createGameService(dependencies),
+
     restart: () => {
       return createGameService(dependencies);
     },
+
     fail: (value: boolean) => {
       failure = value;
     },
+
     repository,
   };
 };
@@ -95,8 +104,11 @@ test('the engine reply can complete a game and the result survives reopening', a
   const replies = ['e7e5', 'd8h4'];
   const engine: EngineService = {
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: replies.shift() ?? null, score: { type: 'cp', value: 0 }, pv: [] };
     },
@@ -117,8 +129,11 @@ test('a player checkmate is stored once and no active game remains', async () =>
   const replies = ['f2f3', 'g2g4'];
   const { game } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: replies.shift() ?? null, score: { type: 'cp', value: 0 }, pv: [] };
     },
@@ -160,8 +175,11 @@ test('cancelling a thinking engine rejects duplicate actions and discards late r
   });
   const { game } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       began();
       await pending;
@@ -210,8 +228,11 @@ test('an illegal engine response leaves the player move available for retry', as
   let bestMove = 'e7e8q';
   const { game } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove, score: { type: 'cp', value: 0 }, pv: [] };
     },
@@ -242,10 +263,13 @@ test('new game work stays blocked until native cancellation has completed', asyn
   });
   const { game } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {
       await cancellation;
     },
+
     evaluate: async () => {
       beginEvaluation();
       await evaluation;

@@ -18,14 +18,15 @@ export const storedStateSchema = z
   })
   .readonly();
 export type StoredState = z.infer<typeof storedStateSchema>;
-export type RepositoryService = Readonly<{
-  initialize: () => Promise<void>;
-  learning: LearningRepository;
-  game: GameRepository;
-  analysis: AnalysisRepository;
-  progression: ProgressionRepository;
-  dispose: () => Promise<void>;
-}>;
+export interface RepositoryService {
+  readonly initialize: () => Promise<void>;
+  readonly learning: LearningRepository;
+  readonly game: GameRepository;
+  readonly analysis: AnalysisRepository;
+  readonly progression: ProgressionRepository;
+  readonly dispose: () => Promise<void>;
+}
+
 export const createEmptyState = (): StoredState => {
   return storedStateSchema.parse({
     schemaVersion: 1,
@@ -36,6 +37,7 @@ export const createEmptyState = (): StoredState => {
     preferences: { color: 'w', level: 'beginner', onboarded: false },
   });
 };
+
 export type MemoryRepositoryDependencies = Readonly<{
   initialState?: StoredState;
 }>;

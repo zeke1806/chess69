@@ -1,14 +1,16 @@
 import { z } from 'zod';
+import { exerciseKindSchema } from '../catalogue/catalogue-types';
 import type { CatalogueService, Exercise } from '../catalogue/catalogue-types';
 import type { ClockService } from '../adapters/clock/clock-types';
 import type { IdentityService } from '../adapters/identity/identity-types';
-import type { RulesService } from '../adapters/rules/rules-types';
+import { chessColorSchema } from '../adapters/rules/rules-types';
+import type { ChessColor, RulesService } from '../adapters/rules/rules-types';
 
 export const attemptSchema = z
   .object({
     id: z.string(),
     contentId: z.string(),
-    kind: z.enum(['opening', 'puzzle', 'endgame']),
+    kind: exerciseKindSchema,
     outcome: z.enum(['success', 'assisted', 'failed']),
     at: z.string(),
     day: z.string(),
@@ -17,7 +19,7 @@ export const attemptSchema = z
 export const reviewSchema = z
   .object({
     contentId: z.string(),
-    color: z.enum(['w', 'b']).optional(),
+    color: chessColorSchema.optional(),
     stage: z.number().int().min(0).max(5),
     streak: z.number().int().min(0),
     due: z.string(),
@@ -29,7 +31,7 @@ export type Review = z.infer<typeof reviewSchema>;
 export type LearningMode = 'guided' | 'memory';
 export type LearningSnapshot = Readonly<{
   exercise: Exercise;
-  color: 'w' | 'b';
+  color: ChessColor;
   mode: LearningMode;
   fen: string;
   ply: number;
@@ -68,18 +70,18 @@ export type LearningDependencies = Readonly<{
   clock: ClockService;
   ids: Pick<IdentityService, 'id'>;
 }>;
-export type LearningService = Readonly<{
-  start: (contentId: string, color?: 'w' | 'b', mode?: LearningMode) => LearningAction;
-  snapshot: () => LearningSnapshot | null;
-  play: (move: string) => LearningAction;
-  hint: () => LearningAction;
-  reveal: () => LearningAction;
-  finish: () => Promise<LearningResult>;
-}>;
-export type LearningRepository = Readonly<{
-  saveAttempt: (
+export interface LearningService {
+  readonly start: (contentId: string, color?: ChessColor, mode?: LearningMode) => LearningAction;
+  readonly snapshot: () => LearningSnapshot | null;
+  readonly play: (move: string) => LearningAction;
+  readonly hint: () => LearningAction;
+  readonly reveal: () => LearningAction;
+  readonly finish: () => Promise<LearningResult>;
+}
+export interface LearningRepository {
+  readonly saveAttempt: (
     attempt: Attempt,
     reviewKey?: string,
     revise?: (previous: Review | undefined) => Review,
   ) => Promise<Review | null>;
-}>;
+}

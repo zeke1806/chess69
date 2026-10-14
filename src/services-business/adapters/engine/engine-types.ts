@@ -18,28 +18,28 @@ export type EngineOptions = Readonly<{
   movetime: number;
 }>;
 /** Scores use the side to move in the supplied FEN, as specified by UCI. */
-export type EngineService = Readonly<{
-  initialize: () => Promise<void>;
-  evaluate: (
+export interface EngineService {
+  readonly initialize: () => Promise<void>;
+  readonly evaluate: (
     fen: string,
     options: EngineOptions,
     signal?: AbortSignal,
   ) => Promise<EngineEvaluation>;
-  cancel: () => Promise<void>;
-  dispose: () => Promise<void>;
-}>;
+  readonly cancel: () => Promise<void>;
+  readonly dispose: () => Promise<void>;
+}
 export type MemoryEngineDependencies = Readonly<{
   evaluatePosition?: (fen: string, options: EngineOptions) => Promise<EngineEvaluation>;
 }>;
-export type EngineLifecycleOperations = Readonly<{
-  initialize: () => Promise<void>;
-  evaluate: (fen: string, options: EngineOptions) => Promise<EngineEvaluation>;
-  cancel: () => Promise<void>;
-  dispose: () => Promise<void>;
-}>;
-export type NativeStockfish = Readonly<{
-  initialize: () => Promise<string>;
-  evaluate: (fen: string, skill: number, movetime: number) => Promise<string>;
-  cancel: () => Promise<void>;
-  dispose: () => Promise<void>;
-}>;
+export interface EngineLifecycleOperations {
+  readonly initialize: () => Promise<void>;
+  readonly evaluate: (fen: string, options: EngineOptions) => Promise<EngineEvaluation>;
+  readonly cancel: () => Promise<void>;
+  readonly dispose: () => Promise<void>;
+}
+export interface NativeStockfish {
+  readonly initialize: () => Promise<string>;
+  readonly evaluate: (fen: string, skill: number, movetime: number) => Promise<string>;
+  readonly cancel: () => Promise<void>;
+  readonly dispose: () => Promise<void>;
+}

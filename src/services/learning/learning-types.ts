@@ -1,3 +1,4 @@
+import type { ChessColor } from '../../services-business/adapters/rules/rules-types';
 import type { Exercise, Opening } from '../../services-business/catalogue/catalogue-types';
 import type { LearningSnapshot } from '../../services-business/learning/learning-types';
 import type { RulesPosition } from '../../services-business/adapters/rules/rules-types';
@@ -11,7 +12,7 @@ export type LearningState = Readonly<{
   openings: readonly Opening[];
   opening: Opening | null;
   openingExercises: readonly Readonly<{ id: string; title: string }>[];
-  color: 'w' | 'b';
+  color: ChessColor;
   session: LearningSnapshot | null;
   selectedPly: number;
   position: RulesPosition | null;
@@ -19,25 +20,29 @@ export type LearningState = Readonly<{
   message: string | null;
   error: string | null;
 }>;
-export type LearningActions = Readonly<{
-  filter: (
+export interface LearningActions {
+  readonly filter: (
     kind: Exercise['kind'],
     theme?: string | null,
     difficulty?: Exercise['difficulty'] | null,
   ) => void;
-  openOpening: (id: string) => void;
-  changeColor: (color: 'w' | 'b') => void;
-  startExercise: (id: string, color?: 'w' | 'b', mode?: 'guided' | 'memory') => void;
-  move: (move: string) => Promise<void>;
-  hint: () => void;
-  reveal: () => Promise<void>;
-  selectPly: (ply: number) => void;
-  retry: () => Promise<void>;
-  leave: () => void;
-}>;
+  readonly openOpening: (id: string) => void;
+  readonly changeColor: (color: ChessColor) => void;
+  readonly startExercise: (id: string, color?: ChessColor, mode?: 'guided' | 'memory') => void;
+  readonly move: (move: string) => Promise<void>;
+  readonly hint: () => void;
+  readonly reveal: () => Promise<void>;
+  readonly selectPly: (ply: number) => void;
+  readonly retry: () => Promise<void>;
+  readonly leave: () => void;
+}
 
-export type LearningUiService = StatefulService<LearningState, LearningActions, LearningBindings>;
-export type LearningBindings = Readonly<{
-  enter: (page: 'opening' | 'exercise' | 'list') => ContextLease;
-  refreshGlobal: () => Promise<void>;
-}>;
+export interface LearningUiService extends StatefulService<
+  LearningState,
+  LearningActions,
+  LearningBindings
+> {}
+export interface LearningBindings {
+  readonly enter: (page: 'opening' | 'exercise' | 'list') => ContextLease;
+  readonly refreshGlobal: () => Promise<void>;
+}

@@ -6,32 +6,13 @@ import type {
   StoredState,
   SQLiteRepositoryDependencies,
 } from '../repository-types';
+
 /** All operations share one queue. A failed write never poisons later retries. */
 export const createSQLiteRepositoryService = ({
   databaseName = 'chess69.db',
 }: SQLiteRepositoryDependencies = {}): RepositoryService => {
   let database: SQLiteDatabase | null = null;
   let pending: Promise<unknown> = Promise.resolve();
-  const enqueue = <T>(action: () => Promise<T>): Promise<T> => {
-    const operation = pending.then(action);
-    pending = operation.catch(() => undefined);
-    return operation;
-  };
-  const getDatabase = (): SQLiteDatabase => {
-    if (!database) {
-      throw new Error('Le stockage local doit être initialisé.');
-    }
-    return database;
-  };
-  const read = async (connection: SQLiteDatabase): Promise<StoredState> => {
-    const row = await connection.getFirstAsync<{
-      payload: string;
-    }>('SELECT payload FROM installation_state WHERE id = 1');
-    if (!row) {
-      throw new Error('La progression locale est absente. Réessayez sans effacer les données.');
-    }
-    return storedStateSchema.parse(JSON.parse(row.payload));
-  };
   return createRepositoryPorts({
     initialize: () => {
       return enqueue(async () => {
@@ -73,13 +54,15 @@ export const createSQLiteRepositoryService = ({
         }
       });
     },
+
     readState: () => {
       return enqueue(() => read(getDatabase()));
     },
+
     updateState: (update) => {
       return enqueue(async () => {
-        const connection = getDatabase();
         let saved: StoredState | undefined;
+        const connection = getDatabase();
         await connection.withExclusiveTransactionAsync(async (transaction) => {
           const current = await read(transaction);
           const next = storedStateSchema.parse(update(current));
@@ -95,6 +78,7 @@ export const createSQLiteRepositoryService = ({
         return storedStateSchema.parse(saved);
       });
     },
+
     dispose: () => {
       return enqueue(async () => {
         const connection = database;
@@ -105,4 +89,27 @@ export const createSQLiteRepositoryService = ({
       });
     },
   });
+
+  function enqueue<T>(action: () => Promise<T>): Promise<T> {
+    const operation = pending.then(action);
+    pending = operation.catch(() => undefined);
+    return operation;
+  }
+
+  function getDatabase(): SQLiteDatabase {
+    if (!database) {
+      throw new Error('Le stockage local doit être initialisé.');
+    }
+    return database;
+  }
+
+  async function read(connection: SQLiteDatabase): Promise<StoredState> {
+    const row = await connection.getFirstAsync<{
+      payload: string;
+    }>('SELECT payload FROM installation_state WHERE id = 1');
+    if (!row) {
+      throw new Error('La progression locale est absente. Réessayez sans effacer les données.');
+    }
+    return storedStateSchema.parse(JSON.parse(row.payload));
+  }
 };

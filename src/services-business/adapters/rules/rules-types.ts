@@ -1,6 +1,7 @@
 import { z } from 'zod';
 export const uciMoveSchema = z.string().regex(/^[a-h][1-8][a-h][1-8][qrbn]?$/);
-export type ChessColor = 'w' | 'b';
+export const chessColorSchema = z.enum(['w', 'b']);
+export type ChessColor = z.infer<typeof chessColorSchema>;
 export type ChessPiece = Readonly<{
   square: string;
   type: 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
@@ -19,9 +20,13 @@ export type RulesPosition = Readonly<{
   endReason: ChessEndReason | null;
   history: readonly string[];
 }>;
-export type RulesService = Readonly<{
+export interface RulesService {
   /** Replays every move, preserving repetition and half-move counters. Invalid records throw. */
-  position: (fen?: string, moves?: readonly string[]) => RulesPosition;
+  readonly position: (fen?: string, moves?: readonly string[]) => RulesPosition;
   /** Returns null for an illegal UCI move; promotions require their suffix. */
-  play: (fen: string | undefined, moves: readonly string[], uci: string) => RulesPosition | null;
-}>;
+  readonly play: (
+    fen: string | undefined,
+    moves: readonly string[],
+    uci: string,
+  ) => RulesPosition | null;
+}

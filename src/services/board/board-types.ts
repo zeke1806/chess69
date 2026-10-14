@@ -1,8 +1,9 @@
+import type { ChessColor } from '../../services-business/adapters/rules/rules-types';
 import type { StatefulService, ContextLease } from '../adapters/stateful/stateful-types';
 export type BoardContext = Readonly<{
   key: string;
   fen: string;
-  color: 'w' | 'b';
+  color: ChessColor;
   legalMoves: readonly string[];
   lastMove: string | null;
   checkSquare: string | null;
@@ -16,13 +17,15 @@ export type BoardState = Readonly<{
   promotion: readonly string[];
   turnMessage: string;
 }>;
-export type BoardActions = Readonly<{
-  synchronize: (context: BoardContext | null) => void;
-  select: (square: string) => void;
-  promote: (piece: 'q' | 'r' | 'b' | 'n') => void;
-  cancelPromotion: () => void;
-  reset: () => void;
-}>;
+export interface BoardActions {
+  readonly synchronize: (context: BoardContext | null) => void;
+  readonly select: (square: string) => void;
+  readonly promote: (piece: 'q' | 'r' | 'b' | 'n') => void;
+  readonly cancelPromotion: () => void;
+  readonly reset: () => void;
+}
 
-export type BoardUiService = StatefulService<BoardState, BoardActions, BoardBindings>;
-export type BoardBindings = Readonly<{ play: (move: string) => Promise<void> }>;
+export interface BoardUiService extends StatefulService<BoardState, BoardActions, BoardBindings> {}
+export interface BoardBindings {
+  readonly play: (move: string) => Promise<void>;
+}

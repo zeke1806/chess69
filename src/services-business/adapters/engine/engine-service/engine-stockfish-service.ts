@@ -3,6 +3,7 @@ import { requireNativeModule } from 'expo';
 import type { EngineEvaluation, EngineService, NativeStockfish } from '../engine-types';
 import { createEngineLifecycle } from './engine-lifecycle';
 const skills = { beginner: 0, casual: 5, club: 20 } as const;
+
 export const createStockfishEngineService = (): EngineService => {
   let native: NativeStockfish | null = null;
   return createEngineLifecycle({
@@ -17,6 +18,7 @@ export const createStockfishEngineService = (): EngineService => {
         throw new Error('Le moteur embarqué n’est pas prêt. Réessayez.');
       }
     },
+
     evaluate: async (fen, options) => {
       // Validate legal positions before passing them to C++, which assumes a valid FEN.
       const position = new Chess(fen);
@@ -43,9 +45,11 @@ export const createStockfishEngineService = (): EngineService => {
       }
       return result;
     },
+
     cancel: async () => {
       await native?.cancel();
     },
+
     dispose: async () => {
       await native?.dispose();
       native = null;

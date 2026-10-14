@@ -14,9 +14,11 @@ import type { GameSession } from '../src/services-business/game/game-types';
 export const noop = () => {
   return;
 };
+
 export const noopAsync = async () => {
   return;
 };
+
 const catalogue = createCatalogueService();
 const rules = createChessJsRulesService();
 const exercise = catalogue.get('opening-italienne-1')!;

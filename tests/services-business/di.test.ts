@@ -7,6 +7,7 @@ import type { RepositoryService } from '../../src/services-business/adapters/rep
 
 function deferred() {
   let resolve = () => {};
+
   const promise = new Promise<void>((done) => {
     resolve = done;
   });
@@ -51,6 +52,7 @@ const ids = {
   id: () => {
     return 'new-id';
   },
+
   random: () => {
     return 0.5;
   },
@@ -62,14 +64,17 @@ test('cleanup et remount pendant une ouverture SQLite suspendue gardent stockage
   const released = deferred();
   let first = true;
   let pending: Promise<unknown> = Promise.resolve();
+
   const enqueue = (action: () => Promise<void>) => {
     const result = pending.then(action);
     pending = result.catch(() => undefined);
     return result;
   };
+
   // The repository double retains the native adapter's own resource queue.
   const repository: RepositoryService = {
     ...memory,
+
     initialize: () => {
       return enqueue(async () => {
         if (first) {
@@ -80,6 +85,7 @@ test('cleanup et remount pendant une ouverture SQLite suspendue gardent stockage
         await memory.initialize();
       });
     },
+
     dispose: () => {
       return enqueue(memory.dispose);
     },
@@ -114,6 +120,7 @@ test('une initialisation moteur échouée libère la base sans perdre les donné
     ids,
     engine: {
       ...memory,
+
       initialize: async () => {
         await memory.initialize();
         if (unavailable) {
@@ -140,6 +147,7 @@ test('une fermeture moteur en erreur ferme aussi le stockage et ne bloque pas la
     ids,
     engine: {
       ...memory,
+
       dispose: async () => {
         await memory.dispose();
         if (first) {

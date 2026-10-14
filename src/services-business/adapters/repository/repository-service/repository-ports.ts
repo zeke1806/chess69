@@ -1,6 +1,7 @@
 import * as R from 'remeda';
 import type { RepositoryService } from '../repository-types';
 import type { InstallationStorage } from './storage-types';
+
 export const createRepositoryPorts = (storage: InstallationStorage): RepositoryService => {
   return {
     initialize: storage.initialize,
@@ -25,9 +26,11 @@ export const createRepositoryPorts = (storage: InstallationStorage): RepositoryS
       active: async () => {
         return R.find((await storage.readState()).games, (game) => !game.finishedAt) ?? null;
       },
+
       get: async (id) => {
         return R.find((await storage.readState()).games, (game) => game.id === id) ?? null;
       },
+
       history: async () => {
         return R.pipe(
           (await storage.readState()).games,
@@ -35,6 +38,7 @@ export const createRepositoryPorts = (storage: InstallationStorage): RepositoryS
           R.reverse(),
         );
       },
+
       start: async ({ record, options, expectedActiveId, replaced }) => {
         let accepted = false;
         await storage.updateState((state) => {
@@ -62,11 +66,12 @@ export const createRepositoryPorts = (storage: InstallationStorage): RepositoryS
           return R.pipe(
             state,
             R.set('games', R.concat(games, [record])),
-            R.set('preferences', { ...state.preferences, ...options }),
+            R.set('preferences', R.merge(state.preferences, options)),
           );
         });
         return accepted;
       },
+
       save: async (
         expected,
         updated,
@@ -106,6 +111,7 @@ export const createRepositoryPorts = (storage: InstallationStorage): RepositoryS
           record: state.analyses[gameId] ?? null,
         };
       },
+
       saveCheckpoint: async (record, isCurrent) => {
         const state = await storage.updateState((state) => {
           if (!isCurrent()) {
@@ -121,9 +127,11 @@ export const createRepositoryPorts = (storage: InstallationStorage): RepositoryS
         const { attempts, reviews, games, preferences } = await storage.readState();
         return Object.freeze({ attempts, reviews, games, preferences });
       },
+
       preferences: async () => {
         return (await storage.readState()).preferences;
       },
+
       markOnboarded: async () => {
         await storage.updateState(R.setPath(['preferences', 'onboarded'], true));
       },

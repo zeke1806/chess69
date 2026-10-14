@@ -39,6 +39,7 @@ export function createLearningService({
         message: null,
       };
     },
+
     connect: (connector) => {
       let generation = 0;
       let lease: ContextLease | null = null;
@@ -67,6 +68,7 @@ export function createLearningService({
             );
           });
         },
+
         openOpening: (id) => {
           const opening = R.find(catalogue.openings(), (value) => value.id === id);
           if (!opening) {
@@ -88,9 +90,11 @@ export function createLearningService({
             );
           });
         },
+
         changeColor: (color) => {
           connector.setState(R.set('color', color));
         },
+
         startExercise: (id, color, mode = 'memory') => {
           const trainedColor =
             color ??
@@ -98,6 +102,7 @@ export function createLearningService({
           lease = connector.bindings.enter('exercise');
           synchronize(learning.start(id, trainedColor, mode));
         },
+
         move: async (move) => {
           await run(async (isCurrent) => {
             if (learning.snapshot()?.status === 'playing') {
@@ -108,11 +113,13 @@ export function createLearningService({
             }
           }, 'Le résultat n’a pas pu être sauvegardé. Touchez Réessayer ; ne quittez pas cet exercice.');
         },
+
         hint: () => {
           if (lease?.isCurrent() && !connector.getState().busy) {
             synchronize(learning.hint());
           }
         },
+
         reveal: async () => {
           await run(async (isCurrent) => {
             if (learning.snapshot()?.status === 'playing') {
@@ -121,6 +128,7 @@ export function createLearningService({
             await save(isCurrent);
           }, 'La solution est visible, mais le résultat n’a pas été sauvegardé. Réessayez.');
         },
+
         selectPly: (ply) => {
           const session = connector.getState().session;
           if (!session || session.mode !== 'guided') {
@@ -138,11 +146,13 @@ export function createLearningService({
             );
           });
         },
+
         retry: async () => {
           if (retry) {
             await retry();
           }
         },
+
         leave: () => {
           generation += 1;
           lease = null;
@@ -171,9 +181,11 @@ export function createLearningService({
         }
         const context = lease;
         const token = ++generation;
+
         const isCurrent = (): boolean => {
           return connector.isActive() && context.isCurrent() && token === generation;
         };
+
         connector.setState((state) => {
           return R.pipe(state, R.set('busy', true), R.set('error', null));
         });

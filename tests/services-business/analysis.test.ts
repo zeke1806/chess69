@@ -40,6 +40,7 @@ const setup = (
   void repository.initialize();
   const analysisRepository: AnalysisRepository = {
     ...repository.analysis,
+
     saveCheckpoint: async (...args) => {
       const wait = beforeWrite;
       beforeWrite = null;
@@ -57,13 +58,17 @@ const setup = (
   };
   return {
     analysis: createAnalysisService(dependencies),
+
     restart: () => {
       return createAnalysisService(dependencies);
     },
+
     fail: (value: boolean) => {
       failure = value;
     },
+
     repository,
+
     holdWrite: () => {
       let began!: () => void;
       let release!: () => void;
@@ -86,8 +91,11 @@ test('analysis stores each position including the final one and converts scores 
   const scores = [50, 70, 10];
   const { analysis, restart } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: 'g1f3', score: { type: 'cp', value: scores.shift() ?? 0 }, pv: ['g1f3'] };
     },
@@ -127,8 +135,11 @@ test('cancelled analysis keeps checkpoints, discards a late reply, and resumes w
   let first = true;
   const { analysis, restart } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       if (first) {
         first = false;
@@ -161,8 +172,11 @@ test('AbortSignal cancels native work without publishing or retaining its late e
   });
   const { analysis } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async (_fen, _options, signal) => {
       began();
       await new Promise<void>((_resolve, reject) => {
@@ -187,8 +201,11 @@ test('mate announcements stay distinct from centipawns and classify lost or allo
   ];
   const { analysis } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: 'g1f3', score: scores.shift() ?? { type: 'cp', value: 0 }, pv: [] };
     },
@@ -216,8 +233,11 @@ test('only completed games are analyzed and concurrent requests receive a recove
   });
   const { analysis, repository } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       began();
       await pending;
@@ -228,8 +248,11 @@ test('only completed games are analyzed and concurrent requests receive a recove
   const unfinished = setup(
     {
       initialize: async () => {},
+
       dispose: async () => {},
+
       cancel: async () => {},
+
       evaluate: async () => {
         throw new Error('une partie active ne consulte pas le moteur');
       },
@@ -251,8 +274,11 @@ test('only completed games are analyzed and concurrent requests receive a recove
 test('a checkpoint cancelled before its queued write is never announced as saved', async () => {
   const { analysis, holdWrite } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: 'e2e4', score: { type: 'cp', value: 0 }, pv: [] };
     },
@@ -275,8 +301,11 @@ test('a checkpoint cancelled before its queued write is never announced as saved
 test('a failed write retains only saved checkpoints and can resume after retry', async () => {
   const { analysis, restart, fail } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: 'e2e4', score: { type: 'cp', value: 0 }, pv: [] };
     },
@@ -308,8 +337,11 @@ test('inconsistent checkpoints are reported without overwriting their saved evid
   const { analysis } = setup(
     {
       initialize: async () => {},
+
       dispose: async () => {},
+
       cancel: async () => {},
+
       evaluate: async () => {
         return { bestMove: 'e2e4', score: { type: 'cp', value: 0 }, pv: [] };
       },
@@ -331,8 +363,11 @@ test.each([
   const values = [100, loss - 100, 0];
   const { analysis } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       return { bestMove: 'e2e4', score: { type: 'cp', value: values.shift() ?? 0 }, pv: [] };
     },
@@ -351,8 +386,11 @@ test('a final checkmate with mate zero still identifies the winner from the posi
   const { analysis, repository } = setup(
     {
       initialize: async () => {},
+
       dispose: async () => {},
+
       cancel: async () => {},
+
       evaluate: async () => {
         return {
           bestMove: scores.length === 1 ? null : 'e2e4',
@@ -374,8 +412,11 @@ test('a native engine failure preserves progress and releases the analysis for r
   let unavailable = true;
   const { analysis, restart } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {},
+
     evaluate: async () => {
       if (!first && unavailable) {
         throw new Error('native failure');
@@ -405,10 +446,13 @@ test('new analysis stays blocked until native cancellation has completed', async
   });
   const { analysis } = setup({
     initialize: async () => {},
+
     dispose: async () => {},
+
     cancel: async () => {
       await cancellation;
     },
+
     evaluate: async () => {
       beginEvaluation();
       await evaluation;
@@ -433,8 +477,11 @@ test('a draw by threefold repetition has a final zero score without requesting e
   const { analysis, restart, repository } = setup(
     {
       initialize: async () => {},
+
       dispose: async () => {},
+
       cancel: async () => {},
+
       evaluate: async (fen) => {
         if (fen === finalPosition.fen) {
           throw new Error('A terminal draw must not request a history-free engine evaluation');

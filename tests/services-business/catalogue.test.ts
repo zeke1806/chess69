@@ -22,6 +22,7 @@ test('le catalogue embarque huit répertoires, 24 variantes, 120 tactiques et 24
 test('chaque position et chaque réponse prévue sont légales et atteignent le véritable objectif annoncé', () => {
   const catalogue = createCatalogueService();
   const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+
   const material = (chess: Chess, side: 'w' | 'b') => {
     return chess
       .board()
@@ -32,6 +33,7 @@ test('chaque position et chaque réponse prévue sont légales et atteignent le 
         0,
       );
   };
+
   for (const exercise of catalogue.list()) {
     expect(exercise.objective.length).toBeGreaterThan(10);
     expect(exercise.explanation.length).toBeGreaterThan(40);

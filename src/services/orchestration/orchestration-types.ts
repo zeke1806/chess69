@@ -34,22 +34,25 @@ export type OrchestrationState = Readonly<{
   progression: ProgressionState;
   board: BoardState;
 }>;
-export type OrchestrationActions = Readonly<{
-  initialize: () => Promise<void>;
-  foreground: () => Promise<void>;
-  dispose: () => Promise<void>;
-  navigate: (destination: Destination) => void;
-  back: () => boolean;
-  openPractice: (kind: Exercise['kind']) => void;
-  startRecommendedPractice: () => void;
-  retry: () => Promise<void>;
-  learning: LearningActions;
-  game: GameActions;
-  analysis: AnalysisActions;
-  progression: ProgressionActions;
-  board: BoardActions;
-}>;
-export type OrchestrationService = StatefulService<OrchestrationState, OrchestrationActions>;
+export interface OrchestrationActions {
+  readonly initialize: () => Promise<void>;
+  readonly foreground: () => Promise<void>;
+  readonly dispose: () => Promise<void>;
+  readonly navigate: (destination: Destination) => void;
+  readonly back: () => boolean;
+  readonly openPractice: (kind: Exercise['kind']) => void;
+  readonly startRecommendedPractice: () => void;
+  readonly retry: () => Promise<void>;
+  readonly learning: LearningActions;
+  readonly game: GameActions;
+  readonly analysis: AnalysisActions;
+  readonly progression: ProgressionActions;
+  readonly board: BoardActions;
+}
+export interface OrchestrationService extends StatefulService<
+  OrchestrationState,
+  OrchestrationActions
+> {}
 export type OrchestrationDependencies = Readonly<{
   version: string;
   learning: LearningUiService;

@@ -1,5 +1,7 @@
+import * as R from 'remeda';
 import { localDay } from '../calendar/calendar-service';
 import type { ProgressionDependencies, ProgressionService } from './progression-types';
+
 export const createProgressionService = ({
   repository,
   clock,
@@ -7,13 +9,11 @@ export const createProgressionService = ({
   return {
     async summary() {
       const state = await repository.read();
-      const days = [
-        ...new Set([
-          ...state.attempts.map((attempt) => attempt.day),
-          ...state.games.flatMap((game) => (game.finishedAt && game.day ? [game.day] : [])),
-        ]),
-      ].sort();
-      const latest = new Map(state.attempts.map((attempt) => [attempt.contentId, attempt]));
+      const days = R.unique([
+        ...R.map(state.attempts, (attempt) => attempt.day),
+        ...R.flatMap(state.games, (game) => (game.finishedAt && game.day ? [game.day] : [])),
+      ]).sort();
+      const latest = new Map(R.map(state.attempts, (attempt) => [attempt.contentId, attempt]));
       const byKind = {
         opening: { success: 0, assisted: 0, failed: 0 },
         puzzle: { success: 0, assisted: 0, failed: 0 },
@@ -22,38 +22,43 @@ export const createProgressionService = ({
       for (const attempt of state.attempts) {
         byKind[attempt.kind][attempt.outcome] += 1;
       }
-      const reviews = Object.values(state.reviews);
+      const reviews = R.values(state.reviews);
       return {
-        successes: state.attempts.filter((attempt) => attempt.outcome === 'success').length,
-        assisted: state.attempts.filter((attempt) => attempt.outcome === 'assisted').length,
-        toReview: [...latest.values()].filter((attempt) => attempt.outcome !== 'success').length,
+        successes: R.filter(state.attempts, (attempt) => attempt.outcome === 'success').length,
+        assisted: R.filter(state.attempts, (attempt) => attempt.outcome === 'assisted').length,
+        toReview: R.filter([...latest.values()], (attempt) => attempt.outcome !== 'success').length,
         attempts: state.attempts.length,
         activeDays: days,
         streak: countStreak(days, clock.now()),
-        due: reviews
-          .filter((review) => review.due <= clock.now().toISOString())
-          .sort((a, b) => a.due.localeCompare(b.due)),
-        mastered: reviews.filter((review) => review.streak >= 3).length,
-        learning: reviews.filter((review) => review.streak < 3).length,
-        finishedGames: state.games.filter((game) => game.finishedAt !== null).length,
+        due: R.pipe(
+          reviews,
+          R.filter((review) => review.due <= clock.now().toISOString()),
+          R.sort((a, b) => a.due.localeCompare(b.due)),
+        ),
+        mastered: R.filter(reviews, (review) => review.streak >= 3).length,
+        learning: R.filter(reviews, (review) => review.streak < 3).length,
+        finishedGames: R.filter(state.games, (game) => game.finishedAt !== null).length,
         byKind,
       };
     },
+
     preferences: async () => {
       return repository.preferences();
     },
+
     async markOnboarded() {
       await repository.markOnboarded();
     },
   };
 };
+
 function countStreak(days: readonly string[], now: Date): number {
+  let count = 0;
   const set = new Set(days);
   const cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
   if (!set.has(localDay(cursor))) {
     cursor.setDate(cursor.getDate() - 1);
   }
-  let count = 0;
   while (set.has(localDay(cursor))) {
     count += 1;
     cursor.setDate(cursor.getDate() - 1);

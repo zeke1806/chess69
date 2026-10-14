@@ -34,21 +34,26 @@ function connect<State, Actions, Bindings>(
     getState: () => {
       return state;
     },
+
     setState: (updater) => {
       if (active) {
         state = updater(state);
       }
     },
+
     isActive: () => {
       return active;
     },
+
     bindings,
   });
   return {
     actions,
+
     get state() {
       return state;
     },
+
     stop: () => {
       active = false;
     },
@@ -64,6 +69,7 @@ const context: BoardContext = {
   checkSquare: null,
   disabled: false,
 };
+
 function board() {
   const moves: string[] = [];
   const connection = connect<BoardState, BoardActions, BoardBindings>(createBoardService(), {
@@ -134,6 +140,7 @@ test('04 — le nouveau parcours attend la fin réelle de l’annulation du mote
     ...base.business,
     game: {
       ...base.business.game,
+
       cancelThinking: async () => {
         if (armed) {
           armed = false;
@@ -141,6 +148,7 @@ test('04 — le nouveau parcours attend la fin réelle de l’annulation du mote
           await released.promise;
         }
       },
+
       start: async (...args) => {
         started += 1;
         return base.business.game.start(...args);
@@ -166,11 +174,13 @@ test('05 — une annulation échouée bloque le lancement et Réessayer retente 
     ...base.business,
     game: {
       ...base.business.game,
+
       cancelThinking: async () => {
         if (fail) {
           throw new Error('native stop');
         }
       },
+
       start: async (...args) => {
         started += 1;
         return base.business.game.start(...args);
@@ -247,6 +257,7 @@ test('09 — une erreur de rafraîchissement au retour au premier plan reste ré
     ...base.business,
     progression: {
       ...base.business.progression,
+
       summary: async () => {
         if (fail) {
           throw new Error('read');
@@ -272,6 +283,7 @@ test('10 — une lecture globale échouée après sauvegarde ne rejoue pas le co
     ...base.business,
     progression: {
       ...base.business.progression,
+
       summary: async () => {
         if (fail) {
           throw new Error('read');
@@ -298,10 +310,12 @@ test('11 — une sauvegarde d’apprentissage terminée après démontage ne pub
   const original = base.business.createLearning;
   const connection = front({
     ...base.business,
+
     createLearning: () => {
       const learning = original();
       return {
         ...learning,
+
         finish: async () => {
           entered.resolve();
           await released.promise;
@@ -344,6 +358,7 @@ test('13 — la reprise après une réponse moteur sauvegardée rafraîchit sans
     ...base.business,
     progression: {
       ...base.business.progression,
+
       summary: async () => {
         if (fail && (await base.repository.progression.read()).games[0]?.moves.length === 2) {
           throw new Error('read');
@@ -365,7 +380,9 @@ test('13 — la reprise après une réponse moteur sauvegardée rafraîchit sans
 function blockedEngine() {
   let calls = 0;
   let failing = true;
+
   let release = (_value: EngineEvaluation): void => {};
+
   const entered = deferred();
   const evaluation: EngineEvaluation = {
     bestMove: 'e2e4',
@@ -377,10 +394,12 @@ function blockedEngine() {
   });
   const engine: EngineService = {
     initialize: async () => {},
+
     evaluate: async () => {
       entered.resolve();
       return pending;
     },
+
     cancel: async () => {
       calls += 1;
       if (failing) {
@@ -388,6 +407,7 @@ function blockedEngine() {
       }
       release(evaluation);
     },
+
     dispose: async () => {
       release(evaluation);
     },
@@ -395,9 +415,11 @@ function blockedEngine() {
   return {
     engine,
     entered: entered.promise,
+
     recover: () => {
       failing = false;
     },
+
     get calls() {
       return calls;
     },
@@ -467,12 +489,15 @@ test.each(['foreground', 'startup'] as const)(
     let failing = mode === 'startup';
     const connection = front({
       ...base.business,
+
       initialize: async () => {
         if (failing && mode === 'startup') throw new Error('startup');
         await base.business.initialize();
       },
+
       progression: {
         ...base.business.progression,
+
         summary: async () => {
           if (failing && mode === 'foreground') throw new Error('read');
           return base.business.progression.summary();

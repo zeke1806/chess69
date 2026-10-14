@@ -1,6 +1,7 @@
 import { Chess } from 'chess.js';
 import type { MemoryEngineDependencies, EngineService } from '../engine-types';
 import { createEngineLifecycle } from './engine-lifecycle';
+
 /** Deterministic legal-move double; this is never the production opponent. */
 export const createMemoryEngineService = ({
   evaluatePosition,
@@ -9,12 +10,15 @@ export const createMemoryEngineService = ({
     initialize: async () => {
       return undefined;
     },
+
     cancel: async () => {
       return undefined;
     },
+
     dispose: async () => {
       return undefined;
     },
+
     evaluate:
       evaluatePosition ??
       (async (fen) => {

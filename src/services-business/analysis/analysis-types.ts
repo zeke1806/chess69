@@ -51,26 +51,26 @@ export type AnalysisOptions = Readonly<{
   signal?: AbortSignal;
   onProgress?: (view: AnalysisView) => void;
 }>;
-export type AnalysisService = Readonly<{
+export interface AnalysisService {
   /** Resumes retained checkpoints; returns partial results on cancellation. */
-  analyze: (gameId: string, options?: AnalysisOptions) => Promise<AnalysisView>;
-  get: (gameId: string) => Promise<AnalysisView | null>;
-  cancel: () => Promise<void>;
-}>;
+  readonly analyze: (gameId: string, options?: AnalysisOptions) => Promise<AnalysisView>;
+  readonly get: (gameId: string) => Promise<AnalysisView | null>;
+  readonly cancel: () => Promise<void>;
+}
 export type AnalysisDependencies = Readonly<{
   repository: AnalysisRepository;
   rules: Pick<RulesService, 'position'>;
   engine: Pick<EngineService, 'evaluate' | 'cancel'>;
 }>;
-export type AnalysisRepository = Readonly<{
-  load: (gameId: string) => Promise<
+export interface AnalysisRepository {
+  readonly load: (gameId: string) => Promise<
     Readonly<{
       game: GameRecord | null;
       record: AnalysisRecord | null;
     }>
   >;
-  saveCheckpoint: (
+  readonly saveCheckpoint: (
     record: AnalysisRecord,
     isCurrent: () => boolean,
   ) => Promise<AnalysisRecord | null>;
-}>;
+}

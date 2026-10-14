@@ -12,26 +12,26 @@ export type GameState = Readonly<{
   replacementRequired: boolean;
   resignationRequired: boolean;
 }>;
-export type GameActions = Readonly<{
-  changeColor: (color: GameOptions['color']) => void;
-  changeLevel: (level: GameOptions['level']) => void;
-  start: (confirmed?: boolean) => Promise<void>;
-  dismissReplacement: () => void;
-  resume: () => Promise<void>;
-  move: (move: string) => Promise<void>;
-  requestResign: () => void;
-  confirmResign: () => Promise<void>;
-  dismissResign: () => void;
-  showHistory: () => Promise<void>;
-  think: () => Promise<void>;
-  refresh: () => Promise<void>;
-  retry: () => Promise<void>;
-  leave: () => void;
-}>;
+export interface GameActions {
+  readonly changeColor: (color: GameOptions['color']) => void;
+  readonly changeLevel: (level: GameOptions['level']) => void;
+  readonly start: (confirmed?: boolean) => Promise<void>;
+  readonly dismissReplacement: () => void;
+  readonly resume: () => Promise<void>;
+  readonly move: (move: string) => Promise<void>;
+  readonly requestResign: () => void;
+  readonly confirmResign: () => Promise<void>;
+  readonly dismissResign: () => void;
+  readonly showHistory: () => Promise<void>;
+  readonly think: () => Promise<void>;
+  readonly refresh: () => Promise<void>;
+  readonly retry: () => Promise<void>;
+  readonly leave: () => void;
+}
 
-export type GameUiService = StatefulService<GameState, GameActions, GameBindings>;
-export type GameBindings = Readonly<{
-  enter: (page: 'game' | 'history') => ContextLease;
-  current: () => ContextLease;
-  refreshGlobal: () => Promise<void>;
-}>;
+export interface GameUiService extends StatefulService<GameState, GameActions, GameBindings> {}
+export interface GameBindings {
+  readonly enter: (page: 'game' | 'history') => ContextLease;
+  readonly current: () => ContextLease;
+  readonly refreshGlobal: () => Promise<void>;
+}

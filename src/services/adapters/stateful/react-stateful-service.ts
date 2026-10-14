@@ -8,6 +8,7 @@ export function useStatefulService<State, Actions, Bindings>(
   service: StatefulService<State, Actions, Bindings>,
   bindings: Bindings,
 ): StatefulConnection<State, Actions>;
+
 export function useStatefulService<State, Actions, Bindings>(
   service: StatefulService<State, Actions, Bindings>,
   bindings?: Bindings,
@@ -21,9 +22,11 @@ export function useStatefulService<State, Actions, Bindings>(
       isActive: () => {
         return mounted.current;
       },
+
       getState: () => {
         return stateRef.current;
       },
+
       setState: (update) => {
         if (!mounted.current) {
           return;
@@ -32,6 +35,7 @@ export function useStatefulService<State, Actions, Bindings>(
         stateRef.current = next;
         setState(() => next);
       },
+
       get bindings() {
         return bindingsRef.current as Bindings;
       },

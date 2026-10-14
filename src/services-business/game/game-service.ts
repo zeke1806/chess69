@@ -1,3 +1,4 @@
+import * as R from 'remeda';
 import { localDay } from '../calendar/calendar-service';
 import type { GameRecord } from './game-types';
 import type { GameDependencies, GameErrorCode, GameService, GameSession } from './game-types';
@@ -7,6 +8,7 @@ export class GameError extends Error {
     this.name = 'GameError';
   }
 }
+
 export const createGameService = ({
   repository,
   rules,
@@ -47,10 +49,12 @@ export const createGameService = ({
         return session(record);
       });
     },
+
     resume: async () => {
       const record = await repository.active();
       return record ? session(record) : null;
     },
+
     play: (uci) => {
       return mutate(async () => {
         const record = await active();
@@ -61,23 +65,27 @@ export const createGameService = ({
         if (!next) {
           throw new GameError('illegal-move');
         }
-        const moved = { ...record, moves: [...record.moves, uci] };
+        const moved = R.set(record, 'moves', R.concat(record.moves, [uci]));
         const updated = next.result ? finish(moved, next.result, clock.now()) : moved;
         await save(record, updated);
         return session(updated);
       });
     },
+
     think: async () => {
       if (busy || thinking) {
         throw new GameError('busy');
       }
       const token = ++generation;
       const controller = new AbortController();
+
       const isCurrent = () => {
         return token === generation && !controller.signal.aborted;
       };
+
       thinking = controller;
       try {
+        let bestMove: string | null;
         const record = await active();
         if (!isCurrent()) {
           return null;
@@ -86,7 +94,6 @@ export const createGameService = ({
         if (position.turn === record.color) {
           throw new GameError('not-engine-turn');
         }
-        let bestMove: string | null;
         try {
           bestMove = (
             await engine.evaluate(
@@ -108,7 +115,7 @@ export const createGameService = ({
         if (!bestMove || !next) {
           throw new GameError('engine-error');
         }
-        const moved = { ...record, moves: [...record.moves, bestMove] };
+        const moved = R.set(record, 'moves', R.concat(record.moves, [bestMove]));
         const updated = next.result ? finish(moved, next.result, clock.now()) : moved;
         await save(record, updated, isCurrent);
         return isCurrent() ? session(updated) : null;
@@ -118,6 +125,7 @@ export const createGameService = ({
         }
       }
     },
+
     cancelThinking: async () => {
       if (!thinking) {
         return;
@@ -131,6 +139,7 @@ export const createGameService = ({
         thinking = null;
       }
     },
+
     resign: () => {
       return mutate(async () => {
         const record = await active();
@@ -139,14 +148,17 @@ export const createGameService = ({
         return session(updated);
       });
     },
+
     history: async () => {
-      return (await repository.history()).map(session);
+      return R.map(await repository.history(), session);
     },
+
     get: async (id) => {
       const record = await repository.get(id);
       return record ? session(record) : null;
     },
   };
+
   async function mutate<T>(action: () => Promise<T>): Promise<T> {
     if (busy || thinking) {
       throw new GameError('busy');
@@ -158,12 +170,14 @@ export const createGameService = ({
       busy = false;
     }
   }
+
   function session(record: GameRecord): GameSession {
     return {
-      record: { ...record, moves: [...record.moves] },
+      record: R.set(record, 'moves', [...record.moves]),
       position: rules.position(undefined, record.moves),
     };
   }
+
   async function active(): Promise<GameRecord> {
     const record = await repository.active();
     if (!record) {
@@ -171,6 +185,7 @@ export const createGameService = ({
     }
     return record;
   }
+
   async function save(
     record: GameRecord,
     updated: GameRecord,
@@ -184,11 +199,11 @@ export const createGameService = ({
     }
   }
 };
+
 const finish = (record: GameRecord, result: string, now: Date): GameRecord => {
-  return {
-    ...record,
+  return R.merge(record, {
     result,
     finishedAt: now.toISOString(),
     day: localDay(now),
-  };
+  });
 };

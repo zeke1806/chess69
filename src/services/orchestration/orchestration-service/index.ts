@@ -35,6 +35,7 @@ export function createOrchestrationService(
         new WeakSet<object>(),
       );
     },
+
     connect: (connector) => {
       let lifecycle = 0;
       let context = 0;
@@ -44,26 +45,6 @@ export function createOrchestrationService(
       let retryLifecycle: (() => Promise<void>) | null = null;
       let actions: OrchestrationActions;
       const frozen = new WeakSet<object>();
-      const isActive = (): boolean => {
-        return connector.isActive() && !disposed;
-      };
-      const publish = (update: (state: OrchestrationState) => OrchestrationState): void => {
-        if (!isActive()) {
-          return;
-        }
-        connector.setState((state) => {
-          return freezeState(presentShell(update(state)), frozen);
-        });
-        actions?.board.synchronize(presentBoard(connector.getState()));
-      };
-      const publishBoard = (update: (state: OrchestrationState) => OrchestrationState): void => {
-        if (!isActive()) {
-          return;
-        }
-        connector.setState((state) => {
-          return freezeState(update(state), frozen);
-        });
-      };
       const learning = dependencies.learning.connect(
         createSliceConnector(
           connector,
@@ -72,6 +53,7 @@ export function createOrchestrationService(
             enter: (page: 'opening' | 'exercise' | 'list') => {
               return enter({ destination: 'learn', page });
             },
+
             refreshGlobal,
           },
           isActive,
@@ -86,6 +68,7 @@ export function createOrchestrationService(
             enter: (page: 'game' | 'history') => {
               return enter({ destination: 'play', page });
             },
+
             current,
             refreshGlobal,
           },
@@ -101,6 +84,7 @@ export function createOrchestrationService(
             enter: () => {
               return enter({ destination: 'play', page: 'analysis' });
             },
+
             current,
           },
           isActive,
@@ -170,6 +154,7 @@ export function createOrchestrationService(
             }
           }
         },
+
         foreground: async () => {
           if (
             !isActive() ||
@@ -211,6 +196,7 @@ export function createOrchestrationService(
             }
           }
         },
+
         dispose: async () => {
           disposed = true;
           lifecycle += 1;
@@ -222,9 +208,11 @@ export function createOrchestrationService(
           const closing = dependencies.dispose();
           await Promise.all([stopping, closing]);
         },
+
         navigate: (destination) => {
           enter({ destination, page: 'list' });
         },
+
         back: () => {
           const state = connector.getState();
           if (state.shell.route.page !== 'list') {
@@ -243,9 +231,11 @@ export function createOrchestrationService(
           }
           return false;
         },
+
         openPractice: (kind) => {
           learning.filter(kind);
         },
+
         startRecommendedPractice: () => {
           const review = connector.getState().progression.summary?.due[0];
           if (review) {
@@ -254,6 +244,7 @@ export function createOrchestrationService(
             actions.navigate('learn');
           }
         },
+
         retry: async () => {
           if (retryLifecycle) {
             await retryLifecycle();
@@ -270,6 +261,7 @@ export function createOrchestrationService(
             await progression.retry();
           }
         },
+
         learning,
         game,
         analysis,
@@ -309,6 +301,7 @@ export function createOrchestrationService(
           isCurrent: () => {
             return isActive() && contextToken === context && lifecycleToken === lifecycle;
           },
+
           ready: pendingStop,
         };
       }
@@ -349,6 +342,29 @@ export function createOrchestrationService(
           return;
         }
         await Promise.all([progression.refresh(), game.refresh()]);
+      }
+
+      function publish(update: (state: OrchestrationState) => OrchestrationState): void {
+        if (!isActive()) {
+          return;
+        }
+        connector.setState((state) => {
+          return freezeState(presentShell(update(state)), frozen);
+        });
+        actions?.board.synchronize(presentBoard(connector.getState()));
+      }
+
+      function publishBoard(update: (state: OrchestrationState) => OrchestrationState): void {
+        if (!isActive()) {
+          return;
+        }
+        connector.setState((state) => {
+          return freezeState(update(state), frozen);
+        });
+      }
+
+      function isActive(): boolean {
+        return connector.isActive() && !disposed;
       }
     },
   };

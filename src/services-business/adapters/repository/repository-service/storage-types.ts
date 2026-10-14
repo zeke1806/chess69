@@ -1,7 +1,7 @@
 import type { StoredState } from '../repository-types';
-export type InstallationStorage = Readonly<{
-  initialize: () => Promise<void>;
-  readState: () => Promise<StoredState>;
-  updateState: (update: (state: StoredState) => StoredState) => Promise<StoredState>;
-  dispose: () => Promise<void>;
-}>;
+export interface InstallationStorage {
+  readonly initialize: () => Promise<void>;
+  readonly readState: () => Promise<StoredState>;
+  readonly updateState: (update: (state: StoredState) => StoredState) => Promise<StoredState>;
+  readonly dispose: () => Promise<void>;
+}

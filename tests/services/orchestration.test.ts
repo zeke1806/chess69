@@ -145,6 +145,7 @@ test('une initialisation terminée après arrêt et réinitialisation ne publie 
   let first = true;
   const connection = front({
     ...context.business,
+
     initialize: async () => {
       if (first) {
         first = false;
@@ -172,6 +173,7 @@ test('ouvrir une analyse dont la lecture est retardée ne remplace pas un nouvea
     ...context.business,
     analysis: {
       ...context.business.analysis,
+
       get: async (id) => {
         entered.resolve();
         await released.promise;
@@ -200,6 +202,7 @@ test('les callbacks et résultats tardifs d’une analyse annulée ne remplacent
     ...context.business,
     analysis: {
       ...context.business.analysis,
+
       analyze: async (id, options) => {
         const view = (await context.business.analysis.get(id))!;
         entered.resolve();

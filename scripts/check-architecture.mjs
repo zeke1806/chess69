@@ -1,15 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
 
-const files = ['src', '.storybook']
+let assignedFunctions = 0;
+let components = 0;
+const files = ['src', 'tests', '.storybook']
   .filter((directory) => fs.existsSync(directory))
   .flatMap(listFiles)
   .filter((file) => /\.tsx?$/.test(file));
 const graph = new Map();
 const problems = [];
-let assignedFunctions = 0;
-let components = 0;
 
 for (const file of files) {
   const source = ts.createSourceFile(
@@ -34,15 +35,36 @@ for (const file of files) {
   if (isComponent && !/^src\/ui\/components\/(common|business)\//.test(file)) {
     report(source, file, source, 'Composant hors common/business.');
   }
+
   function visit(node) {
     if (
       ts.isArrowFunction(node) &&
-      (ts.isVariableDeclaration(node.parent) || ts.isPropertyAssignment(node.parent))
+      (ts.isVariableDeclaration(node.parent) ||
+        ts.isPropertyAssignment(node.parent) ||
+        ts.isPropertyDeclaration(node.parent) ||
+        (ts.isBinaryExpression(node.parent) &&
+          node.parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+          node.parent.right === node))
     ) {
       assignedFunctions += 1;
       if (!ts.isBlock(node.body)) {
         report(source, file, node, 'Fonction affectée sans bloc/return explicite.');
       }
+    }
+    if (
+      ts.isFunctionLike(node) &&
+      node.body &&
+      ts.isBlock(node.body) &&
+      node.body.statements.length
+    ) {
+      const first = source.getLineAndCharacterOfPosition(node.body.getStart(source)).line;
+      const last = source.getLineAndCharacterOfPosition(node.body.end).line;
+      if (first === last) {
+        report(source, file, node, 'Corps de fonction à répartir sur plusieurs lignes.');
+      }
+    }
+    if (ts.isTypeAliasDeclaration(node) && /(?:Service|Repository)$/.test(node.name.text)) {
+      report(source, file, node, 'Contrat de service à déclarer avec une interface readonly.');
     }
     if (ts.isClassDeclaration(node)) {
       const heritage = node.heritageClauses?.find(
@@ -112,29 +134,21 @@ for (const file of files) {
     }
     ts.forEachChild(node, visit);
   }
+
   visit(source);
   graph.set(file, imports);
 }
 
 const seen = new Set();
 const active = new Set();
-function detectCycles(file, trail = []) {
-  if (active.has(file)) {
-    problems.push(`Cycle : ${[...trail, file].join(' → ')}`);
-    return;
-  }
-  if (seen.has(file)) {
-    return;
-  }
-  active.add(file);
-  for (const imported of graph.get(file) ?? []) {
-    detectCycles(imported, [...trail, file]);
-  }
-  active.delete(file);
-  seen.add(file);
-}
 for (const file of files) {
   detectCycles(file);
+}
+const spacing = spawnSync(process.execPath, ['scripts/format-function-blocks.mjs'], {
+  encoding: 'utf8',
+});
+if (spacing.status !== 0) {
+  problems.push(spacing.stderr || spacing.error?.message || 'Échec du contrôle des espacements.');
 }
 if (problems.length) {
   console.error(problems.join('\n'));
@@ -150,6 +164,22 @@ function listFiles(directory) {
     const target = path.join(directory, entry.name);
     return entry.isDirectory() ? listFiles(target) : [target];
   });
+}
+
+function detectCycles(file, trail = []) {
+  if (active.has(file)) {
+    problems.push(`Cycle : ${[...trail, file].join(' → ')}`);
+    return;
+  }
+  if (seen.has(file)) {
+    return;
+  }
+  active.add(file);
+  for (const imported of graph.get(file) ?? []) {
+    detectCycles(imported, [...trail, file]);
+  }
+  active.delete(file);
+  seen.add(file);
 }
 
 function resolveLocal(file, imported) {

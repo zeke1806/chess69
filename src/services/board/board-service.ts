@@ -13,6 +13,7 @@ export function createBoardService(): BoardUiService {
         turnMessage: '',
       };
     },
+
     connect: (connector) => {
       const actions = {
         synchronize: (context: BoardContext | null): void => {
@@ -42,6 +43,7 @@ export function createBoardService(): BoardUiService {
             );
           });
         },
+
         select: (square: string): void => {
           const state = connector.getState();
           const context = state.context;
@@ -71,6 +73,7 @@ export function createBoardService(): BoardUiService {
             return R.pipe(value, R.set('selected', selected), R.set('targets', targets));
           });
         },
+
         promote: (piece: 'q' | 'r' | 'b' | 'n'): void => {
           const state = connector.getState();
           if (!connector.isActive() || !state.context || state.context.disabled) {
@@ -87,9 +90,11 @@ export function createBoardService(): BoardUiService {
           actions.reset();
           void connector.bindings.play(move);
         },
+
         cancelPromotion: (): void => {
           connector.setState(R.set('promotion', []));
         },
+
         reset: (): void => {
           connector.setState((state) => {
             return R.pipe(

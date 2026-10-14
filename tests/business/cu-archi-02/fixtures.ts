@@ -58,15 +58,18 @@ export const openDatabaseAsync = async (databaseName: string): Promise<ExpoConne
     execAsync: async (sql) => {
       database.exec(sql);
     },
+
     getFirstAsync: async <T>(sql: string): Promise<T | null> => {
       return (database.prepare(sql).get() as T | undefined) ?? null;
     },
+
     runAsync: async (sql, ...parameters) => {
       if (failedWrites.delete(databaseName)) {
         throw new Error('Disque indisponible');
       }
       database.prepare(sql).run(...parameters);
     },
+
     withExclusiveTransactionAsync: async (action) => {
       database.exec('BEGIN IMMEDIATE;');
       try {
@@ -77,6 +80,7 @@ export const openDatabaseAsync = async (databaseName: string): Promise<ExpoConne
         throw error;
       }
     },
+
     closeAsync: async () => {
       database.close();
       openConnections.delete(database);

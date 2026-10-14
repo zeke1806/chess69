@@ -7,15 +7,15 @@ export type ProgressionState = Readonly<{
   busy: boolean;
   error: string | null;
 }>;
-export type ProgressionActions = Readonly<{
-  refresh: () => Promise<void>;
-  dismissOnboarding: () => Promise<void>;
-  retry: () => Promise<void>;
-}>;
+export interface ProgressionActions {
+  readonly refresh: () => Promise<void>;
+  readonly dismissOnboarding: () => Promise<void>;
+  readonly retry: () => Promise<void>;
+}
 
-export type ProgressionUiService = StatefulService<
+export interface ProgressionUiService extends StatefulService<
   ProgressionState,
   ProgressionActions,
   ProgressionBindings
->;
+> {}
 export type ProgressionBindings = undefined;

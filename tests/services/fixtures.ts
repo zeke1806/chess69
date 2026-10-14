@@ -22,33 +22,41 @@ export function connect(service: OrchestrationService) {
     isActive: () => {
       return active;
     },
+
     getState: () => {
       return state;
     },
+
     setState: (update) => {
       if (active) {
         state = update(state);
       }
     },
+
     bindings: undefined,
   });
   return {
     actions,
+
     get state() {
       return state;
     },
+
     stop: () => {
       active = false;
     },
   };
 }
+
 export function deferred() {
   let resolve = (): void => {};
+
   const promise = new Promise<void>((done) => {
     resolve = done;
   });
   return { promise, resolve };
 }
+
 export function gameContext(
   initialState: StoredState = createEmptyState(),
   catalogue?: CatalogueService,
@@ -62,12 +70,14 @@ export function gameContext(
   const memory = createMemoryRepositoryService({ initialState });
   const repository: RepositoryService = {
     ...memory,
+
     initialize: async () => {
       if (failInit) {
         throw new Error('database');
       }
       await memory.initialize();
     },
+
     learning: {
       saveAttempt: async (...args) => {
         if (failWrite) {
@@ -78,6 +88,7 @@ export function gameContext(
     },
     game: {
       ...memory.game,
+
       save: async (...args) => {
         const held = heldWrite;
         heldWrite = null;
@@ -102,6 +113,7 @@ export function gameContext(
       id: () => {
         return `id-${++sequence}`;
       },
+
       random: () => {
         return 0.5;
       },
@@ -112,6 +124,7 @@ export function gameContext(
     ? {
         ...base,
         catalogue,
+
         createLearning: () => {
           return createLearningService({
             catalogue,
@@ -140,12 +153,15 @@ export function gameContext(
     definition,
     business,
     repository,
+
     failWrite: (value: boolean) => {
       failWrite = value;
     },
+
     failInit: (value: boolean) => {
       failInit = value;
     },
+
     holdNextWrite: () => {
       const entered = deferred();
       const released = deferred();
@@ -174,9 +190,11 @@ export const catalogue: CatalogueService = {
   list: () => {
     return [exercise];
   },
+
   get: (id) => {
     return id === exercise.id ? exercise : undefined;
   },
+
   openings: () => {
     return [];
   },
@@ -194,6 +212,7 @@ export function recordedGame(id: string, finished: boolean): StoredState['games'
     day: finished ? '2026-10-13' : null,
   };
 }
+
 export function analyzedState(): StoredState {
   const base = gameContext();
   const moves = ['f2f3', 'e7e5', 'g2g4', 'd8h4'];

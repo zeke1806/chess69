@@ -21,14 +21,21 @@ export type AnalysisState = Readonly<{
   message: string | null;
   error: string | null;
 }>;
-export type AnalysisActions = Readonly<{
-  open: (id: string) => Promise<void>;
-  analyze: () => Promise<void>;
-  cancel: () => Promise<void>;
-  selectPly: (ply: number) => void;
-  retry: () => Promise<void>;
-  leave: () => void;
-}>;
+export interface AnalysisActions {
+  readonly open: (id: string) => Promise<void>;
+  readonly analyze: () => Promise<void>;
+  readonly cancel: () => Promise<void>;
+  readonly selectPly: (ply: number) => void;
+  readonly retry: () => Promise<void>;
+  readonly leave: () => void;
+}
 
-export type AnalysisUiService = StatefulService<AnalysisState, AnalysisActions, AnalysisBindings>;
-export type AnalysisBindings = Readonly<{ enter: () => ContextLease; current: () => ContextLease }>;
+export interface AnalysisUiService extends StatefulService<
+  AnalysisState,
+  AnalysisActions,
+  AnalysisBindings
+> {}
+export interface AnalysisBindings {
+  readonly enter: () => ContextLease;
+  readonly current: () => ContextLease;
+}

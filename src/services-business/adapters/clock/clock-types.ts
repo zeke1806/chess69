@@ -1,3 +1,3 @@
-export type ClockService = Readonly<{
-  now: () => Date;
-}>;
+export interface ClockService {
+  readonly now: () => Date;
+}

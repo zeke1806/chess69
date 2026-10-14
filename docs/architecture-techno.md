@@ -49,7 +49,9 @@ Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
 - Skills Matt Pocock et Impeccable : installés localement dans `.agents/skills`.
 - Skill CU-ARCHI : installé dans `/Users/zeke/.agents/skills/cu-archi`.
 - Prettier : version exacte installée pour les sources ; contrôle architectural
-  TypeScript complémentaire dans `npm run check:architecture`.
+  TypeScript complémentaire dans `npm run check:architecture`. Le complément
+  local `scripts/format-function-blocks.mjs` utilise l'AST TypeScript et Prettier
+  pour conserver l'espacement des fonctions d'objet demandé pour Chess69.
 - Storybook avec le framework officiel React Native Web/Vite : catalogue de
   composants isolé dans `.storybook`, sans changement de l’entrée Expo ni
   ajout de dépendance native. Les preuves de stories web et d’APK Android

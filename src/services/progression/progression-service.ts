@@ -21,6 +21,7 @@ export function createProgressionService(
         error: null,
       };
     },
+
     connect: (connector) => {
       let generation = 0;
       let retry: (() => Promise<void>) | null = null;
@@ -42,6 +43,7 @@ export function createProgressionService(
             );
           });
         },
+
         dismissOnboarding: async (): Promise<void> => {
           if (!connector.isActive() || connector.getState().busy) {
             return;
@@ -67,6 +69,7 @@ export function createProgressionService(
             }
           }
         },
+
         retry: async (): Promise<void> => {
           if (retry) {
             await retry();

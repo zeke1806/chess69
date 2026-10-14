@@ -46,6 +46,7 @@ export const Promotion = {
   render: () => {
     return <BoardInteraction initialState={promotionBoard} />;
   },
+
   args: { state: promotionBoard },
   parameters: { smoke: { text: 'Promouvoir le pion', svg: true, board: true, promotion: true } },
 } satisfies Story;
@@ -54,5 +55,6 @@ export const Interactive = {
   render: () => {
     return <BoardInteraction initialState={boardState} />;
   },
+
   parameters: { smoke: { text: 'Aucun coup transmis', board: true, interactive: true } },
 } satisfies Story;

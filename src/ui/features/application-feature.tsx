@@ -57,6 +57,7 @@ export function ApplicationFeature({ service }: Readonly<{ service: Orchestratio
         {
           text: 'Abandonner et commencer',
           style: 'destructive',
+
           onPress: () => {
             void actions.game.start(true);
           },
@@ -78,6 +79,7 @@ export function ApplicationFeature({ service }: Readonly<{ service: Orchestratio
         {
           text: 'Abandonner',
           style: 'destructive',
+
           onPress: () => {
             void actions.game.confirmResign();
           },
@@ -152,6 +154,7 @@ function renderPage(
         onRecommended: actions.startRecommendedPractice,
         onPractice: actions.openPractice,
         onResume: actions.game.resume,
+
         onPlay: () => {
           actions.navigate('play');
         },

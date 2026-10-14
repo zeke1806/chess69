@@ -1,3 +1,4 @@
+import * as R from 'remeda';
 import type { EngineEvaluation } from '../adapters/engine/engine-types';
 import type { AnalysisRecord } from './analysis-types';
 import type { GameRecord } from '../game/game-types';
@@ -15,6 +16,7 @@ export class AnalysisError extends Error {
     this.name = 'AnalysisError';
   }
 }
+
 export const createAnalysisService = ({
   repository,
   rules,
@@ -30,16 +32,20 @@ export const createAnalysisService = ({
       const token = ++generation;
       const current = new AbortController();
       controller = current;
+
       const onAbort = () => {
         return current.abort();
       };
+
       if (options.signal?.aborted) {
         current.abort();
       }
       options.signal?.addEventListener('abort', onAbort, { once: true });
+
       const isCurrent = () => {
         return token === generation && !current.signal.aborted;
       };
+
       try {
         const saved = await repository.load(gameId);
         const game = saved.game;
@@ -59,11 +65,11 @@ export const createAnalysisService = ({
           throw new AnalysisError('invalid-checkpoint');
         }
         for (let ply = record.positions.length; ply <= game.moves.length; ply++) {
+          let evaluation: EngineEvaluation;
           if (!isCurrent()) {
             break;
           }
           const position = rules.position(undefined, game.moves.slice(0, ply));
-          let evaluation: EngineEvaluation;
           try {
             evaluation =
               position.result === '1/2-1/2'
@@ -85,19 +91,19 @@ export const createAnalysisService = ({
           const nextRecord: AnalysisRecord = {
             gameId,
             complete: ply === game.moves.length,
-            positions: [
-              ...record.positions,
+            positions: R.concat(record.positions, [
               {
                 ply,
                 fen: position.fen,
                 bestMove: evaluation.bestMove,
-                score: {
-                  ...evaluation.score,
-                  value: position.turn === 'w' ? evaluation.score.value : -evaluation.score.value,
-                },
+                score: R.set(
+                  evaluation.score,
+                  'value',
+                  position.turn === 'w' ? evaluation.score.value : -evaluation.score.value,
+                ),
                 pv: [...evaluation.pv],
               },
-            ],
+            ]),
           };
           const checkpoint = await repository.saveCheckpoint(nextRecord, isCurrent);
           record = checkpoint ?? record;
@@ -114,10 +120,12 @@ export const createAnalysisService = ({
         }
       }
     },
+
     get: async (gameId) => {
       const { game, record } = await repository.load(gameId);
       return game && record ? view(record, game) : null;
     },
+
     cancel: async () => {
       if (!controller) {
         return;
@@ -133,23 +141,24 @@ export const createAnalysisService = ({
     },
   };
 };
+
 const view = (record: AnalysisRecord, game: GameRecord): AnalysisView => {
   return {
-    record: {
-      ...record,
-      positions: record.positions.map((position) => ({
-        ...position,
-        score: { ...position.score },
-        pv: [...position.pv],
-      })),
-    },
+    record: R.set(
+      record,
+      'positions',
+      R.map(record.positions, (position) =>
+        R.pipe(position, R.set('score', { ...position.score }), R.set('pv', [...position.pv])),
+      ),
+    ),
     assessments: assessments(record, game),
     totalPositions: game.moves.length + 1,
   };
 };
+
 const assessments = (record: AnalysisRecord, game: GameRecord): readonly MoveAssessment[] => {
-  const positions = new Map(record.positions.map((position) => [position.ply, position]));
-  return game.moves.flatMap<MoveAssessment>((move, index) => {
+  const positions = new Map(R.map(record.positions, (position) => [position.ply, position]));
+  return R.flatMap(game.moves, (move, index): readonly MoveAssessment[] => {
     const before = positions.get(index);
     const after = positions.get(index + 1);
     if (!before || !after) {
@@ -185,6 +194,7 @@ const assessments = (record: AnalysisRecord, game: GameRecord): readonly MoveAss
     ];
   });
 };
+
 export const mateWinner = (position: AnalysisMatePosition): number => {
   return position.score.value === 0
     ? position.fen.split(' ')[1] === 'w'

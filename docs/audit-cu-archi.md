@@ -4,8 +4,8 @@
 `65ad45f6979ca567b9cdbdec50761fd5c808a3af`, avec la documentation d’adoption
 réalisée dans ce travail. Les constats et propositions ci-dessous décrivent cet état initial.
 Les corrections ont ensuite été appliquées ; leur bilan figure en fin de document. Ce rapport est un constat daté, pas une nouvelle source de normes.
-Le [nouveau contrôle après recentrage du skill](#nouveau-contrôle-après-recentrage-du-skill--14-octobre-2026)
-constitue le bilan le plus récent ; les sections précédentes restent historiques.
+Le [bilan des corrections finales](#corrections-finales-et-espacement--14-octobre-2026)
+constitue le bilan le plus récent ; les audits précédents restent historiques.
 
 ## Références et périmètre
 
@@ -544,3 +544,32 @@ APK/Stockfish natif ni mesure Samsung n'a été réalisée pour cet audit.
 Le bilan est : architecture conforme sur les points inspectés, trois groupes
 d'écarts explicites de conventions, deux préférences à harmoniser, un point
 de lisibilité natif et un renvoi documentaire à actualiser.
+
+## Corrections finales et espacement — 14 octobre 2026
+
+Réalisation depuis `3d2ffc4`, à la demande de l'utilisateur. Les preuves et
+limites sont dans [la vérification finale](../.scratch/conformite-cu-archi-finale/verification.md).
+
+| Constat du nouveau contrôle | Correction |
+| --- | --- |
+| R1 — Validations répétées | Schémas kind et couleur uniques, réutilisés ou dérivés ; compatibilité contrôlée. |
+| R2 — Contrats type au lieu d'interface | Services/ports et services UI en interfaces readonly. |
+| R3 — Ordre de lecture | Helpers hoistables après opérations et consommateurs dans adaptateurs, DI et orchestration. |
+| P1/P2 — Remeda et let/const | Transitions et collections métier harmonisées ; ordre des déclarations ajusté. |
+| L1 — Blocs natifs compactés | Kotlin et JNI aérés, signatures et logique préservées. |
+| Renvoi documentaire | Mode de travail recentré sur son processus ; anciennes conditions par ticket désattribuées à CU-ARCHI. |
+
+L'utilisateur précise aussi que les fonctions définies dans un objet sont
+des blocs de lecture distincts. Une ligne vide les sépare désormais de leurs
+voisins, notamment createInitialState/connect et les actions. Les propriétés
+de données consécutives restent groupées. Le formatage du projet conserve
+cette précision et le contrôle architectural couvre aussi les tests.
+La séparation des fonctions déclarées et des helpers hors objets est aussi
+appliquée et contrôlée, après le dernier constat de la revue Standards.
+
+Typage, formatage, contrôle architectural, 108 tests Jest et 67 contrôles
+Storybook réussis ; compilation Android réussie et contre-revues Standards/Spec
+sans constat restant, consignées dans la
+vérification finale. Cette correction conserve l'organisation des modules,
+la stack et les formats SQLite V1. La validation native sur appareil reste
+distincte de ces preuves de compilation et de comportement en mémoire.

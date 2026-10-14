@@ -29,6 +29,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
         resignationRequired: false,
       };
     },
+
     connect: (connector) => {
       let generation = 0;
       let thinkingGeneration = 0;
@@ -41,10 +42,12 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
           optionsDirty = true;
           connector.setState(R.setPath(['options', 'color'], color));
         },
+
         changeLevel: (level) => {
           optionsDirty = true;
           connector.setState(R.setPath(['options', 'level'], level));
         },
+
         start: async (confirmed = false) => {
           let committed = false;
           if (!connector.isActive() || connector.getState().busy) {
@@ -108,10 +111,12 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             await actions.think();
           }
         },
+
         dismissReplacement: () => {
           pendingOptions = null;
           connector.setState(R.set('replacementRequired', false));
         },
+
         resume: async () => {
           if (!connector.isActive() || connector.getState().busy) {
             return;
@@ -144,6 +149,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             await actions.think();
           }
         },
+
         move: async (move) => {
           let committed = false;
           if (connector.getState().thinking || !connector.getState().session) {
@@ -179,11 +185,13 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             await actions.think();
           }
         },
+
         requestResign: () => {
           if (connector.getState().session && !connector.getState().busy) {
             connector.setState(R.set('resignationRequired', true));
           }
         },
+
         confirmResign: async () => {
           let committed = false;
           if (!connector.getState().resignationRequired) {
@@ -223,9 +231,11 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             },
           );
         },
+
         dismissResign: () => {
           connector.setState(R.set('resignationRequired', false));
         },
+
         showHistory: async () => {
           if (!connector.isActive() || connector.getState().busy) {
             return;
@@ -247,6 +257,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             actions.showHistory,
           );
         },
+
         think: async () => {
           let committed = false;
           const session = connector.getState().session;
@@ -261,6 +272,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
           }
           const lease = connector.bindings.current();
           const token = ++thinkingGeneration;
+
           const isCurrent = (): boolean => {
             return (
               connector.isActive() &&
@@ -269,6 +281,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
               connector.getState().session?.record.id === session.record.id
             );
           };
+
           connector.setState((state) => {
             return R.pipe(
               state,
@@ -314,6 +327,7 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             }
           }
         },
+
         refresh: async () => {
           const token = ++refreshGeneration;
           const [activeGame, history, saved] = await Promise.all([
@@ -336,11 +350,13 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
             );
           });
         },
+
         retry: async () => {
           if (retry) {
             await retry();
           }
         },
+
         leave: () => {
           generation += 1;
           thinkingGeneration += 1;
@@ -389,9 +405,11 @@ export function createGameService({ game, preferences }: Dependencies): GameUiSe
           return;
         }
         const token = ++generation;
+
         const isCurrent = (): boolean => {
           return connector.isActive() && lease.isCurrent() && token === generation;
         };
+
         connector.setState((state) => {
           return R.pipe(state, R.set('busy', true), R.set('error', null));
         });

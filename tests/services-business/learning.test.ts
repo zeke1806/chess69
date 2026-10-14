@@ -47,9 +47,11 @@ function setup(exercise = opening) {
     list: () => {
       return [exercise];
     },
+
     get: (id) => {
       return id === exercise.id ? exercise : undefined;
     },
+
     openings: () => {
       return [];
     },
@@ -72,12 +74,15 @@ function setup(exercise = opening) {
   return {
     service,
     repository,
+
     fail: (value: boolean) => {
       failSave = value;
     },
+
     date: (value: Date) => {
       currentDate = value;
     },
+
     pauseSave: () => {
       let resolve!: () => void;
       waitForSave = new Promise<void>((done) => {
@@ -94,16 +99,27 @@ function setup(exercise = opening) {
 test('un entraînement joue les réponses adverses et sauvegarde un succès avec une première révision demain', async () => {
   const { service, repository } = setup();
   service.start(opening.id, 'w', 'memory');
+  const initial = service.snapshot()!;
   service.play('e2e4');
+  const advanced = service.snapshot()!;
   expect(service.snapshot()?.ply).toBe(2);
   service.play('g1f3');
   service.play('f1c4');
+  const completed = service.snapshot()!;
   const result = await service.finish();
   expect(result).toMatchObject({
     ok: true,
     attempt: { outcome: 'success', day: '2026-10-13' },
     review: { stage: 1, streak: 0, due: new Date(2026, 9, 14, 14).toISOString() },
   });
+  expect(initial).toMatchObject({ ply: 0, lastMove: null, status: 'playing' });
+  expect(initial.legalMoves).toContain('e2e4');
+  expect(advanced).toMatchObject({ ply: 2, lastMove: 'e7e5', status: 'playing' });
+  expect(advanced.legalMoves).toContain('g1f3');
+  expect(completed.status).toBe('completed');
+  expect(service.snapshot()?.status).toBe('saved');
+  expect(advanced.exercise).toBe(initial.exercise);
+  expect(service.snapshot()?.exercise).toBe(initial.exercise);
   expect((await repository.progression.read()).attempts).toHaveLength(1);
 });
 
@@ -166,12 +182,14 @@ test('une erreur empêche le succès sans aide et remet le camp au premier entra
   await complete(service);
   date(new Date(2026, 9, 14, 14));
   service.start(opening.id, 'w', 'memory');
-  const before = service.snapshot()?.fen;
+  const before = service.snapshot()!;
   expect(service.play('d2d4')).toMatchObject({
     ok: true,
     snapshot: { errorCount: 1, feedback: 'incorrect', expectedMove: 'e2e4' },
   });
-  expect(service.snapshot()?.fen).toBe(before);
+  expect(service.snapshot()?.fen).toBe(before.fen);
+  expect(before).toMatchObject({ errorCount: 0, feedback: null, expectedMove: null });
+  expect(service.snapshot()?.legalMoves).toBe(before.legalMoves);
   service.play('e2e4');
   service.play('g1f3');
   service.play('f1c4');
@@ -185,7 +203,10 @@ test('une erreur empêche le succès sans aide et remet le camp au premier entra
 test('un indice, une solution montrée et le mode guidé restent des tentatives avec aide', async () => {
   const { service } = setup();
   service.start(opening.id, 'w', 'memory');
+  const unassisted = service.snapshot()!;
   service.hint();
+  expect(unassisted).toMatchObject({ assisted: false, hint: null, expectedMove: null });
+  expect(service.snapshot()?.legalMoves).toBe(unassisted.legalMoves);
   service.play('e2e4');
   service.play('g1f3');
   service.play('f1c4');
@@ -194,8 +215,11 @@ test('un indice, une solution montrée et le mode guidé restent des tentatives 
     review: { stage: 0, streak: 0 },
   });
   service.start(opening.id);
+  const unrevealed = service.snapshot()!;
   service.reveal();
   expect(service.snapshot()).toMatchObject({ status: 'revealed', assisted: true, ply: 5 });
+  expect(unrevealed).toMatchObject({ status: 'playing', assisted: false, ply: 0 });
+  expect(unrevealed.legalMoves).toContain('e2e4');
   expect(await service.finish()).toMatchObject({ attempt: { outcome: 'assisted' } });
   service.start(opening.id, 'w', 'guided');
   expect(service.snapshot()?.expectedMove).toBe('e2e4');

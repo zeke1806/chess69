@@ -1,3 +1,5 @@
+import type { Exercise } from '../catalogue/catalogue-types';
+import { chessColorSchema } from '../adapters/rules/rules-types';
 import type { Attempt, Review } from '../learning/learning-types';
 import type { GameRecord } from '../game/game-types';
 import { z } from 'zod';
@@ -5,7 +7,11 @@ import { engineLevelSchema } from '../adapters/engine/engine-types';
 import type { ClockService } from '../adapters/clock/clock-types';
 
 export const preferencesSchema = z
-  .object({ color: z.enum(['w', 'b', 'random']), level: engineLevelSchema, onboarded: z.boolean() })
+  .object({
+    color: z.enum([...chessColorSchema.options, 'random']),
+    level: engineLevelSchema,
+    onboarded: z.boolean(),
+  })
   .readonly();
 export type Preferences = z.infer<typeof preferencesSchema>;
 
@@ -22,7 +28,7 @@ export type ProgressionSummary = Readonly<{
   finishedGames: number;
   byKind: Readonly<
     Record<
-      'opening' | 'puzzle' | 'endgame',
+      Exercise['kind'],
       Readonly<{
         success: number;
         assisted: number;
@@ -31,11 +37,11 @@ export type ProgressionSummary = Readonly<{
     >
   >;
 }>;
-export type ProgressionService = Readonly<{
-  summary: () => Promise<ProgressionSummary>;
-  preferences: () => Promise<Preferences>;
-  markOnboarded: () => Promise<void>;
-}>;
+export interface ProgressionService {
+  readonly summary: () => Promise<ProgressionSummary>;
+  readonly preferences: () => Promise<Preferences>;
+  readonly markOnboarded: () => Promise<void>;
+}
 export type ProgressionDependencies = Readonly<{
   repository: ProgressionRepository;
   clock: ClockService;
@@ -46,8 +52,8 @@ export type ProgressionData = Readonly<{
   games: readonly GameRecord[];
   preferences: Preferences;
 }>;
-export type ProgressionRepository = Readonly<{
-  read: () => Promise<ProgressionData>;
-  preferences: () => Promise<Preferences>;
-  markOnboarded: () => Promise<void>;
-}>;
+export interface ProgressionRepository {
+  readonly read: () => Promise<ProgressionData>;
+  readonly preferences: () => Promise<Preferences>;
+  readonly markOnboarded: () => Promise<void>;
+}
