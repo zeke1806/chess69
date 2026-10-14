@@ -1,0 +1,85 @@
+import { z } from 'zod';
+import type { CatalogueService, Exercise } from '../catalogue/catalogue-types';
+import type { ClockService } from '../adapters/clock/clock-types';
+import type { IdentityService } from '../adapters/identity/identity-types';
+import type { RulesService } from '../adapters/rules/rules-types';
+
+export const attemptSchema = z
+  .object({
+    id: z.string(),
+    contentId: z.string(),
+    kind: z.enum(['opening', 'puzzle', 'endgame']),
+    outcome: z.enum(['success', 'assisted', 'failed']),
+    at: z.string(),
+    day: z.string(),
+  })
+  .readonly();
+export const reviewSchema = z
+  .object({
+    contentId: z.string(),
+    color: z.enum(['w', 'b']).optional(),
+    stage: z.number().int().min(0).max(5),
+    streak: z.number().int().min(0),
+    due: z.string(),
+  })
+  .readonly();
+export type Attempt = z.infer<typeof attemptSchema>;
+export type Review = z.infer<typeof reviewSchema>;
+
+export type LearningMode = 'guided' | 'memory';
+export type LearningSnapshot = Readonly<{
+  exercise: Exercise;
+  color: 'w' | 'b';
+  mode: LearningMode;
+  fen: string;
+  ply: number;
+  status: 'playing' | 'completed' | 'revealed' | 'saved';
+  legalMoves: ReadonlyArray<string>;
+  expectedMove: string | null;
+  lastMove: string | null;
+  errorCount: number;
+  assisted: boolean;
+  hint: string | null;
+  feedback: 'correct' | 'incorrect' | 'illegal' | null;
+}>;
+export type LearningAction =
+  | Readonly<{
+      ok: true;
+      snapshot: LearningSnapshot;
+    }>
+  | Readonly<{
+      ok: false;
+      reason: 'not-started' | 'not-playing' | 'unknown-content' | 'wrong-color' | 'saving';
+    }>;
+export type LearningResult =
+  | Readonly<{
+      ok: true;
+      attempt: Attempt;
+      review: Review | null;
+    }>
+  | Readonly<{
+      ok: false;
+      reason: 'not-started' | 'unfinished' | 'save-failed' | 'saving';
+    }>;
+export type LearningDependencies = Readonly<{
+  catalogue: Pick<CatalogueService, 'get'>;
+  repository: LearningRepository;
+  rules: RulesService;
+  clock: ClockService;
+  ids: Pick<IdentityService, 'id'>;
+}>;
+export type LearningService = Readonly<{
+  start: (contentId: string, color?: 'w' | 'b', mode?: LearningMode) => LearningAction;
+  snapshot: () => LearningSnapshot | null;
+  play: (move: string) => LearningAction;
+  hint: () => LearningAction;
+  reveal: () => LearningAction;
+  finish: () => Promise<LearningResult>;
+}>;
+export type LearningRepository = Readonly<{
+  saveAttempt: (
+    attempt: Attempt,
+    reviewKey?: string,
+    revise?: (previous: Review | undefined) => Review,
+  ) => Promise<Review | null>;
+}>;

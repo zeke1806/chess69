@@ -1,0 +1,10 @@
+node_modules/
+artifacts/
+android/
+modules/
+.agents/
+.scratch/
+.impeccable/
+.expo/
+package-lock.json
+storybook-static/

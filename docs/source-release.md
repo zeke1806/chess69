@@ -1,6 +1,10 @@
-# Sources correspondant à Chess69 0.2.0, code 4
+# Sources correspondant à Chess69
 
-L’archive `chess69-source.tar.gz` distribuée à côté de l’APK contient le code
+La version publique 0.2.0/code4 conserve ses sources distribuées. La livraison
+locale CU-ARCHI 0.2.1/code5 prépare `artifacts/chess69-0.2.1-5-source.tar.gz`
+avec la révision finale, sans publication distante.
+
+L’archive des sources correspondant à chaque APK contient le code
 original, le module JNI/Kotlin, Stockfish 17.1 et ses deux réseaux NNUE,
 les ressources locales, les licences, le lockfile et les scripts de compilation.
 `SOURCE-REVISION.txt` identifie le commit source. La clé privée de distribution,

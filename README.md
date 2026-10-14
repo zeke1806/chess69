@@ -12,17 +12,22 @@ Le [mode de travail](docs/mode-de-travail.md) articule les workflows Matt Pocock
 le skill [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) pour l’architecture
 et les normes de codage, et Impeccable pour l’interface. Les
 [choix technologiques](docs/architecture-techno.md) restent propres à Chess69.
-L’[audit CU-ARCHI](docs/audit-cu-archi.md) décrit les divergences et corrections proposées.
+L’[audit CU-ARCHI](docs/audit-cu-archi.md) conserve le constat initial et le bilan des corrections A1–A9/D1 appliquées.
 
 ```bash
 npm ci
 npm run typecheck
 npm test
+npm run format:check
+npm run check:architecture
+npm run storybook:test
 npx expo install --check
 npx expo-doctor
 ```
 
-Les tests rapides utilisent les contrats publics et des adaptateurs en mémoire, sans réseau, disque, SQLite natif ou moteur réel. Le fonctionnement natif exige Android ; un navigateur ou Expo Go ne remplace pas l’APK.
+Les tests rapides utilisent les contrats publics et des dépendances injectées, sans réseau ni moteur natif. Les tests de persistance SQLite traversent aussi un adaptateur Expo substitué par le vrai SQLite Node dans des bases temporaires. Les 17 composants common/business disposent de 66 stories React Native Web : `npm run storybook:dev` ouvre le catalogue, `npm run storybook:test` vérifie son build et ses interactions. Voir [.storybook/README.md](.storybook/README.md). Le fonctionnement natif exige Android ; le catalogue web et Expo Go ne remplacent pas l’APK.
+
+Les [preuves CU-ARCHI 0.2.1](.scratch/corrections-cu-archi/verification.md) couvrent cette livraison locale et sa mise à jour sans effacement. Elles complètent les preuves de la version publique 0.2.0.
 
 ## Compiler et distribuer
 

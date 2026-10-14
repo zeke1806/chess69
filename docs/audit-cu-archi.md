@@ -2,8 +2,8 @@
 
 État examiné le 14 octobre 2026 : code du commit
 `65ad45f6979ca567b9cdbdec50761fd5c808a3af`, avec la documentation d’adoption
-réalisée dans ce travail. Les corrections du code ci-dessous sont proposées,
-pas implémentées. Ce rapport est un constat daté, pas une nouvelle source de normes.
+réalisée dans ce travail. Les constats et propositions ci-dessous décrivent cet état initial.
+Les corrections ont ensuite été appliquées ; leur bilan figure en fin de document. Ce rapport est un constat daté, pas une nouvelle source de normes.
 
 ## Références et périmètre
 
@@ -348,9 +348,9 @@ la persistance ou le cycle de vie natif change.
 - Liens locaux des neuf documents modifiés : aucune cible manquante.
 - `git diff --check` : succès.
 
-Ces contrôles valident le socle actuel et la précision des constats ; une suite
-verte ne prouve pas la conformité architecturale. Les refactorings proposés
-restent à implémenter dans un travail ultérieur.
+Ces contrôles validaient le socle et la précision des constats au moment de
+l’audit initial ; une suite verte ne prouve pas la conformité architecturale.
+Le travail suivant a implémenté les corrections, décrites dans le bilan final.
 
 ## Revue de la livraison documentaire
 
@@ -370,3 +370,39 @@ Aucun constat actionnable. La suppression/remplacement, les adaptations propres
 Aucun refactoring fonctionnel ni changement de stack n’est introduit.
 
 Bilan des revues de cette livraison : Standards 0 constat ; Spec 0 constat.
+
+## Corrections appliquées — 14 octobre 2026
+
+Travail suivant, base `e8f1a65`, conformément à l’ordre proposé. Les preuves
+complètes et les limites sont dans [la vérification CU-ARCHI](../.scratch/corrections-cu-archi/verification.md).
+Les chemins anciens des constats restent ceux de l’état audité.
+
+| Points | Résultat |
+| --- | --- |
+| A1 | Horloge et identité sont deux modules d’adaptation distincts. |
+| A6/A7 | Schémas de domaine uniques, objets et tableaux imbriqués readonly ; formats V1 conservés. |
+| A2 | Ports learning/game/analysis/progression ciblés ; détails de stockage privés, sauvegardes atomiques et contrôles de concurrence maintenus. |
+| A8 | `services`, `adapters`, `*-types.ts`, `di.ts` et implémentations natives/chess.js nommées. |
+| A3 | Raccordement stateful générique, état/actions par connexion, aucun couplage au domaine Application. |
+| A4/D1 | Application remplacé par learning, game, analysis, progression, board et orchestration ; l’orchestrateur coordonne navigation, lifecycle et exclusion moteur. |
+| A5 | 17 vues stateless rangées en common/business, 66 stories RNW exécutables, validation Android distincte. |
+| A9 | Blocs explicites, groupes et JSX formatés, ordre des déclarations revu et Remeda pour transitions/collections pertinentes. |
+
+Les adaptations Chess69 restent en place : monolithe React Native/Expo Android,
+npm, données locales SQLite, moteur Stockfish embarqué, interface française,
+assets, package/signature et procédures Matt Pocock/Impeccable. L’outillage de
+stories reste exclusivement de développement.
+
+Les revues Standards et Spec de l’implémentation ont identifié trois constats :
+arrêt physique du moteur non rappelé après échec, dépendances métier encore
+trop larges et reprise lifecycle perdue après navigation depuis une erreur.
+Les corrections sont couvertes par quatre reproductions rouges puis vertes.
+Les contre-revues ciblées confirment leur résolution, sans nouveau constat.
+Ces comptes rendus sont conservés séparément dans
+[Standards](../.scratch/corrections-cu-archi/standards-review.md) et
+[Spec](../.scratch/corrections-cu-archi/spec-review.md).
+
+Bilan final : 108 tests/15 suites Jest et 67 tests Chromium réussis ; typage,
+formatage, contrôle des frontières/imports, compatibilité Expo et APK signée
+vérifiés. L’émulateur ARM64 couvre la mise à jour et les parcours hors ligne ;
+le Galaxy S22 Ultra reste une validation matérielle distincte.

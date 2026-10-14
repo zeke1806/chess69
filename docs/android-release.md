@@ -102,7 +102,7 @@ signe avec `apksigner`, puis vérifie avant de promouvoir l'artefact local :
 - bundle `assets/index.android.bundle` embarqué et alignement ;
 - taille et SHA-256 du fichier final.
 
-Sorties actuelles : `artifacts/chess69-0.2.0-4-arm64.apk` et son fichier `.json` public.
+Sorties actuelles : `artifacts/chess69-0.2.1-5-arm64.apk` et son fichier `.json` public.
 Les APK sont ignorées par Git. Gradle produit volontairement une APK non signée ;
 seul `android:build` fournit la release distribuable. Les clés debug standard
 Android ne sont jamais utilisées pour cette release.
@@ -116,8 +116,10 @@ python3 scripts/verify-apk.py /chemin/vers/telechargement.apk
 
 ## Contrôle Android sur émulateur
 
-Le contrôle réel de cette release est consigné dans
-[les preuves de l’application locale](../.scratch/application-locale/verification.md).
+Les preuves de la version publique 0.2.0 sont dans
+[le contrôle de l’application locale](../.scratch/application-locale/verification.md).
+La mise en conformité locale 0.2.1/code5 est vérifiée séparément dans
+[les preuves CU-ARCHI](../.scratch/corrections-cu-archi/verification.md).
 L'émulateur n'est pas nécessaire à la compilation. Pour préparer ses composants :
 
 ```bash
@@ -168,3 +170,11 @@ Version livrée : 0.2.0, code 4 (les codes 2 et 3 ont servi aux preuves natives 
 La publication reçoit aussi l’archive des sources correspondantes GPL. Après succès de la vérification HTTP complète, seules la release courante, son empreinte, sa page et ses sources restent sur le serveur ; anciennes APK et sauvegardes de releases sont supprimées. La récupération de la clé privée sur le Mac est conservée. Il n’existe plus de rollback serveur vers une ancienne version : une correction augmente le code de version.
 
 Pour mettre à jour, ouvrir la nouvelle APK et accepter **Mettre à jour**. Ne pas désinstaller : la progression appartient aux données de cette installation. Voir le guide appareil de la livraison locale.
+
+## Mise en conformité CU-ARCHI 0.2.1
+
+Release locale 0.2.1/code5 : contrats ciblés, persistance V1 inchangée, modules
+front séparés et orchestration. Même package et certificat. L’APK signée et
+l’archive de sources correspondantes sont préparées sous `artifacts/`.
+Cette livraison ne publie pas la nouvelle version sur le VPS. Le protocole de
+mise à jour et les preuves Android sont dans le [compte rendu CU-ARCHI](../.scratch/corrections-cu-archi/verification.md).

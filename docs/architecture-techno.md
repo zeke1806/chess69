@@ -15,28 +15,32 @@ pas les technologies retenues ici.
 | Expo | Outillage et modules Android, compilation d’une APK autonome | Installé ; première APK 0.1.0 |
 | TypeScript en mode strict | Contrats, types et vérification statique | Configuré en mode strict |
 | Zod | Validation des données à l’exécution et types inférés depuis les schémas | Installé ; catalogue, état persisté et évaluations moteur validés |
-| Remeda | Transformations fonctionnelles et utilitaires purs | Installé ; disponible pour les transformations utiles |
+| Remeda | Transformations fonctionnelles et utilitaires purs | Installé ; utilisé pour les transitions immuables et collections |
 | Git | Historique du projet | Initialisé, branche `main` |
 | GitHub | Dépôt distant | `zeke1806/chess69`, remote `origin` configuré |
 
 Aucune bibliothèque de conteneur DI ou de gestion d’état supplémentaire n’est
-installée. Le raccordement React actuel utilise `useSyncExternalStore` ; son
-évaluation selon CU-ARCHI figure dans [l’audit d’adoption](audit-cu-archi.md).
+installée. Le raccordement React utilise un adaptateur `stateful` générique avec
+`createInitialState` et `connect`. Les parcours possèdent leurs modules de
+présentation, assemblés par le module d’orchestration de Chess69.
 
 ## Briques confirmées
 
 | Technologie | Usage | Statut |
 | --- | --- | --- |
 | Expo Router | Routes raccordées aux features | Installé ; routes dans src/app |
-| SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Installé ; adaptateurs SQLite/mémoire et migration transactionnelle |
+| SQLite via `expo-sqlite` | Persistance locale derrière `RepositoryService` | Installé ; ports par parcours, adaptateurs SQLite/mémoire et migration transactionnelle |
 | Stockfish embarqué | Adversaire et analyse hors ligne | Stockfish 17.1, module Expo local Kotlin/JNI C++ ARM64 et NNUE embarqués |
 | `chess.js` | Règles et validation des coups | Installé ; règles et validation des coups derrière adaptateur |
 | `react-native-svg` | Pièces et icônes vectorielles locales | Compatible Expo SDK 57 ; assets Chessnut Apache-2.0, icônes géométriques originales |
-| Jest + `jest-expo` | Tests unitaires et intégration en mémoire, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
+| Jest + `jest-expo` | Tests unitaires et intégration, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
 
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
 [le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). La suite
-actuelle teste les services business et front avec des dépendances en mémoire.
+actuelle teste les services business et front avec des dépendances injectées,
+le raccordement React et les migrations/persistance avec le vrai SQLite Node
+dans des bases temporaires. Ce dernier contrôle substitue seulement la frontière
+Expo ; il ne remplace pas la preuve SQLite native sur APK.
 
 Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
 
@@ -44,6 +48,12 @@ Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
 
 - Skills Matt Pocock et Impeccable : installés localement dans `.agents/skills`.
 - Skill CU-ARCHI : installé dans `/Users/zeke/.agents/skills/cu-archi`.
+- Prettier : version exacte installée pour les sources ; contrôle architectural
+  TypeScript complémentaire dans `npm run check:architecture`.
+- Storybook avec le framework officiel React Native Web/Vite : catalogue de
+  composants isolé dans `.storybook`, sans changement de l’entrée Expo ni
+  ajout de dépendance native. Les preuves de stories web et d’APK Android
+  sont distinctes. Playwright contrôle le rendu des stories statiques.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
   avec Expo SDK 57 ; OpenJDK 17, SDK 36, NDK 27.1.12297006, Gradle 9.3.1.
   Setup et signature : [procédure Android](android-release.md).

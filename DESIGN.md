@@ -146,9 +146,9 @@ l’action suivante : apprendre, jouer, revoir ou consulter un résultat.
 La densité vient d’une colonne lisible, de listes séparées par un trait et de
 panneaux réservés aux groupes utiles.
 
-Ce document décrit le code Android livré : [thème](src/ui/components/application/theme.ts),
-[commandes](src/ui/components/application/controls.tsx), [écrans](src/ui/components/application/application-screen.tsx)
-et [échiquier](src/ui/components/application/chessboard.tsx). Les dimensions sont
+Ce document décrit le code Android livré : [thème](src/ui/components/common/theme.ts),
+[commandes](src/ui/components/common/button.tsx), [écrans](src/ui/components/business/application-shell.tsx)
+et [échiquier](src/ui/components/business/chessboard.tsx). Les dimensions sont
 en dp et les textes en sp ; la famille système est laissée au moteur natif.
 Les exemples HTML/CSS du sidecar sont des traductions de présentation au facteur
 1 dp/sp vers 1 px. Leurs états de survol et de focus clavier servent uniquement
@@ -245,6 +245,12 @@ de 1 dp. Le retour est un contrôle circulaire de 48 dp. Le dialogue de promotio
 utilise `dialog`, avec 24 dp de marge intérieure.
 
 ## Components
+
+Les primitives sont dans `src/ui/components/common` et les vues produit dans
+`src/ui/components/business`. Chaque parcours possède une vue stateless ; les
+choix et gestes sont portés par les services de présentation et leur orchestration.
+Les stories illustrent les états avec les mêmes composants, via React Native Web ;
+la vérification du rendu Android utilise la vraie APK séparément.
 
 ### Buttons
 

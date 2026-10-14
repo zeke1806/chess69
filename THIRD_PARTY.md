@@ -29,4 +29,4 @@ Le code original de cette application liée à Stockfish est distribué sous GPL
 
 ## Dessins et rendu SVG
 
-Les douze pièces Chessnut d’Alexis Luengas sont sous Apache-2.0, issues d’une version épinglée du dépôt officiel Lichess. SVG originaux, provenance et licence sont inclus dans src/ui/components/application/pieces. Les icônes géométriques de navigation sont originales Chess69 sous GPL-3.0-or-later. react-native-svg conserve sa licence MIT. Toutes ces ressources sont locales dans l’APK.
+Les douze pièces Chessnut d’Alexis Luengas sont sous Apache-2.0, issues d’une version épinglée du dépôt officiel Lichess. SVG originaux, provenance et licence sont inclus dans src/ui/components/business/pieces. Les icônes géométriques de navigation sont originales Chess69 sous GPL-3.0-or-later. react-native-svg conserve sa licence MIT. Toutes ces ressources sont locales dans l’APK.
