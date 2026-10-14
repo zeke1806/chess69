@@ -45,15 +45,9 @@ export type ServicesBusinessDependencies = Readonly<{
   ids?: IdentityService;
 }>;
 
-export const createServicesBusiness = (
-  dependencies: ServicesBusinessDependencies = {},
-): ServicesBusiness => {
+export const createServicesBusiness = (dependencies: ServicesBusinessDependencies = {}): ServicesBusiness => {
   const data = dependencies.data ?? createMemoryDataService();
-  const gameData = data.createData<GameExecutionData>({
-    busy: false,
-    generation: 0,
-    thinking: null,
-  });
+  const gameData = data.createData<GameExecutionData>({ busy: false, generation: 0, thinking: null });
   const analysisData = data.createData<AnalysisExecutionData>({ generation: 0, controller: null });
   const lifecycleData = data.createData(createInitialLifecycleData());
   const repository = dependencies.repository ?? createSQLiteRepositoryService();
@@ -63,30 +57,12 @@ export const createServicesBusiness = (
   const ids = dependencies.ids ?? createNativeIdentityService();
   const catalogueData = dependencies.catalogueData ?? createBundledCatalogueDataService();
   const catalogue = createCatalogueService(catalogueData);
-  const game = createGameService({
-    data: gameData,
-    repository: repository.game,
-    rules,
-    clock,
-    ids,
-    engine,
-  });
-  const analysis = createAnalysisService({
-    data: analysisData,
-    repository: repository.analysis,
-    rules,
-    engine,
-  });
+  const game = createGameService({ data: gameData, repository: repository.game, rules, clock, ids, engine });
+  const analysis = createAnalysisService({ data: analysisData, repository: repository.analysis, rules, engine });
   const progression = createProgressionService({ repository: repository.progression, clock });
   const lifecycle = createLifecycleService([repository, engine], lifecycleData);
 
-  const learning = createLearningService({
-    repository: repository.learning,
-    rules,
-    clock,
-    ids,
-    catalogue,
-  });
+  const learning = createLearningService({ repository: repository.learning, rules, clock, ids, catalogue });
 
   return { catalogue, rules, learning, game, analysis, progression, lifecycle };
 };
