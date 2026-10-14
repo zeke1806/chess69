@@ -1,9 +1,13 @@
+import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Preview } from '@storybook/react-native-web-vite';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { colors } from '../src/ui/components/common/theme';
 
 const preview: Preview = {
-  initialGlobals: { catalogueWidth: '412' },
+  initialGlobals: {
+    catalogueWidth: '412',
+    viewport: { value: 'mobile2', isRotated: false },
+  },
   globalTypes: {
     catalogueWidth: {
       description: 'Largeur du catalogue en pixels',
@@ -20,6 +24,7 @@ const preview: Preview = {
     },
   },
   parameters: {
+    viewport: { options: MINIMAL_VIEWPORTS },
     layout: 'fullscreen',
     options: {
       storySort: {

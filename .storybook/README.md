@@ -15,7 +15,10 @@ npm run storybook:dev
 ```
 
 Ouvrir [http://localhost:6006](http://localhost:6006) dans un navigateur.
-Le port de développement est **6006**. Arrêter le serveur avec `Ctrl+C`.
+Le port de développement est **6006**. L’aperçu démarre en **Large mobile**,
+portrait **414 × 896 px**, via le sélecteur de viewport officiel de Storybook.
+Ce sélecteur reste modifiable ; le menu **Largeur** règle le contenu à l’intérieur
+de cet aperçu. Arrêter le serveur avec `Ctrl+C`.
 
 ## Parcourir l’interface actuelle
 
