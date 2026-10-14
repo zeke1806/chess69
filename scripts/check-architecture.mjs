@@ -37,6 +37,9 @@ for (const file of files) {
   }
 
   function visit(node) {
+    if (isComposition) {
+      checkComposition(source, file, node);
+    }
     if (
       ts.isArrowFunction(node) &&
       (ts.isVariableDeclaration(node.parent) ||
@@ -196,4 +199,40 @@ function resolveLocal(file, imported) {
 function report(source, file, node, message) {
   const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
   problems.push(`${file}:${line} ${message}`);
+}
+
+function checkComposition(source, file, node) {
+  if (ts.isVariableDeclarationList(node) && !(node.flags & ts.NodeFlags.Const)) {
+    report(source, file, node, 'DI : état mutable à déplacer dans un module.');
+  }
+  if (
+    ts.isIfStatement(node) ||
+    ts.isSwitchStatement(node) ||
+    ts.isTryStatement(node) ||
+    ts.isIterationStatement(node, false) ||
+    ts.isAwaitExpression(node) ||
+    ts.isThrowStatement(node)
+  ) {
+    report(source, file, node, 'DI : comportement opérationnel à déplacer dans un module.');
+  }
+  if (
+    (ts.isBinaryExpression(node) &&
+      node.operatorToken.kind >= ts.SyntaxKind.FirstAssignment &&
+      node.operatorToken.kind <= ts.SyntaxKind.LastAssignment) ||
+    ((ts.isPrefixUnaryExpression(node) || ts.isPostfixUnaryExpression(node)) &&
+      (node.operator === ts.SyntaxKind.PlusPlusToken ||
+        node.operator === ts.SyntaxKind.MinusMinusToken))
+  ) {
+    report(source, file, node, 'DI : mutation à déplacer dans un module.');
+  }
+  if (ts.isCallExpression(node)) {
+    const factory = ts.isIdentifier(node.expression)
+      ? node.expression.text
+      : ts.isPropertyAccessExpression(node.expression)
+        ? node.expression.name.text
+        : '';
+    if (!/^create[A-Z]/.test(factory) && node.expression.getText(source) !== 'Object.freeze') {
+      report(source, file, node, 'DI : appel autre qu’une fabrique de composition.');
+    }
+  }
 }

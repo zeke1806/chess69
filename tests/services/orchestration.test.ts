@@ -146,13 +146,17 @@ test('une initialisation terminée après arrêt et réinitialisation ne publie 
   const connection = front({
     ...context.business,
 
-    initialize: async () => {
-      if (first) {
-        first = false;
-        entered.resolve();
-        await released.promise;
-      }
-      await context.business.initialize();
+    lifecycle: {
+      ...context.business.lifecycle,
+
+      initialize: async () => {
+        if (first) {
+          first = false;
+          entered.resolve();
+          await released.promise;
+        }
+        await context.business.lifecycle.initialize();
+      },
     },
   });
   const old = connection.actions.initialize();

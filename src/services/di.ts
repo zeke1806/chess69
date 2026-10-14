@@ -42,8 +42,7 @@ export function createServicesFront({ version, business }: Dependencies): Servic
           analysis,
           progression,
           board,
-          initialize: business.initialize,
-          dispose: business.dispose,
+          lifecycle: business.lifecycle,
           cancelAnalysis: business.analysis.cancel,
           cancelThinking: business.game.cancelThinking,
         });

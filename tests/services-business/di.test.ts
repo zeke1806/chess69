@@ -96,10 +96,10 @@ test('cleanup et remount pendant une ouverture SQLite suspendue gardent stockage
     clock,
     ids,
   });
-  const opening = services.initialize();
+  const opening = services.lifecycle.initialize();
   await entered.promise;
-  const cleanup = services.dispose();
-  const remount = services.initialize();
+  const cleanup = services.lifecycle.dispose();
+  const remount = services.lifecycle.initialize();
   released.resolve();
   await Promise.all([opening, cleanup, remount]);
   expect((await services.progression.summary()).successes).toBe(1);
@@ -129,10 +129,10 @@ test('une initialisation moteur échouée libère la base sans perdre les donné
       },
     },
   });
-  await expect(services.initialize()).rejects.toThrow('Moteur indisponible');
+  await expect(services.lifecycle.initialize()).rejects.toThrow('Moteur indisponible');
   await expect(services.progression.summary()).rejects.toThrow('initialisé');
   unavailable = false;
-  await services.initialize();
+  await services.lifecycle.initialize();
   expect((await services.progression.summary()).successes).toBe(1);
   expect((await services.game.think())?.record.moves).toEqual(['a2a3']);
 });
@@ -157,10 +157,10 @@ test('une fermeture moteur en erreur ferme aussi le stockage et ne bloque pas la
       },
     },
   });
-  await services.initialize();
-  await expect(services.dispose()).rejects.toThrow('Fermeture moteur échouée');
+  await services.lifecycle.initialize();
+  await expect(services.lifecycle.dispose()).rejects.toThrow('Fermeture moteur échouée');
   await expect(services.progression.summary()).rejects.toThrow('initialisé');
-  await services.initialize();
+  await services.lifecycle.initialize();
   expect((await services.progression.summary()).successes).toBe(1);
   expect((await services.game.think())?.record.moves).toEqual(['a2a3']);
 });

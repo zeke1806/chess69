@@ -23,6 +23,11 @@ Aucune bibliothèque de conteneur DI ou de gestion d’état supplémentaire n�
 installée. Le raccordement React utilise un adaptateur `stateful` générique avec
 `createInitialState` et `connect`. Les parcours possèdent leurs modules de
 présentation, assemblés par le module d’orchestration de Chess69.
+Le module `services-business/lifecycle` coordonne le cycle de vie commun de SQLite
+et du moteur : ouverture séquentielle, fermeture de toutes les ressources et
+reprise après échec. La DI expose `business.lifecycle` ; l’orchestration de
+présentation consomme ce contrat. Les adaptateurs conservent leurs cycles de vie
+propres. Le contrôle architectural vérifie aussi le rôle strict des deux DI.
 
 ## Briques confirmées
 

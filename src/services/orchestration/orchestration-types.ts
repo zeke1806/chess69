@@ -1,3 +1,4 @@
+import type { LifecycleService } from '../../services-business/lifecycle/lifecycle-types';
 import type { Exercise } from '../../services-business/catalogue/catalogue-types';
 import type { LearningState, LearningActions, LearningUiService } from '../learning/learning-types';
 import type { GameState, GameActions, GameUiService } from '../game/game-types';
@@ -60,8 +61,7 @@ export type OrchestrationDependencies = Readonly<{
   analysis: AnalysisUiService;
   progression: ProgressionUiService;
   board: BoardUiService;
-  initialize: () => Promise<void>;
-  dispose: () => Promise<void>;
+  lifecycle: LifecycleService;
   cancelThinking: () => Promise<void>;
   cancelAnalysis: () => Promise<void>;
 }>;

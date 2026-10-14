@@ -1,3 +1,5 @@
+import { createLifecycleService } from './lifecycle/lifecycle-service';
+import type { LifecycleService } from './lifecycle/lifecycle-types';
 import { createNativeClockService } from './adapters/clock/native-clock-service';
 import { createNativeIdentityService } from './adapters/identity/native-identity-service';
 import { createStockfishEngineService } from './adapters/engine/engine-service';
@@ -25,8 +27,7 @@ export interface ServicesBusiness {
   readonly analysis: AnalysisService;
   readonly progression: ProgressionService;
   readonly rules: RulesService;
-  readonly initialize: () => Promise<void>;
-  readonly dispose: () => Promise<void>;
+  readonly lifecycle: LifecycleService;
 }
 export type ServicesBusinessDependencies = Readonly<{
   repository?: RepositoryService;
@@ -38,8 +39,6 @@ export type ServicesBusinessDependencies = Readonly<{
 export const createServicesBusiness = (
   dependencies: ServicesBusinessDependencies = {},
 ): ServicesBusiness => {
-  let initialized = false;
-  let pending: Promise<unknown> = Promise.resolve();
   const repository = dependencies.repository ?? createSQLiteRepositoryService();
   const engine = dependencies.engine ?? createStockfishEngineService();
   const rules = createChessJsRulesService();
@@ -64,41 +63,6 @@ export const createServicesBusiness = (
     analysis: createAnalysisService({ repository: repository.analysis, rules, engine }),
     progression: createProgressionService({ repository: repository.progression, clock }),
 
-    initialize: () => {
-      return enqueue(async () => {
-        if (initialized) {
-          return;
-        }
-        try {
-          await repository.initialize();
-          await engine.initialize();
-          initialized = true;
-        } catch (error) {
-          // Preserve the initialization error while releasing partial resources.
-          await closeResources().catch(() => undefined);
-          throw error;
-        }
-      });
-    },
-
-    dispose: () => {
-      return enqueue(closeResources);
-    },
+    lifecycle: createLifecycleService([repository, engine]),
   };
-
-  function enqueue(operation: () => Promise<void>): Promise<void> {
-    const result = pending.then(operation);
-    pending = result.catch(() => undefined);
-    return result;
-  }
-
-  async function closeResources(): Promise<void> {
-    initialized = false;
-    const results = await Promise.allSettled([engine.dispose(), repository.dispose()]);
-    for (const result of results) {
-      if (result.status === 'rejected') {
-        throw result.reason;
-      }
-    }
-  }
 };

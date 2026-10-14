@@ -490,9 +490,13 @@ test.each(['foreground', 'startup'] as const)(
     const connection = front({
       ...base.business,
 
-      initialize: async () => {
-        if (failing && mode === 'startup') throw new Error('startup');
-        await base.business.initialize();
+      lifecycle: {
+        ...base.business.lifecycle,
+
+        initialize: async () => {
+          if (failing && mode === 'startup') throw new Error('startup');
+          await base.business.lifecycle.initialize();
+        },
       },
 
       progression: {

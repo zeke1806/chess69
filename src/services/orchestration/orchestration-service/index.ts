@@ -129,7 +129,7 @@ export function createOrchestrationService(
           });
           retryLifecycle = actions.initialize;
           try {
-            await dependencies.initialize();
+            await dependencies.lifecycle.initialize();
             if (!isActive() || token !== lifecycle) {
               return;
             }
@@ -205,7 +205,7 @@ export function createOrchestrationService(
           leave();
           // Invoke disposal immediately so the infrastructure queues it before a StrictMode restart.
           const stopping = stop();
-          const closing = dependencies.dispose();
+          const closing = dependencies.lifecycle.dispose();
           await Promise.all([stopping, closing]);
         },
 
