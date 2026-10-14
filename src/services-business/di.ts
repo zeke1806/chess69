@@ -61,7 +61,6 @@ export const createServicesBusiness = (dependencies: ServicesBusinessDependencie
   const analysis = createAnalysisService({ data: analysisData, repository: repository.analysis, rules, engine });
   const progression = createProgressionService({ repository: repository.progression, clock });
   const lifecycle = createLifecycleService([repository, engine], lifecycleData);
-
   const learning = createLearningService({ repository: repository.learning, rules, clock, ids, catalogue });
 
   return { catalogue, rules, learning, game, analysis, progression, lifecycle };
