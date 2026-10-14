@@ -202,6 +202,27 @@ function report(source, file, node, message) {
 }
 
 function checkComposition(source, file, node) {
+  if (ts.isReturnStatement(node) && node.expression) {
+    const expression = node.expression;
+    const exposed =
+      ts.isCallExpression(expression) && expression.expression.getText(source) === 'Object.freeze'
+        ? expression.arguments[0]
+        : expression;
+    if (exposed && ts.isObjectLiteralExpression(exposed)) {
+      for (const property of exposed.properties) {
+        if (
+          !ts.isShorthandPropertyAssignment(property) &&
+          !(
+            ts.isPropertyAssignment(property) &&
+            (ts.isIdentifier(property.initializer) ||
+              ts.isPropertyAccessExpression(property.initializer))
+          )
+        ) {
+          report(source, file, property, 'DI : déclarer services et fabriques avant le return.');
+        }
+      }
+    }
+  }
   if (ts.isVariableDeclarationList(node) && !(node.flags & ts.NodeFlags.Const)) {
     report(source, file, node, 'DI : état mutable à déplacer dans un module.');
   }

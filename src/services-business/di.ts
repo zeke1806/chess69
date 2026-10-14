@@ -45,24 +45,21 @@ export const createServicesBusiness = (
   const clock = dependencies.clock ?? createNativeClockService();
   const ids = dependencies.ids ?? createNativeIdentityService();
   const catalogue = createCatalogueService();
-  return {
-    catalogue,
-    rules,
 
-    createLearning: () => {
-      return createLearningService({
-        repository: repository.learning,
-        rules,
-        clock,
-        ids,
-        catalogue,
-      });
-    },
-
-    game: createGameService({ repository: repository.game, rules, clock, ids, engine }),
-    analysis: createAnalysisService({ repository: repository.analysis, rules, engine }),
-    progression: createProgressionService({ repository: repository.progression, clock }),
-
-    lifecycle: createLifecycleService([repository, engine]),
+  const createLearning = () => {
+    return createLearningService({
+      repository: repository.learning,
+      rules,
+      clock,
+      ids,
+      catalogue,
+    });
   };
+
+  const game = createGameService({ repository: repository.game, rules, clock, ids, engine });
+  const analysis = createAnalysisService({ repository: repository.analysis, rules, engine });
+  const progression = createProgressionService({ repository: repository.progression, clock });
+  const lifecycle = createLifecycleService([repository, engine]);
+
+  return { catalogue, rules, createLearning, game, analysis, progression, lifecycle };
 };

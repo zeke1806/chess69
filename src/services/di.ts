@@ -32,21 +32,22 @@ export function createServicesFront({ version, business }: Dependencies): Servic
     catalogue: business.catalogue,
   });
   const board = createBoardService();
-  return {
-    orchestration: {
-      createOrchestrationService: () => {
-        return createOrchestrationService({
-          version,
-          learning,
-          game,
-          analysis,
-          progression,
-          board,
-          lifecycle: business.lifecycle,
-          cancelAnalysis: business.analysis.cancel,
-          cancelThinking: business.game.cancelThinking,
-        });
-      },
-    },
+
+  const createOrchestration = () => {
+    return createOrchestrationService({
+      version,
+      learning,
+      game,
+      analysis,
+      progression,
+      board,
+      lifecycle: business.lifecycle,
+      cancelAnalysis: business.analysis.cancel,
+      cancelThinking: business.game.cancelThinking,
+    });
   };
+
+  const orchestration = { createOrchestrationService: createOrchestration };
+
+  return { orchestration };
 }
