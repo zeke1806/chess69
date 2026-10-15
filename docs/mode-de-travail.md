@@ -4,9 +4,9 @@
 
 ## Exécution locale
 
-Travailler dans le dépôt principal sans worktree, y compris pour les sous-agents lorsqu'une délégation est autorisée. Les skills Matt Pocock et Impeccable sont locaux dans `.agents/skills` ; les skills CU sont installés au niveau utilisateur. Leur vérification et leur orchestration relèvent de CU Workflow.
+Travailler dans le dépôt principal sans worktree, y compris pour les sous-agents lorsqu'une délégation est autorisée. Les emplacements des skills et outils sont indiqués dans [les technologies retenues](architecture-techno.md).
 
-Le suivi conserve `.scratch/` et ses anciens dossiers. Les nouvelles demandes utilisent les identifiants SCRUM selon CU Workflow. Les sorties lourdes vont dans `.scratch/artifacts/` ou les sorties Impeccable ignorées ; conserver les rapports et décisions textuels. Les ressources applicatives déjà versionnées ne sont pas supprimées par cette extraction.
+Pour le suivi et le triage, consulter les [adaptations du tracker](agents/issue-tracker.md). Les emplacements locaux de génération sont définis dans `.gitignore` ; leur gestion suit CU Workflow.
 
 ## Convention locale de lecture
 
@@ -39,11 +39,6 @@ La [procédure Android](android-release.md) conserve l’identité de signature 
 les étapes de compilation. La publication depuis Mustang appartient au projet
 `vps-perso` ; Chess69 conserve ses données et calculs sur le téléphone.
 
-## Validation visuelle dans Storybook
+## Emplacements des propositions Storybook
 
-Pour les explorations graphiques conduites selon CU Workflow, livrer le moodboard dans Common et les maquettes dans une racine durable Design. Les propositions portent les statuts
-proposition, approuvé et intégré ; garder la référence approuvée après intégration.
-Common et Business cataloguent les composants réellement utilisés. Les sources textuelles des maquettes restent dans `.storybook/design`, avec des vues stateless et un raccordement de démonstration pour les seules interactions locales. Les captures et images lourdes générées restent dans les dossiers ignorés définis par CU Workflow ; une référence approuvée conserve sa description et ses sources textuelles. Le code Android et les services métier
-ne dépendent pas de cette proposition.
-
-Les tokens proposés restent locaux au prototype jusqu’à la validation visuelle ; `DESIGN.md` décrit l’application réellement livrée.
+Le catalogue applique la structure de CU Archi. Adaptations Chess69 : le moodboard est dans `Common/Design/Moodboard`, les maquettes dans la racine `Design`, et leurs sources textuelles dans `.storybook/design`. Les tokens proposés restent locaux au prototype jusqu'au jalon de validation défini par CU Workflow ; `DESIGN.md` décrit l'application intégrée.

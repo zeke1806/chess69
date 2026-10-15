@@ -4,8 +4,7 @@
 `65ad45f6979ca567b9cdbdec50761fd5c808a3af`, avec la documentation d’adoption
 réalisée dans ce travail. Les constats et propositions ci-dessous décrivent cet état initial.
 Les corrections ont ensuite été appliquées ; leur bilan figure en fin de document. Ce rapport est un constat daté, pas une nouvelle source de normes.
-Le [bilan des corrections finales](#corrections-finales-et-espacement--14-octobre-2026)
-constitue le bilan le plus récent ; les audits précédents restent historiques.
+Le [bilan des corrections finales](#corrections-finales-et-espacement--14-octobre-2026) clôt cet audit historique. Les conventions ont depuis évolué (SCRUM, tests isolés, retrait de Playwright) : pour travailler aujourd'hui, suivre [AGENTS.md](../AGENTS.md). Les permissions et commandes citées ci-dessous ne constituent pas des instructions actuelles.
 
 ## Références et périmètre
 

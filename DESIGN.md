@@ -167,9 +167,7 @@ arrondies à 22 dp ; l’échiquier est clippé à 16 dp. La modal de promotion 
 
 ## Components
 
-Les vues Common et Business sont stateless : données et callbacks par props.
-Les features raccordent les effets, dimensions et fonte ; les services restent
-propriétaires des transitions. Chaque composant réutilisable possède ses stories.
+La structure des composants et leur catalogue suivent [CU Archi](/Users/zeke/.agents/skills/cu-archi/references/architecture.md). Les choix visuels propres à Chess69 sont décrits ci-dessous.
 
 - Boutons : minimum 52 dp, primaire sauge, secondaire tonal, désactivé à opacité
   0,45 ; la désactivation bloque l’action et est exposée à l’accessibilité.

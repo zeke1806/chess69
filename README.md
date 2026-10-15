@@ -8,10 +8,7 @@ Téléchargement : [APK et instructions](https://apk.rentabe.ovh/chess69). Ouvri
 
 Node 24 (`.nvmrc`) et npm ; versions exactes dans le lockfile.
 
-Le [mode de travail](docs/mode-de-travail.md) articule les workflows Matt Pocock,
-le skill [CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) pour l’architecture
-et les normes de codage, et Impeccable pour l’interface. Les
-[choix technologiques](docs/architecture-techno.md) restent propres à Chess69.
+Les [consignes du projet](AGENTS.md) indiquent les skills à appliquer ; le [mode de travail local](docs/mode-de-travail.md) conserve leurs adaptations et les [choix technologiques](docs/architecture-techno.md) restent propres à Chess69.
 L’[audit CU-ARCHI](docs/audit-cu-archi.md) conserve le constat initial et le bilan des corrections A1–A9/D1 appliquées.
 
 ```bash
@@ -33,7 +30,7 @@ Le catalogue `Common` / `Business` présente les composants et les écrans compl
 sous `Business/Pages/Application`. La commande **Largeur** permet de comparer
 360, 412 et 480 px. Les stories utilisent les mêmes vues stateless que
 l’application Android. `npm run storybook:build` produit `storybook-static/`.
-Les états se consultent story par story. La politique de validation visuelle est définie dans CU Archi ; les tests dans un vrai navigateur nécessitent une demande explicite.
+Les états se consultent story par story. La [politique de validation visuelle de CU Archi](/Users/zeke/.agents/skills/cu-archi/references/architecture.md) définit les contrôles applicables.
 Voir [.storybook/README.md](.storybook/README.md) pour le catalogue et ses contrôles.
 Le rendu web s’inspecte sans appareil Android ; les preuves natives exigent l’APK.
 
