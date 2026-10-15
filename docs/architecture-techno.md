@@ -55,13 +55,11 @@ SQLite ni dépendance native n’est modifié par cette séparation.
 | Jest + `jest-expo` | Tests unitaires et intégration, rapides et déterministes | Configuré ; preset jest-expo et tests front sans effets externes |
 
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
-[le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). La suite
-actuelle teste les services business et front avec des dépendances injectées,
-le raccordement React et les migrations/persistance avec le vrai SQLite Node
-dans des bases temporaires. Ce dernier contrôle substitue seulement la frontière
-Expo ; il ne remplace pas la preuve SQLite native sur APK.
+[le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). La suite teste les services business et front avec des dépendances injectées, ainsi que le raccordement React. Les tests de l’adaptateur SQLite utilisent un double du protocole Expo en mémoire : initialisation, reprise, version future et écritures atomiques sont vérifiées sans driver ni fichier. Ils ne prouvent pas la durabilité ou les garanties transactionnelles du vrai SQLite, qui demandent les contrôles APK séparés.
 
-CU Archi exige désormais des tests unitaires et d’intégration sans driver réel ni effets externes : les adaptateurs en mémoire servent aux nouveaux tests, l’application utilise SQLite. La suite historique décrite ci-dessus comporte encore des contrôles SQLite réels ; elle n’est pas conforme à cette nouvelle exigence. Sa migration, ainsi que celle des anciens identifiants Business vers de nouvelles demandes SCRUM si nécessaire, relève d’un travail distinct ; ne pas présenter ces contrôles historiques comme des exemples conformes.
+Tous les tests unitaires et d’intégration restent dans `tests/`. Le fichier `tests/business/scrum-2/scrum-2.test.ts` regroupe les 30 comportements migrés de CU-ARCHI-01, 02 et 04 sous la spec SCRUM-2, avec descriptions françaises et numérotées. Le setup d’isolation interdit réseau et écritures de fichiers courantes pendant les cas ; la lecture des sources par Jest reste nécessaire au runner. Les contrôles navigateur réels sont dans `verification/storybook/`, hors suite isolée, et restent lancés explicitement par `npm run storybook:test`.
+
+L’application utilise toujours SQLite ; aucun comportement produit n’est modifié par cette migration des tests.
 
 ## Outils de développement et de distribution
 

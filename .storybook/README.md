@@ -92,3 +92,7 @@ La racine durable **Design → Proposition** présente les cinq maquettes
 et la navigation de démonstration. Voir [le périmètre temporaire](design/README.md).
 La proposition charbon, ivoire et sauge est approuvée et intégrée.
 Design conserve cette référence ; Business montre les vrais parcours Android.
+
+## Contrôles réels et tests isolés
+
+Les contrôles Playwright sont dans `verification/storybook/` et nécessitent un navigateur et un serveur réels ; ils ne font pas partie de `npm test`. Les tests unitaires/intégration sont centralisés dans `tests/` et utilisent des frontières externes en mémoire.

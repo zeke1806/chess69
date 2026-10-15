@@ -62,6 +62,9 @@
     "testMatch": [
       "<rootDir>/tests/**/*.test.ts",
       "<rootDir>/tests/**/*.test.tsx"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/isolation-setup.ts"
     ]
   },
   "expo": {
