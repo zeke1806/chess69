@@ -1,15 +1,3 @@
-# Labels de triage
+# Triage local de Chess69
 
-Les rôles Matt Pocock conservent leurs noms dans le suivi local :
-
-| Rôle / label | Usage |
-| --- | --- |
-| `needs-triage` | Besoin à examiner avant découpage ou implémentation |
-| `needs-info` | Information nécessaire manquante |
-| `ready-for-agent` | Travail suffisamment défini pour l’agent |
-| `ready-for-human` | Action exigeant une intervention humaine |
-| `wontfix` | Travail explicitement écarté |
-
-Ces rôles sont les valeurs de triage employées par les skills. Les états
-de réalisation `claimed` et `resolved` suivent les conventions du tracker.
-Ne pas créer de labels GitHub pour ce suivi local.
+Le vocabulaire et les états suivent le [suivi local de CU Workflow](/Users/zeke/.agents/skills/cu-workflow/references/suivi-local.md). Ils sont enregistrés dans les fichiers Markdown de `.scratch/` ; aucun label GitHub ou Jira n'est créé implicitement.

@@ -1,20 +1,12 @@
 # Chess69
 
-Pour tout besoin produit, implémentation, correction ou travail d’interface,
-appliquer [le mode de travail de Chess69](docs/mode-de-travail.md) : orchestration,
-skills Matt Pocock, CU-ARCHI et Impeccable, progression, vérification et suivi durable.
+Pour toute demande de réalisation, appliquer [CU Workflow](/Users/zeke/.agents/skills/cu-workflow/SKILL.md) pour le cadrage, le suivi local, l'orchestration des skills et la livraison sur branche.
 
-Avant de concevoir, créer, modifier ou revoir du code, appliquer le skill
-[CU-ARCHI](/Users/zeke/.agents/skills/cu-archi/SKILL.md) et ses références.
-Il est la source des règles d’architecture et des normes de codage du projet.
+Avant de concevoir, créer, modifier ou revoir du code, appliquer [CU Archi](/Users/zeke/.agents/skills/cu-archi/SKILL.md) et ses références pour l'architecture, les normes de code et les tests.
 
-Avant de choisir, installer ou configurer une dépendance, lire
-[les technologies retenues et leur statut](docs/architecture-techno.md).
+Les adaptations propres à Chess69 sont dans [le mode de travail local](docs/mode-de-travail.md). Avant de choisir, installer ou configurer une dépendance, lire [les technologies retenues](docs/architecture-techno.md). Consigner les décisions propres au projet dans ses documents.
 
-Consigner les adaptations propres à Chess69 dans les documents du projet concernés.
+## Contexte local
 
-## Agent skills
-
-- Tickets et spécifications en Markdown local : [issue tracker](docs/agents/issue-tracker.md).
-- Labels de triage : [triage labels](docs/agents/triage-labels.md).
-- Contexte métier unique : [domain docs](docs/agents/domain.md).
+- [Suivi local](docs/agents/issue-tracker.md) et [triage](docs/agents/triage-labels.md).
+- [Contexte métier](docs/agents/domain.md).

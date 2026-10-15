@@ -61,12 +61,12 @@ le raccordement React et les migrations/persistance avec le vrai SQLite Node
 dans des bases temporaires. Ce dernier contrôle substitue seulement la frontière
 Expo ; il ne remplace pas la preuve SQLite native sur APK.
 
-Les adaptateurs en mémoire servent aux tests ; l’application utilise SQLite.
+CU Archi exige désormais des tests unitaires et d’intégration sans driver réel ni effets externes : les adaptateurs en mémoire servent aux nouveaux tests, l’application utilise SQLite. La suite historique décrite ci-dessus comporte encore des contrôles SQLite réels ; elle n’est pas conforme à cette nouvelle exigence. Sa migration, ainsi que celle des anciens identifiants Business vers de nouvelles demandes SCRUM si nécessaire, relève d’un travail distinct ; ne pas présenter ces contrôles historiques comme des exemples conformes.
 
 ## Outils de développement et de distribution
 
 - Skills Matt Pocock et Impeccable : installés localement dans `.agents/skills`.
-- Skill CU-ARCHI : installé dans `/Users/zeke/.agents/skills/cu-archi`.
+- Skills CU Archi et CU Workflow : installés au niveau utilisateur ; sources centralisées dans `ai-skills`, liées symboliquement sur ce Mac.
 - Prettier : version exacte installée pour les sources ; contrôle architectural
   TypeScript complémentaire dans `npm run check:architecture`. Le complément
   local `scripts/format-function-blocks.mjs` utilise l'AST TypeScript et Prettier

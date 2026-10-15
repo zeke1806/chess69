@@ -1,24 +1,5 @@
-# Issue tracker : Markdown local
+# Suivi local de Chess69
 
-Les spécifications et tickets vivent dans `.scratch/` et sont versionnés.
-Le dépôt GitHub héberge le code ; le suivi de travail reste local par défaut.
+Appliquer le [suivi des demandes de CU Workflow](/Users/zeke/.agents/skills/cu-workflow/references/suivi-local.md) pour les specs SCRUM, les tickets internes, la carte de progression et les échanges ponctuels avec Jira. Le tracker est local et ses documents textuels sont versionnés.
 
-- Un dossier par fonctionnalité ou effort : `.scratch/<feature>/`.
-- Spécification : `spec.md`.
-- Un fichier par ticket : `issues/<NN>-<slug>.md`, numéroté en ordre de dépendance.
-- Chaque ticket indique le comportement livré, ses critères d’acceptation,
-  `Blocked by:` et `Status:` près du début du fichier.
-- Un ticket prêt porte `Status: ready-for-agent`, puis `claimed` pendant le
-  travail et `resolved` après validation de ses critères.
-- Avant de résoudre, noter les contrôles réellement effectués et les limites.
-  Un contrôle requis mais non réalisé ne devient pas un contrôle réussi.
-- Les commentaires complémentaires vont sous `## Comments`.
-
-« Publier au tracker » signifie écrire ces fichiers. « Lire un ticket » signifie
-lire son fichier, ses dépendances et la spécification correspondante.
-La création des tickets est déléguée à l’agent selon le mode de travail du projet.
-
-Pour `wayfinder`, conserver `map.md` avec décisions, travail restant et questions.
-Les tickets de décision portent également `Type:` ; après résolution, ajouter
-la réponse dans `## Answer` et une référence depuis la carte. La prochaine tâche
-est un ticket non réclamé dont tous les bloqueurs sont résolus.
+Les anciens dossiers de `.scratch/` et leurs références restent inchangés. La première demande numérotée est `SCRUM-1 : Extraire CU Workflow et préciser les conventions de tests`. Les nouvelles demandes poursuivent la séquence définie par CU Workflow.

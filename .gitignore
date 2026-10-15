@@ -1,5 +1,5 @@
 # Keep .agents/skills/, project documentation, and .scratch/ tickets in Git.
-# Keep application assets (including PNGs) and bundled content databases in Git.
+# Existing application resources remain tracked; generated workflow media stays local.
 
 # Impeccable: generated mockups, captures, build state, and local preferences.
 # Keep shared config.json, design.json, and written critique reports.
@@ -74,3 +74,13 @@ __pycache__/
 /storybook-static/
 
 /android/.kotlin/
+
+# CU Workflow: heavy generated evidence stays local; specs and reports remain tracked.
+/.scratch/artifacts/
+/.scratch/**/*.png
+/.scratch/**/*.jpg
+/.scratch/**/*.jpeg
+/.scratch/**/*.webp
+/.scratch/**/*.gif
+/.scratch/**/*.mp4
+/.scratch/**/*.pdf
