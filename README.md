@@ -20,21 +20,20 @@ npm run typecheck
 npm test
 npm run format:check
 npm run check:architecture
-npm run storybook:test
+npm run storybook:build
 npx expo install --check
 npx expo-doctor
 ```
 
-Les tests rapides utilisent les contrats publics et des dépendances injectées, sans réseau ni moteur natif. Les tests de persistance SQLite traversent aussi un adaptateur Expo substitué par le vrai SQLite Node dans des bases temporaires.
+Les tests rapides utilisent les contrats publics et des dépendances injectées, sans réseau ni moteur natif. Les tests de stockage utilisent un double du protocole Expo en mémoire, sans driver réel ni fichier de données.
 
 Pour inspecter l’interface dans un navigateur, lancer `npm run storybook:dev`
 depuis la racine du dépôt, puis ouvrir [http://localhost:6006](http://localhost:6006).
 Le catalogue `Common` / `Business` présente les composants et les écrans complets
 sous `Business/Pages/Application`. La commande **Largeur** permet de comparer
 360, 412 et 480 px. Les stories utilisent les mêmes vues stateless que
-l’application Android. `npm run storybook:build` produit `storybook-static/` ;
-`npm run storybook:test` contrôle son build et ses interactions après installation
-de Chromium via `npx playwright install chromium`.
+l’application Android. `npm run storybook:build` produit `storybook-static/`.
+Les états se consultent story par story. La politique de validation visuelle est définie dans CU Archi ; les tests dans un vrai navigateur nécessitent une demande explicite.
 Voir [.storybook/README.md](.storybook/README.md) pour le catalogue et ses contrôles.
 Le rendu web s’inspecte sans appareil Android ; les preuves natives exigent l’APK.
 

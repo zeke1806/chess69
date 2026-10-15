@@ -17,7 +17,6 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"scripts/*.mjs\" && node scripts/format-function-blocks.mjs --write",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx}\" \"scripts/*.mjs\" && node scripts/format-function-blocks.mjs",
     "storybook:build": "storybook build --output-dir storybook-static",
-    "storybook:test": "npm run storybook:build && playwright test --config .storybook/playwright.config.ts",
     "check:architecture": "node scripts/check-architecture.mjs",
     "storybook:dev": "storybook dev --host 127.0.0.1 --port 6006 --exact-port --no-open"
   },
@@ -44,7 +43,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.0",
     "@storybook/react-native-web-vite": "10.6.2",
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",

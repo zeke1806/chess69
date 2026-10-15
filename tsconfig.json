@@ -10,7 +10,6 @@
     "src/**/*.tsx",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "verification/**/*.ts",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     ".storybook/**/*.ts",

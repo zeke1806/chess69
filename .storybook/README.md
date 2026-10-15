@@ -62,28 +62,15 @@ pour consulter les fichiers statiques ; il s’arrête avec `Ctrl+C`.
 
 ## Vérifier le catalogue
 
-Installer Chromium une fois, puis lancer les contrôles :
-
 ```sh
-npx playwright install chromium
 npm run typecheck
 npm run check:architecture
-npm run storybook:test
+npm run storybook:build
 ```
 
-Le dernier script reconstruit le catalogue puis lance Chromium sur les fichiers
-statiques, avec un serveur temporaire Python sur `127.0.0.1:6011`. Libérer ce port
-avant le contrôle. Les tests inspectent les stories et leurs interactions ;
-les captures sont conservées dans `artifacts/cu-archi-stories/` et
-`artifacts/storybook-web/`. Builds, captures
-et rapports sont ignorés par Git. Les tests `.spec.ts` du catalogue sont séparés
-des tests Jest de l’application.
+Inspecter les stories état par état dans le catalogue. Le contrôle architectural vérifie leur présence ; le build vérifie leur compilation. La [politique CU Archi](/Users/zeke/.agents/skills/cu-archi/references/architecture.md) définit quand ajouter des interactions ou une automatisation navigateur. Aucun runner Playwright n’est installé pour ce catalogue.
 
-Ces contrôles prouvent le rendu React Native Web. Ils ne remplacent pas
-l’exécution de l’APK Android, la mise à jour avec données ou les contrôles
-TalkBack. RNW 0.21 ne traduit pas les champs natifs
-`accessibilityState.checked/selected` ; les stories vérifient la sélection
-visuelle, tandis que son annonce accessible reste un contrôle natif.
+Une inspection Storybook concerne React Native Web ; l’exécution de l’APK, les mises à jour avec données et TalkBack demandent des contrôles Android distincts.
 
 ## Références de design
 
@@ -92,7 +79,3 @@ La racine durable **Design → Proposition** présente les cinq maquettes
 et la navigation de démonstration. Voir [le périmètre temporaire](design/README.md).
 La proposition charbon, ivoire et sauge est approuvée et intégrée.
 Design conserve cette référence ; Business montre les vrais parcours Android.
-
-## Contrôles réels et tests isolés
-
-Les contrôles Playwright sont dans `verification/storybook/` et nécessitent un navigateur et un serveur réels ; ils ne font pas partie de `npm test`. Les tests unitaires/intégration sont centralisés dans `tests/` et utilisent des frontières externes en mémoire.

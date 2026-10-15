@@ -57,7 +57,7 @@ SQLite ni dépendance native n’est modifié par cette séparation.
 Le runner est concrétisé par Jest et le preset `jest-expo`, documentés dans
 [le guide officiel Expo](https://docs.expo.dev/develop/unit-testing/). La suite teste les services business et front avec des dépendances injectées, ainsi que le raccordement React. Les tests de l’adaptateur SQLite utilisent un double du protocole Expo en mémoire : initialisation, reprise, version future et écritures atomiques sont vérifiées sans driver ni fichier. Ils ne prouvent pas la durabilité ou les garanties transactionnelles du vrai SQLite, qui demandent les contrôles APK séparés.
 
-Tous les tests unitaires et d’intégration restent dans `tests/`. Le fichier `tests/business/scrum-2/scrum-2.test.ts` regroupe les 30 comportements migrés de CU-ARCHI-01, 02 et 04 sous la spec SCRUM-2, avec descriptions françaises et numérotées. Le setup d’isolation interdit réseau et écritures de fichiers courantes pendant les cas ; la lecture des sources par Jest reste nécessaire au runner. Les contrôles navigateur réels sont dans `verification/storybook/`, hors suite isolée, et restent lancés explicitement par `npm run storybook:test`.
+Tous les tests unitaires et d’intégration restent dans `tests/`. Le fichier `tests/business/scrum-2/scrum-2.test.ts` regroupe les 30 comportements migrés de CU-ARCHI-01, 02 et 04 sous la spec SCRUM-2, avec descriptions françaises et numérotées. Le setup d’isolation interdit réseau et écritures de fichiers courantes pendant les cas ; la lecture des sources par Jest reste nécessaire au runner. Les contrôles Playwright ont été retirés dans SCRUM-3 ; Storybook conserve les états consultables selon la politique de validation CU Archi.
 
 L’application utilise toujours SQLite ; aucun comportement produit n’est modifié par cette migration des tests.
 
@@ -78,7 +78,7 @@ L’application utilise toujours SQLite ; aucun comportement produit n’est mod
   dans la feature. `npm run storybook:dev` sert le catalogue web sur
   `http://localhost:6006` ; voir [son guide](../.storybook/README.md) pour les
   largeurs mobiles et le build statique. Les preuves de stories web et d’APK
-  Android sont distinctes. Playwright contrôle le rendu des stories statiques.
+  Android sont distinctes. Le build compile les stories ; leur consultation état par état suit la politique CU Archi.
 - Compilation Android locale : outils Android SDK, JDK et Gradle compatibles
   avec Expo SDK 57 ; OpenJDK 17, SDK 36, NDK 27.1.12297006, Gradle 9.3.1.
   Setup et signature : [procédure Android](android-release.md).
